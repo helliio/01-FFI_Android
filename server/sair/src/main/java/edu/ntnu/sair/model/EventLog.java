@@ -4,13 +4,12 @@ import javax.persistence.*;
 import java.util.Calendar;
 
 @Entity
-@Table(name = "location")
-public class Location {
+@Table(name = "eventlog")
+public class EventLog {
     private long id;
     private Member member;
-    private double longitude;
-    private double latitude;
     private Calendar timestamp;
+    private String description;
 
     @Id
     @GeneratedValue
@@ -21,7 +20,7 @@ public class Location {
     public void setId(long id) {
         this.id = id;
     }
-
+    
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "memberid")
     public Member getMember() {
@@ -32,27 +31,19 @@ public class Location {
         this.member = member;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
     public Calendar getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
