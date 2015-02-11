@@ -83,26 +83,6 @@
             <version>4.2.11.Final</version>
         </dependency>
 
-
-        <!-- Struts2 -->
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-core</artifactId>
-            <version>2.3.16.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-convention-plugin</artifactId>
-            <version>2.3.16.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-spring-plugin</artifactId>
-            <version>2.3.16.3</version>
-        </dependency>
-
         <!-- Database -->
         <dependency>
             <groupId>org.apache.commons</groupId>

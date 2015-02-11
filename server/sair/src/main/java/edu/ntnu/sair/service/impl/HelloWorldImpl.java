@@ -1,9 +1,5 @@
 package edu.ntnu.sair.service.impl;
 
-/**
- * Created by chun on 1/28/15.
- */
-
 import edu.ntnu.sair.service.HelloWorld;
 import javax.jws.WebService;
 
