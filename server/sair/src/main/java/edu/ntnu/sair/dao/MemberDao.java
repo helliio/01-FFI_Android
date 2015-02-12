@@ -14,5 +14,4 @@ public interface MemberDao {
 	public Member getById(String id);
 
 	public List<Member> getAll();
-
 }

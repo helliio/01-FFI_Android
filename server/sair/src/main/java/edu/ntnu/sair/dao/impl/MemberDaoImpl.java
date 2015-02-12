@@ -2,9 +2,11 @@ package edu.ntnu.sair.dao.impl;
 
 import edu.ntnu.sair.dao.MemberDao;
 import edu.ntnu.sair.model.Member;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository("memberDao")
 public class MemberDaoImpl implements MemberDao{
     @Override
     public void add(Member member) {
