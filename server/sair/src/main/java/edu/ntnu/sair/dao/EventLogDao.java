@@ -11,7 +11,7 @@ public interface EventLogDao {
 
     public void update(EventLog eventLog);
 
-    public EventLog getById(String id);
+    public EventLog getById(long id);
 
     public List<EventLog> getAll();
 }

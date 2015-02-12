@@ -11,7 +11,7 @@ public interface TextReportDao {
 
     public void update(TextReport textReport);
 
-    public TextReport getById(String id);
+    public TextReport getById(long id);
 
     public List<TextReport> getAll();
 }

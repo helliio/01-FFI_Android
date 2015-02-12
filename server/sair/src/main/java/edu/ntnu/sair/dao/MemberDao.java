@@ -11,7 +11,7 @@ public interface MemberDao {
 
 	public void update(Member member);
 
-	public Member getById(String id);
+	public Member getById(long id);
 
 	public List<Member> getAll();
 }

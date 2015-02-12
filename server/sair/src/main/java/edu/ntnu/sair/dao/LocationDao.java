@@ -11,7 +11,7 @@ public interface LocationDao {
 
 	public void update(Location location);
 
-	public Location getById(String id);
+	public Location getById(long id);
 
 	public List<Location> getAll();
 }

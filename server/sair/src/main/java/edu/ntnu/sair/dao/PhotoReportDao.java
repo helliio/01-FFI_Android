@@ -11,7 +11,7 @@ public interface PhotoReportDao {
 
     public void update(PhotoReport photoReport);
 
-    public PhotoReport getById(String id);
+    public PhotoReport getById(long id);
 
     public List<PhotoReport> getAll();
 }
