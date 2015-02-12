@@ -8,10 +8,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository("memberDao")
-public class MemberDaoImpl implements MemberDao{
+public class MemberDaoImpl implements MemberDao {
     private SessionFactory sessionFactory;
     private Session session;
 
@@ -46,15 +47,21 @@ public class MemberDaoImpl implements MemberDao{
     @Override
     public Member getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Member where id = " +id);
-        if(q.list().size() == 0){
+        Query q = this.session.createSQLQuery("from Member where id = " + id);
+        if (q.list().size() == 0) {
             return null;
         }
-        return (Member)q.list().get(0);
+        return (Member) q.list().get(0);
     }
 
     @Override
     public List<Member> getAll() {
-        return null;
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createSQLQuery("from Member");
+        List<Member> list = new ArrayList<>();
+        for (Object o : q.list()) {
+            list.add((Member) o);
+        }
+        return list;
     }
 }
