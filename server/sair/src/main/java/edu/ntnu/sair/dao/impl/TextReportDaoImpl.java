@@ -1,7 +1,7 @@
 package edu.ntnu.sair.dao.impl;
 
-import edu.ntnu.sair.dao.MemberDao;
-import edu.ntnu.sair.model.Member;
+import edu.ntnu.sair.dao.TextReportDao;
+import edu.ntnu.sair.model.TextReport;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,8 +15,8 @@ import java.util.List;
  * Created by chun on 2/10/15.
  */
 
-@Repository("memberDao")
-public class MemberDaoImpl implements MemberDao {
+@Repository("textReportDao")
+public class TextReportDaoImpl implements TextReportDao {
     private SessionFactory sessionFactory;
     private Session session;
 
@@ -26,40 +26,40 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public void add(Member member) {
+    public void add(TextReport textReport) {
         this.session = this.sessionFactory.getCurrentSession();
-        this.session.save(member);
+        this.session.save(textReport);
     }
 
     @Override
-    public void delete(Member member) {
+    public void delete(TextReport textReport) {
         this.session = this.sessionFactory.getCurrentSession();
-        this.session.delete(member);
+        this.session.delete(textReport);
     }
 
     @Override
-    public void update(Member member) {
+    public void update(TextReport textReport) {
         this.session = this.sessionFactory.getCurrentSession();
-        this.session.update(member);
+        this.session.update(textReport);
     }
 
     @Override
-    public Member getById(long id) {
+    public TextReport getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Member where id = " + id);
+        Query q = this.session.createSQLQuery("from TextReport where id = " + id);
         if (q.list().size() == 0) {
             return null;
         }
-        return (Member) q.list().get(0);
+        return (TextReport) q.list().get(0);
     }
 
     @Override
-    public List<Member> getAll() {
+    public List<TextReport> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Member");
-        List<Member> list = new ArrayList<>();
+        Query q = this.session.createSQLQuery("from TextReport");
+        List<TextReport> list = new ArrayList<>();
         for (Object o : q.list()) {
-            list.add((Member) o);
+            list.add((TextReport) o);
         }
         return list;
     }

@@ -16,10 +16,11 @@
          http://cxf.apache.org/schemas/jaxws.xsd">
 
     <bean id="hello" class="edu.ntnu.sair.service.impl.HelloWorldImpl"></bean>
-    <jaxws:endpoint id="helloWorld" implementor="#hello" address="/HelloWorld" />
+    <jaxws:endpoint id="helloWorld" implementor="#hello" address="/HelloWorld"/>
 
     <context:component-scan base-package="edu.ntnu.sair"/>
 
+    <!--
     <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
@@ -27,6 +28,14 @@
                   value="jdbc:mysql://aprilchun.com:3306/sair?characterEncoding=utf-8"/>
         <property name="username" value="sair"/>
         <property name="password" value="ffiandroid2015"/>
+
+    </bean>
+    -->
+
+    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="jdbc:sqlite:sair.db"/>
     </bean>
 
     <bean id="mySessionFactory"

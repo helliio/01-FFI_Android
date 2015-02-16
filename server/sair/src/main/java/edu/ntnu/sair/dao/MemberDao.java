@@ -4,6 +4,10 @@ import edu.ntnu.sair.model.Member;
 
 import java.util.List;
 
+/**
+ * Created by chun on 2/10/15.
+ */
+
 public interface MemberDao {
 	public void add(Member member);
 

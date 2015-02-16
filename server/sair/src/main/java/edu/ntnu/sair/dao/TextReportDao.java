@@ -4,6 +4,10 @@ import edu.ntnu.sair.model.TextReport;
 
 import java.util.List;
 
+/**
+ * Created by chun on 2/10/15.
+ */
+
 public interface TextReportDao {
     public void add(TextReport textReport);
 

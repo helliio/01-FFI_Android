@@ -3,6 +3,10 @@ package edu.ntnu.sair.model;
 import javax.persistence.*;
 import java.util.Calendar;
 
+/**
+ * Created by chun on 2/6/15.
+ */
+
 @Entity
 @Table(name = "eventlog")
 public class EventLog {
@@ -20,7 +24,7 @@ public class EventLog {
     public void setId(long id) {
         this.id = id;
     }
-    
+
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "memberid")
     public Member getMember() {

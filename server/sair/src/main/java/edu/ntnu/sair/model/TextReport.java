@@ -3,6 +3,10 @@ package edu.ntnu.sair.model;
 import javax.persistence.*;
 import java.util.Calendar;
 
+/**
+ * Created by chun on 2/6/15.
+ */
+
 @Entity
 @Table(name = "textreport")
 public class TextReport {

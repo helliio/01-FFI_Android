@@ -2,6 +2,10 @@ package edu.ntnu.sair.model;
 
 import javax.persistence.*;
 
+/**
+ * Created by chun on 2/6/15.
+ */
+
 @Entity
 @Table(name = "member")
 public class Member {

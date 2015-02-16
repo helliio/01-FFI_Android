@@ -4,6 +4,10 @@ import edu.ntnu.sair.model.EventLog;
 
 import java.util.List;
 
+/**
+ * Created by chun on 2/10/15.
+ */
+
 public interface EventLogDao {
     public void add(EventLog eventLog);
 

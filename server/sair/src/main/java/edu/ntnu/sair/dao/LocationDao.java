@@ -4,6 +4,10 @@ import edu.ntnu.sair.model.Location;
 
 import java.util.List;
 
+/**
+ * Created by chun on 2/10/15.
+ */
+
 public interface LocationDao {
 	public void add(Location location);
 
