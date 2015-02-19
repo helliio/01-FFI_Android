@@ -46,7 +46,7 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public Member getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Member where id = " + id);
+        Query q = this.session.createQuery("from Member where id = " + id);
         if (q.list().size() == 0) {
             return null;
         }
@@ -56,11 +56,21 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public List<Member> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Member");
+        Query q = this.session.createQuery("from Member");
         List<Member> list = new ArrayList<>();
         for (Object o : q.list()) {
             list.add((Member) o);
         }
         return list;
+    }
+
+    @Override
+    public Member getByUsername(String username) {
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createQuery("from Member where username = '" + username + "'");
+        if (q.list().size() == 0) {
+            return null;
+        }
+        return (Member) q.list().get(0);
     }
 }

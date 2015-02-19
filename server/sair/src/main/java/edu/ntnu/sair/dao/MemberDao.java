@@ -18,4 +18,6 @@ public interface MemberDao {
 	public Member getById(long id);
 
 	public List<Member> getAll();
+
+    public Member getByUsername(String username);
 }

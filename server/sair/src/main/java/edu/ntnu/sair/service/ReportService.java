@@ -1,18 +1,17 @@
 package edu.ntnu.sair.service;
 
-import edu.ntnu.sair.model.Location;
+import javax.jws.WebService;
 
 /**
  * Created by chun on 2/16/15.
  */
 
+@WebService
 public interface ReportService {
 
-    public default String sendLocationReport(Location location) {
-        return null;
-    }
+    public String sendLocationReport(String memberId, String uuid, String longitude, String latitude, String sendingTime);
 
-    public String sendTextReport();
+    public String sendTextReport(String memberId, String uuid, String longitude, String latitude, String content, String sendingTime);
 
-    public String sendPhotoReport();
+    public String sendPhotoReport(String memberId, String uuid, String longitude, String latitude, String extension, String description, String direction, String sendingTime);
 }

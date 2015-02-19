@@ -2,7 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -15,12 +16,13 @@
          http://cxf.apache.org/jaxws
          http://cxf.apache.org/schemas/jaxws.xsd">
 
-    <bean id="hello" class="edu.ntnu.sair.service.impl.HelloWorldImpl"></bean>
-    <jaxws:endpoint id="helloWorld" implementor="#hello" address="/HelloWorld"/>
+
+    <jaxws:endpoint id="hello" implementor="#helloWorld" address="/HelloWorld"/>
+    <jaxws:endpoint id="user" implementor="#userService" address="/UserService"/>
+    <jaxws:endpoint id="report" implementor="#reportService" address="/ReportService"/>
 
     <context:component-scan base-package="edu.ntnu.sair"/>
 
-    <!--
     <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
@@ -29,13 +31,6 @@
         <property name="username" value="sair"/>
         <property name="password" value="ffiandroid2015"/>
 
-    </bean>
-    -->
-
-    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-          destroy-method="close">
-        <property name="driverClassName" value="org.sqlite.JDBC"/>
-        <property name="url" value="jdbc:sqlite::resource:sair.db"/>
     </bean>
 
     <bean id="mySessionFactory"
@@ -55,6 +50,31 @@
             </props>
         </property>
     </bean>
+
+    <!--
+    <bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="jdbc:sqlite:sair.db"/>
+    </bean>
+
+    <bean id="mySessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="myDataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <value>edu.ntnu.sair.model</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">com.applerao.hibernatesqlite.dialect.SQLiteDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean> -->
 
     <bean id="txManager"
           class="org.springframework.orm.hibernate4.HibernateTransactionManager">

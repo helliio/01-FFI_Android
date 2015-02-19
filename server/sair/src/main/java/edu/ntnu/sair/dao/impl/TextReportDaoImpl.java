@@ -46,7 +46,7 @@ public class TextReportDaoImpl implements TextReportDao {
     @Override
     public TextReport getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from TextReport where id = " + id);
+        Query q = this.session.createQuery("from TextReport where id = " + id);
         if (q.list().size() == 0) {
             return null;
         }
@@ -56,7 +56,7 @@ public class TextReportDaoImpl implements TextReportDao {
     @Override
     public List<TextReport> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from TextReport");
+        Query q = this.session.createQuery("from TextReport");
         List<TextReport> list = new ArrayList<>();
         for (Object o : q.list()) {
             list.add((TextReport) o);

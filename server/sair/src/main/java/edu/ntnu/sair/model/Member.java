@@ -1,6 +1,7 @@
 package edu.ntnu.sair.model;
 
 import javax.persistence.*;
+import java.util.Calendar;
 
 /**
  * Created by chun on 2/6/15.
@@ -13,6 +14,8 @@ public class Member {
     private String username;
     private String password;
     private String name;
+    private String uuid;
+    private Calendar validTime;
     private String teamId;
 
     @Id
@@ -25,6 +28,7 @@ public class Member {
         this.id = id;
     }
 
+    @Column(unique = true, nullable = false)
     public String getUsername() {
         return username;
     }
@@ -33,6 +37,7 @@ public class Member {
         this.username = username;
     }
 
+    @Column(nullable = false)
     public String getPassword() {
         return password;
     }
@@ -47,6 +52,22 @@ public class Member {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public Calendar getValidTime() {
+        return validTime;
+    }
+
+    public void setValidTime(Calendar validTime) {
+        this.validTime = validTime;
     }
 
     @Column(name = "teamid")

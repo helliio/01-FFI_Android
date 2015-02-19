@@ -46,7 +46,7 @@ public class LocationDaoImpl implements LocationDao {
     @Override
     public Location getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Location where id = " + id);
+        Query q = this.session.createQuery("from Location where id = " + id);
         if (q.list().size() == 0) {
             return null;
         }
@@ -56,7 +56,7 @@ public class LocationDaoImpl implements LocationDao {
     @Override
     public List<Location> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from Location");
+        Query q = this.session.createQuery("from Location");
         List<Location> list = new ArrayList<>();
         for (Object o : q.list()) {
             list.add((Location) o);

@@ -46,7 +46,7 @@ public class PhotoReportDaoImpl implements PhotoReportDao {
     @Override
     public PhotoReport getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from PhotoReport where id = " + id);
+        Query q = this.session.createQuery("from PhotoReport where id = " + id);
         if (q.list().size() == 0) {
             return null;
         }
@@ -56,7 +56,7 @@ public class PhotoReportDaoImpl implements PhotoReportDao {
     @Override
     public List<PhotoReport> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createSQLQuery("from PhotoReport");
+        Query q = this.session.createQuery("from PhotoReport");
         List<PhotoReport> list = new ArrayList<>();
         for (Object o : q.list()) {
             list.add((PhotoReport) o);
