@@ -1,4 +1,4 @@
-package com.aprilchun.androidtest.com.aprilchun.androidtest.util;
+package com.aprilchun.androidtest.util;
 
 import java.util.TimeZone;
 

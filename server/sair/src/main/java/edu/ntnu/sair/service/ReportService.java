@@ -9,9 +9,9 @@ import javax.jws.WebService;
 @WebService
 public interface ReportService {
 
-    public String sendLocationReport(String memberId, String uuid, String longitude, String latitude, String sendingTime);
+    public String sendLocationReport(String memberId, String deviceId, String longitude, String latitude, String sendingTime);
 
-    public String sendTextReport(String memberId, String uuid, String longitude, String latitude, String content, String sendingTime);
+    public String sendTextReport(String memberId, String deviceId, String longitude, String latitude, String content, String sendingTime);
 
-    public String sendPhotoReport(String memberId, String uuid, String longitude, String latitude, String extension, String description, String direction, String sendingTime);
+    public String sendPhotoReport(String memberId, String deviceId, String longitude, String latitude, String extension, String description, String direction, String sendingTime);
 }

@@ -1,8 +1,6 @@
-package com.aprilchun.androidtest;
+package com.aprilchun.androidtest.service;
 
-import android.util.Log;
-
-import com.aprilchun.androidtest.com.aprilchun.androidtest.util.Constant;
+import com.aprilchun.androidtest.util.Constant;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -14,7 +12,7 @@ import java.util.Calendar;
 /**
  * Created by chun on 2/18/15.
  */
-public class ServiceActivity {
+public class UserService {
     public String register(String username, String password, String name, String teamId) {
         try {
             SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "register");
@@ -38,7 +36,9 @@ public class ServiceActivity {
             e.printStackTrace();
             return null;
         }
+
     }
+
 
     public String login(String username, String androidId, String password) {
         try {
@@ -64,4 +64,5 @@ public class ServiceActivity {
             return null;
         }
     }
+
 }

@@ -14,7 +14,8 @@ public class Location {
     private Member member;
     private double longitude;
     private double latitude;
-    private Calendar timestamp;
+    private Calendar clientTimestamp;
+    private Calendar serverTimestamp;
 
     @Id
     @GeneratedValue
@@ -52,11 +53,21 @@ public class Location {
         this.latitude = latitude;
     }
 
-    public Calendar getTimestamp() {
-        return timestamp;
+    @Column(name = "clienttimestamp")
+    public Calendar getClientTimestamp() {
+        return clientTimestamp;
     }
 
-    public void setTimestamp(Calendar timestamp) {
-        this.timestamp = timestamp;
+    public void setClientTimestamp(Calendar clientTimestamp) {
+        this.clientTimestamp = clientTimestamp;
+    }
+
+    @Column(name = "servertimestamp")
+    public Calendar getServerTimestamp() {
+        return serverTimestamp;
+    }
+
+    public void setServerTimestamp(Calendar serverTimestamp) {
+        this.serverTimestamp = serverTimestamp;
     }
 }

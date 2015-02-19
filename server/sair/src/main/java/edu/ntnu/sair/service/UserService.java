@@ -12,8 +12,8 @@ public interface UserService {
 
     public String register(String username, String password, String name, String teamId);
 
-    public String login(String username, String uuid, String password, String loginTime);
+    public String login(String username, String deviceId, String password, String loginTime);
 
-    public String checkLogin(String memberId, String uuid);
+    public String checkLogin(String memberId, String deviceId);
 
 }

@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public String login(String username, String androidId, String password, String loginTime) {
+    public String login(String username, String deviceId, String password, String loginTime) {
         Member member = this.memberDao.getByUsername(username);
         if (member == null) {
             return "Incorrect username or password";
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         if (member.getPassword() == null || !member.getPassword().equals(password)) {
             return "Incorrect username or password";
         }
-        member.setUuid(Code.encrypt(username + androidId));
+        member.setUuid(Code.encrypt(username + deviceId));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(Long.valueOf(loginTime));
         calendar.add(Calendar.HOUR_OF_DAY, Constant.LOGIN_PERIOD);
@@ -52,14 +52,13 @@ public class UserServiceImpl implements UserService {
         return "success";
     }
 
-    @Transactional
     @Override
-    public String checkLogin(String memberId, String androidId) {
+    public String checkLogin(String memberId, String deviceId) {
         Member member = this.memberDao.getById(Long.valueOf(memberId));
         if (member == null) {
             return "Invalid request: member does not exist.";
         }
-        if (member.getUuid() == null || !member.getUuid().equals(Code.encrypt(member.getUsername() + androidId))) {
+        if (member.getUuid() == null || !member.getUuid().equals(Code.encrypt(member.getUsername() + deviceId))) {
             return "Invalid request: member has not logged in.";
         }
         Calendar calendar = Calendar.getInstance(Constant.TIME_ZONE);

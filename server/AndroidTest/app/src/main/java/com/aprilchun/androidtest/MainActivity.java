@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.aprilchun.androidtest.service.ReportService;
+import com.aprilchun.androidtest.service.UserService;
+
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -28,6 +31,7 @@ public class MainActivity extends ActionBarActivity {
         Button but2 = (Button) this.findViewById(R.id.button2);
         Button but3 = (Button) this.findViewById(R.id.button3);
         Button but4 = (Button) this.findViewById(R.id.button4);
+        Button but5 = (Button) this.findViewById(R.id.button5);
 
         but1.setOnClickListener(new View.OnClickListener() {
 
@@ -35,11 +39,11 @@ public class MainActivity extends ActionBarActivity {
                 // TODO Auto-generated method stub
                 Log.v("MyTag", "111111111111111111111");
                 Log.v("MyTag", "onClick");
-                new Thread(downloadRun).start();
+                new Thread(serviceThread).start();
             }
 
 
-            Runnable downloadRun = new Runnable() {
+            Runnable serviceThread = new Runnable() {
                 @Override
                 public void run() {
                     Looper.prepare();
@@ -72,11 +76,11 @@ public class MainActivity extends ActionBarActivity {
                 // TODO Auto-generated method stub
                 Log.v("MyTag", "111111111111111111111");
                 Log.v("MyTag", "onClick");
-                new Thread(downloadRun).start();
+                new Thread(serviceThread).start();
             }
 
 
-            Runnable downloadRun = new Runnable() {
+            Runnable serviceThread = new Runnable() {
                 @Override
                 public void run() {
                     Looper.prepare();
@@ -109,15 +113,14 @@ public class MainActivity extends ActionBarActivity {
         but3.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                Log.v("MyTag", "onClick");
-                new Thread(downloadRun).start();
+                new Thread(serviceThread).start();
             }
 
-            Runnable downloadRun = new Runnable() {
+            Runnable serviceThread = new Runnable() {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    new ServiceActivity().register();
+                    new UserService().register("aa","aapassword", "aa", "aa");
                     Looper.loop();
                 }
             };
@@ -126,17 +129,34 @@ public class MainActivity extends ActionBarActivity {
         but4.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                Log.v("MyTag", "onClick");
-                new Thread(downloadRun).start();
+                new Thread(serviceThread).start();
             }
 
-            Runnable downloadRun = new Runnable() {
+            Runnable serviceThread = new Runnable() {
                 @Override
                 public void run() {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    new ServiceActivity().login("chun", androidId, "chunpassword");
+                    new UserService().login("aa", androidId, "aapassword");
+                    Looper.loop();
+                }
+            };
+        });
+
+        but5.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                new Thread(serviceThread).start();
+            }
+
+            Runnable serviceThread = new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    String androidId = Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    //new ReportService().sendLocationReport()；
                     Looper.loop();
                 }
             };
