@@ -24,3 +24,10 @@ proguard/
 
 # Log Files
 *.log
+
+# Idea
+.idea/
+*.iml
+
+# Other
+.DS_Store
