@@ -3,7 +3,6 @@ package edu.ntnu.sair.service.impl;
 import edu.ntnu.sair.dao.MemberDao;
 import edu.ntnu.sair.model.Member;
 import edu.ntnu.sair.service.UserService;
-import edu.ntnu.sair.util.Code;
 import edu.ntnu.sair.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public String register(String username, String password, String name, String teamId) {
-        Member member = new Member();
+        Member member = this.memberDao.getByUsername(username);
+        if(member != null){
+            return "Username exists";
+        }
+        member = new Member();
         member.setUsername(username);
         member.setPassword(password);
         member.setName(name);
@@ -36,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public String login(String username, String deviceId, String password, String loginTime) {
+    public String login(String username, String uuid, String password, String loginTime) {
         Member member = this.memberDao.getByUsername(username);
         if (member == null) {
             return "Incorrect username or password";
@@ -44,7 +47,7 @@ public class UserServiceImpl implements UserService {
         if (member.getPassword() == null || !member.getPassword().equals(password)) {
             return "Incorrect username or password";
         }
-        member.setUuid(Code.encrypt(username + deviceId));
+        member.setUuid(uuid);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(Long.valueOf(loginTime));
         calendar.add(Calendar.HOUR_OF_DAY, Constant.LOGIN_PERIOD);
@@ -53,13 +56,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String checkLogin(String memberId, String deviceId) {
-        Member member = this.memberDao.getById(Long.valueOf(memberId));
+    public String checkLogin(String username, String uuid) {
+        Member member = this.memberDao.getByUsername(username);
         if (member == null) {
-            return "Invalid request: member does not exist.";
+            return "Invalid request: member does not exist";
         }
-        if (member.getUuid() == null || !member.getUuid().equals(Code.encrypt(member.getUsername() + deviceId))) {
-            return "Invalid request: member has not logged in.";
+        if (member.getUuid() == null || !member.getUuid().equals(uuid)) {
+            return "Invalid request: member has not logged in";
         }
         Calendar calendar = Calendar.getInstance(Constant.TIME_ZONE);
         if (calendar.after(member.getValidTime())){

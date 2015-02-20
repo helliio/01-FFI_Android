@@ -34,7 +34,7 @@ public class Code {
 	}
 
 
-	protected static String encryptMD5(String input) {
+	public static String encryptMD5(String input) {
 		try {
 			// Construct MessageDigest with MD5 type
 			MessageDigest md = MessageDigest.getInstance("MD5");

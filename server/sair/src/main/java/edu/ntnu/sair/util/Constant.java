@@ -9,6 +9,7 @@ public class Constant {
 
     // Key for encryption
     protected static final String AES_KEY = "01FFIAndroid2015";
+
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");
 

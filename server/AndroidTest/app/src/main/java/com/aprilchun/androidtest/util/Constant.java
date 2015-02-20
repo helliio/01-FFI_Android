@@ -6,13 +6,16 @@ import java.util.TimeZone;
  * Created by chun on 2/19/15.
  */
 public class Constant {
-    //URL of the server
-    public static final String SERVICE_URL = "http://78.91.48.89:8080/";
+    // Key for encryption
+    public static final String AES_KEY = "01FFIAndroid2015";
 
-    //Timezone for time
+    // URL of the server
+    public static final String SERVICE_URL = "http://192.168.2.101:8080/";
+
+    // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");
 
-    //Time format
+    // Time format
     public static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 }

@@ -120,7 +120,7 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    new UserService().register("aa","aapassword", "aa", "aa");
+                    new UserService().register("aa", "aapassword", "aa", "aa");
                     Looper.loop();
                 }
             };
@@ -156,7 +156,7 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    //new ReportService().sendLocationReport()；
+                    Log.d("aa", new ReportService().sendLocationReport("aa", androidId, 1, 1));
                     Looper.loop();
                 }
             };

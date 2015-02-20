@@ -1,5 +1,6 @@
 package edu.ntnu.sair.service;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 /**
@@ -9,11 +10,25 @@ import javax.jws.WebService;
 @WebService
 public interface RequestService {
 
-    public String getTeamMembers(String memberId, String uuid, String timestamp);
+    public String getTeamMembers(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getTeamLocations(String memberId, String uuid, String timestamp);
+    public String getTeamLocations(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getLocationsByMember(String memberId, String uuid, String timestamp);
+    public String getLocationsByMember(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getLocationsByPeriod(String memberId, String uuid, String startTime, String endTime, String timestamp);
+    public String getLocationsByPeriod(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime,
+            @WebParam(name = "sendingTime") String sendingTime);
 }

@@ -1,5 +1,6 @@
 package edu.ntnu.sair.service;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 /**
@@ -9,9 +10,28 @@ import javax.jws.WebService;
 @WebService
 public interface ReportService {
 
-    public String sendLocationReport(String memberId, String deviceId, String longitude, String latitude, String sendingTime);
+    public String sendLocationReport(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "longitude") String longitude,
+            @WebParam(name = "latitude") String latitude,
+            @WebParam(name = "sendingTime") String sendingTime);
 
-    public String sendTextReport(String memberId, String deviceId, String longitude, String latitude, String content, String sendingTime);
+    public String sendTextReport(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "longitude") String longitude,
+            @WebParam(name = "latitude") String latitude,
+            @WebParam(name = "content") String content,
+            @WebParam(name = "sendingTime") String sendingTime);
 
-    public String sendPhotoReport(String memberId, String deviceId, String longitude, String latitude, String extension, String description, String direction, String sendingTime);
+    public String sendPhotoReport(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "longitude") String longitude,
+            @WebParam(name = "latitude") String latitude,
+            @WebParam(name = "extension") String extension,
+            @WebParam(name = "description") String description,
+            @WebParam(name = "direction") String direction,
+            @WebParam(name = "sendingTime") String sendingTime);
 }

@@ -16,10 +16,9 @@
          http://cxf.apache.org/jaxws
          http://cxf.apache.org/schemas/jaxws.xsd">
 
-
-    <jaxws:endpoint id="hello" implementor="#helloWorld" address="/HelloWorld"/>
     <jaxws:endpoint id="user" implementor="#userService" address="/UserService"/>
     <jaxws:endpoint id="report" implementor="#reportService" address="/ReportService"/>
+    <jaxws:endpoint id="request" implementor="#requestService" address="/RequestService"/>
 
     <context:component-scan base-package="edu.ntnu.sair"/>
 

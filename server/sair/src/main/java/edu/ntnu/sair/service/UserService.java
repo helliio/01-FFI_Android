@@ -1,7 +1,7 @@
 package edu.ntnu.sair.service;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
-import java.util.Calendar;
 
 /**
  * Created by chun on 2/16/15.
@@ -10,10 +10,20 @@ import java.util.Calendar;
 @WebService
 public interface UserService {
 
-    public String register(String username, String password, String name, String teamId);
+    public String register(
+            @WebParam(name = "username")String username,
+            @WebParam(name = "password")String password,
+            @WebParam(name = "name")String name,
+            @WebParam(name = "teamId")String teamId);
 
-    public String login(String username, String deviceId, String password, String loginTime);
+    public String login(
+            @WebParam(name = "username")String username,
+            @WebParam(name = "uuid")String uuid,
+            @WebParam(name = "password")String password,
+            @WebParam(name = "loginTime")String loginTime);
 
-    public String checkLogin(String memberId, String deviceId);
+    public String checkLogin(
+            @WebParam(name = "username")String username,
+            @WebParam(name = "uuid")String uuid);
 
 }

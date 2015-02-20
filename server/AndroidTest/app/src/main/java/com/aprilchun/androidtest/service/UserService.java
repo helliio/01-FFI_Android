@@ -1,5 +1,6 @@
 package com.aprilchun.androidtest.service;
 
+import com.aprilchun.androidtest.util.Code;
 import com.aprilchun.androidtest.util.Constant;
 
 import org.ksoap2.SoapEnvelope;
@@ -17,13 +18,13 @@ public class UserService {
         try {
             SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "register");
             // arg0: username
-            soapObject.addProperty("arg0", username);
+            soapObject.addProperty("username", Code.encryptMD5(username));
             // arg1: password
-            soapObject.addProperty("arg1", password);
+            soapObject.addProperty("password", Code.encryptMD5(password));
             // arg2: name
-            soapObject.addProperty("arg2", name);
+            soapObject.addProperty("name", name);
             // arg3: teamId
-            soapObject.addProperty("arg3", teamId);
+            soapObject.addProperty("teamId", teamId);
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.bodyOut = soapObject;
@@ -39,18 +40,17 @@ public class UserService {
 
     }
 
-
-    public String login(String username, String androidId, String password) {
+    public String login(String username, String deviceId, String password) {
         try {
             SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "login");
             // arg0: username
-            soapObject.addProperty("arg0", username);
+            soapObject.addProperty("username", Code.encryptMD5(username));
             // arg1: uuid
-            soapObject.addProperty("arg1", androidId);
+            soapObject.addProperty("uuid", Code.encryptMD5(username + deviceId));
             // arg2: password
-            soapObject.addProperty("arg2", password);
+            soapObject.addProperty("password", Code.encryptMD5(password));
             // arg3: loginTime
-            soapObject.addProperty("arg3", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+            soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.bodyOut = soapObject;
