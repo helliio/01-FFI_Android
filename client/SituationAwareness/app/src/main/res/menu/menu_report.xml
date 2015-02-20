@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="ffiandroid.situationawareness.Report">
+    <item
+        android:id="@+id/report"
+        android:title="@string/title_report"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/app_settings"
+        android:title="@string/title_settings"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+</menu>
