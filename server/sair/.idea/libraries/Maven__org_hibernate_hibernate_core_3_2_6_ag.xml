@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.hibernate:hibernate-core:3.2.6.ag">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/3.2.6.ag/hibernate-core-3.2.6.ag.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/3.2.6.ag/hibernate-core-3.2.6.ag-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/3.2.6.ag/hibernate-core-3.2.6.ag-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
