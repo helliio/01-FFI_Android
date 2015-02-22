@@ -11,7 +11,7 @@ import android.view.MenuItem;
  * <p/>
  * Created by GuoJunjun <junjunguo.com> on 2/20/2015.
  * <p/>
- * Participants of this file: GuoJunjun
+ * responsible for this file: GuoJunjun
  */
 public class Status extends ActionBarActivity {
 

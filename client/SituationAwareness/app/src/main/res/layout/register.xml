@@ -42,7 +42,8 @@
         android:layout_height="wrap_content"
         android:hint="@string/group_id"
         android:id="@+id/register_group_id"
-        android:maxLength="10"
+        android:maxLength="20"
+        android:editable="false"
         android:layout_marginBottom="20dp"
         android:width="200dp"
         android:layout_above="@+id/register_user_password"
@@ -58,7 +59,6 @@
         android:id="@+id/register_user_id"
         android:maxLength="10"
         android:layout_above="@+id/register_group_id"
-        android:editable="false"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:width="200dp"
@@ -98,6 +98,7 @@
         android:layout_centerHorizontal="true"
         android:text="Back to Login Screen"
         android:onClick="backtoLoginClicked"
+        android:layout_marginTop="10dp"
         android:width="200dp"
         android:gravity="center"/>
 

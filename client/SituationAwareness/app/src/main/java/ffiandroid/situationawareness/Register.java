@@ -15,7 +15,7 @@ import ffiandroid.situationawareness.service.UserService;
 /**
  * This file is part of project: Situation Awareness
  * <p/>
- * Created by GuoJunjun <junjunguo.com> on 2/20/15.
+ * Created by GuoJunjun <junjunguo.com> on 2/20/15. responsible for this file: GuoJunjun
  */
 public class Register extends ActionBarActivity {
     private String userid, username, userpass;
@@ -33,6 +33,7 @@ public class Register extends ActionBarActivity {
      */
     public void registerClicked(View view) {
         if (validateInput()) {
+            Toast.makeText(getBaseContext(), "connecting database ... ", Toast.LENGTH_LONG).show();
             new Thread(registerThread).start();
         }
     }
@@ -48,13 +49,13 @@ public class Register extends ActionBarActivity {
 
         String userpass = editTextUserpassword.getText().toString();
 
-        if (userpass.equals(editTextUserpasswordR.toString())) {
+        if (userpass.equals(editTextUserpasswordR.getText().toString())) {
             this.userid = editTextUserid.getText().toString();
             this.username = editTextUsername.getText().toString();
             this.userpass = editTextUserpassword.getText().toString();
             return true;
         } else {
-            Toast.makeText(this, "Make user you enter the same password !", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Make user you enter the same password !", Toast.LENGTH_LONG).show();
         }
         return false;
     }
@@ -63,11 +64,11 @@ public class Register extends ActionBarActivity {
         @Override public void run() {
             Looper.prepare();
             String feedback = new UserService().register(userid, userpass, username, "1");
-            if (feedback.equals("success")) {
-                Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_LONG);
+            if (feedback != null && feedback.equals("success")) {
+                Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_LONG).show();
                 gotoLogin();
             } else {
-                Toast.makeText(getBaseContext(), feedback, Toast.LENGTH_LONG);
+                Toast.makeText(getBaseContext(), feedback, Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
         }
