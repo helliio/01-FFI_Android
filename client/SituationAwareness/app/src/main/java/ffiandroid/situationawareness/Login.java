@@ -45,8 +45,8 @@ public class Login extends ActionBarActivity {
         editTextpass.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    toMapWindow();
-                    //                    login();
+                    //                    toMapWindow();
+                    login();
                 }
                 return false;
             }
@@ -60,8 +60,8 @@ public class Login extends ActionBarActivity {
      */
     public void loginClicked(View view) {
         Toast.makeText(this, "Login .....", Toast.LENGTH_LONG).show();
-        //        login();
-        toMapWindow();
+        login();
+        //        toMapWindow();
     }
 
 
@@ -91,7 +91,7 @@ public class Login extends ActionBarActivity {
             String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
             String message = new UserService().login(userName, UserInfo.getMYANDROIDID(),
                     ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
-            if (message.equals("success")) {
+            if (message != null && message.equals("success")) {
                 UserInfo.setUSERNAME(userName);
                 toMapWindow();
             }
