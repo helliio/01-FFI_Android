@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".Login">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextLoginID"
+        android:maxLength="20"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="30dp"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:width="200dp"
+        android:hint="@string/user_id"/>
+
+    <TextView
+        android:text="@string/app_name_sair"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/editTextLoginID"
+        android:textSize="20dp"
+        android:width="200dp"
+        android:id="@+id/textView"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:maxLength="20"
+        android:id="@+id/editTextLoginPass"
+        android:hint="@string/user_password"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:width="200dp"
+        android:layout_below="@id/editTextLoginID"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextLoginPass"
+        android:id="@+id/btn_login"
+        android:layout_marginTop="30dp"
+        android:width="200dp"
+        android:text="Login"
+        android:onClick="loginClicked"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_login"
+        android:layout_marginTop="10dp"
+        android:width="200dp"
+        android:text="Register"
+        android:onClick="registerClicked"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>
