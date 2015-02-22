@@ -38,7 +38,6 @@ public class RequestService {
             e.printStackTrace();
             return null;
         }
-
     }
 
     public JSONArray getLocationsByTeam(String username, String deviceId) {
@@ -59,7 +58,7 @@ public class RequestService {
 
             SoapObject response = (SoapObject) envelope.bodyIn;
 
-            return new JSONArray(response.toString());
+            return new JSONArray(response.getProperty(0).toString());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
