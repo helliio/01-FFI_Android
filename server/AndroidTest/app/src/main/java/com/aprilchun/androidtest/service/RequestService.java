@@ -60,8 +60,8 @@ public class RequestService {
             ht.call(null, envelope);
 
             SoapObject response = (SoapObject)envelope.bodyIn;
-
-            return new JSONArray(response.toString());
+            
+            return new JSONArray(response.getProperty(0).toString());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
