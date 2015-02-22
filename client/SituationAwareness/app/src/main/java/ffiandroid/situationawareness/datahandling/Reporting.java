@@ -33,7 +33,7 @@ public class Reporting {
     public static void reportMyLocation(Location location) {
         setLocation(location);
         new Thread(reportThread).start();
-        String feedback = "";
+        //        String feedback = "";
     }
 
     private static Runnable reportThread = new Runnable() {
@@ -42,8 +42,13 @@ public class Reporting {
             String feedback = new ReportService()
                     .sendLocationReport(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID(), getLocation().getLatitude(),
                             getLocation().getLongitude());
+            if (feedback != null && feedback.equals("success")) {
+                System.out.println("send location report success !!!!!");
+
+            } else {
+                Looper.loop();
+            }
             System.out.println("$$$$$$$$$$$$$" + feedback);
-            Looper.loop();
         }
     };
 
