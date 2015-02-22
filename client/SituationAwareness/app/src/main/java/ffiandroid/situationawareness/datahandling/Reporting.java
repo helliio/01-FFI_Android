@@ -12,6 +12,7 @@ import ffiandroid.situationawareness.service.ReportService;
  * <p/>
  * Created by GuoJunjun <junjunguo.com> on 20/02/15.
  * <p/>
+ * responsible for this file: GuoJunjun
  */
 public class Reporting {
     private static Location location;

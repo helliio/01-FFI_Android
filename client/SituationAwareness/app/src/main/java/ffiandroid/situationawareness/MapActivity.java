@@ -14,6 +14,8 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
  * <p/>
  * Created by GuoJunjun <junjunguo.com> on 2/20/15.
  * <p/>
- * Participants of this file: GuoJunjun & Simen
+ * responsible for this file: GuoJunjun & Simen
  */
 public class MapActivity extends Activity implements LocationListener {
     private MapView mMapView;
@@ -49,6 +51,16 @@ public class MapActivity extends Activity implements LocationListener {
         setContentView(R.layout.map_view);
         activeOpenStreetMap();
         checkGpsAvailability();
+        showTitle();
+    }
+
+    public void showTitle() {
+        try {
+            ((View) findViewById(android.R.id.title).getParent()).setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+        }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override protected void onResume() {

@@ -20,5 +20,7 @@
     <string name="register_user">Register</string>
     <string name="repeat_password">Repeat password</string>
     <string name="user_name">User Name</string>
+    <string name="report_issues_about_this_area">Report issues about this area:</string>
+    <string name="send_text_report">Send text Report</string>
 
 </resources>

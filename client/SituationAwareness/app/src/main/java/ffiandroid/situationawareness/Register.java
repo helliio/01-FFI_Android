@@ -16,6 +16,7 @@ import ffiandroid.situationawareness.service.UserService;
  * This file is part of project: Situation Awareness
  * <p/>
  * Created by GuoJunjun <junjunguo.com> on 2/20/15.
+ * responsible for this file: GuoJunjun
  */
 public class Register extends ActionBarActivity {
     private String userid, username, userpass;

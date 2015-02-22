@@ -7,7 +7,7 @@ package ffiandroid.situationawareness.datahandling;
  * <p/>
  * Created by GuoJunjun <junjunguo.com> on 20/02/15.
  * <p/>
- * Participants of this file: GuoJunjun
+ * responsible for this file: GuoJunjun
  */
 public class UserInfo {
     private static String MYANDROIDID, USERNAME;
