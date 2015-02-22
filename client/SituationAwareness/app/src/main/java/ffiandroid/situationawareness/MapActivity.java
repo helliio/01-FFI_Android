@@ -55,17 +55,7 @@ public class MapActivity extends Activity implements LocationListener {
         setContentView(R.layout.map_view);
         activeOpenStreetMap();
         checkGpsAvailability();
-        //        showTitle();
     }
-
-    //    public void showTitle() {
-    //        try {
-    //            ((View) findViewById(android.R.id.title).getParent()).setVisibility(View.VISIBLE);
-    //        } catch (Exception e) {
-    //        }
-    //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-    //        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    //    }
 
     @Override protected void onResume() {
         super.onResume();
@@ -116,27 +106,18 @@ public class MapActivity extends Activity implements LocationListener {
     }
 
     /**
-     * add markers on the map view
+     * get coworkers location and add the to map view
+     *
+     * @return
      */
-    private void addMarkersOnMapView() {
-        JSONArray jsonArray =
-                new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID());
-        System.out.println("++++++++ ");
-        if (jsonArray != null) {
-            System.out.println("+++++ " + jsonArray.toString());
-            ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-                    new ItemizedIconOverlay(this, new MyCoworkers().getCoworkerMarkersOverlay(jsonArray), null);
-            mMapView.getOverlays().add(markerItemizedIconOverlay);
-            ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-            mMapView.getOverlays().add(myScaleBarOverlay);
-        }
-    }
-
     private ArrayList<OverlayItem> getCoworkersLocation() {
         new Thread(queryThread).start();
         return null;
     }
 
+    /**
+     * use thread to run the server request
+     */
     private Runnable queryThread = new Runnable() {
         @Override public void run() {
             Looper.prepare();
@@ -151,8 +132,16 @@ public class MapActivity extends Activity implements LocationListener {
         }
     };
 
+    /**
+     * add markers to map view
+     *
+     * @param jsonArray
+     */
     private void addAllMarkers(JSONArray jsonArray) {
         ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
+        markersOverlayItemArray.add(new OverlayItem("test", "text",
+                new GeoPoint((myCurrentLocation.getLatitude() - 0.001), myCurrentLocation.getLongitude())));
+        System.out.println("add markers : -------- " + markersOverlayItemArray.toString());
         ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
                 new ItemizedIconOverlay(this, markersOverlayItemArray, null);
         mMapView.getOverlays().add(markerItemizedIconOverlay);
@@ -208,20 +197,6 @@ public class MapActivity extends Activity implements LocationListener {
         startMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
         startMarker.setTitle("My point");
     }
-
-    /**
-     * report my location to server
-     *
-     * @param location
-     */
-    private void reportMyLocation(Location location) {
-        //        Toast.makeText(this,
-        //                ReportService.sendLocationReport("1", myAndroidId, location.getLatitude(), 
-        // location.getLongitude()),
-        //                Toast.LENGTH_LONG).show();
-        //        new Thread(queryThread).start();
-    }
-
 
     @Override public void onStatusChanged(String provider, int status, Bundle extras) {
 

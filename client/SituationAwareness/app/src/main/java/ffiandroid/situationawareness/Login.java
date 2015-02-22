@@ -45,7 +45,6 @@ public class Login extends ActionBarActivity {
         editTextpass.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //                    toMapWindow();
                     login();
                 }
                 return false;
@@ -61,7 +60,6 @@ public class Login extends ActionBarActivity {
     public void loginClicked(View view) {
         Toast.makeText(this, "Login .....", Toast.LENGTH_LONG).show();
         login();
-        //        toMapWindow();
     }
 
 
@@ -92,8 +90,11 @@ public class Login extends ActionBarActivity {
             String message = new UserService().login(userName, UserInfo.getMYANDROIDID(),
                     ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
             if (message != null && message.equals("success")) {
+                Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
                 UserInfo.setUSERNAME(userName);
                 toMapWindow();
+            } else {
+                Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_LONG);
             }
             Looper.loop();
         }

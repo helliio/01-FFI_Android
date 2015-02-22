@@ -1,3 +1,4 @@
+
 package ffiandroid.situationawareness.util;
 
 import java.util.TimeZone;
