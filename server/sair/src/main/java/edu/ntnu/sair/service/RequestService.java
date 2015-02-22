@@ -1,13 +1,17 @@
 package edu.ntnu.sair.service;
 
+import edu.ntnu.sair.model.Location;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chun on 2/16/15.
  */
 
-@WebService
+@WebService(endpointInterface = "edu.ntnu.sair.service.RequestService", targetNamespace = "http://service.sair.ntnu.edu/")
 public interface RequestService {
 
     public String getTeamMembers(

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.aprilchun.androidtest.service.ReportService;
+import com.aprilchun.androidtest.service.RequestService;
 import com.aprilchun.androidtest.service.UserService;
 
 import org.ksoap2.SoapEnvelope;
@@ -37,8 +38,6 @@ public class MainActivity extends ActionBarActivity {
 
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Log.v("MyTag", "111111111111111111111");
-                Log.v("MyTag", "onClick");
                 new Thread(serviceThread).start();
             }
 
@@ -47,24 +46,10 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    // TODO Auto-generated method stub
-                    SoapObject request = new SoapObject("http://service.sair.ntnu.edu/", "sayHello");
-                    Toast.makeText(MainActivity.this, "test", Toast.LENGTH_LONG).show();
-                    //request.addProperty("sayHi", "");
-                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                    envelope.bodyOut = request;
-                    HttpTransportSE ht = new HttpTransportSE("http://78.91.48.254:8080/HelloWorld?wsdl");
-                    try {
-
-                        System.out.println("aaaaaa");
-                        ht.call(null, envelope);
-                        System.out.println("bbbbbb");
-                        //SoapObject soapObject = (SoapObject) envelope.getResponse();
-                        //Log.v("MyTag", soapObject.getNamespace());
-                        System.out.println(envelope.getResponse().toString());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    System.out.println("Start");
+                    String androidId = Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    new RequestService().getLocationsByTeam("bb", androidId);
                     Looper.loop();
                 }
             };
@@ -120,7 +105,7 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    new UserService().register("aa", "aapassword", "aa", "aa");
+                    new UserService().register("bb", "bb", "bb", "aa");
                     Looper.loop();
                 }
             };
@@ -138,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    new UserService().login("aa", androidId, "aapassword");
+                    new UserService().login("bb", androidId, "bb");
                     Looper.loop();
                 }
             };
@@ -156,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    Log.d("aa", new ReportService().sendLocationReport("aa", androidId, 1, 1));
+                    Log.d("aa", new ReportService().sendLocationReport("bb", androidId, 1, 1));
                     Looper.loop();
                 }
             };

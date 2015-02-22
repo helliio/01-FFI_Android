@@ -7,23 +7,23 @@ import javax.jws.WebService;
  * Created by chun on 2/16/15.
  */
 
-@WebService
+@WebService(endpointInterface = "edu.ntnu.sair.service.UserService", targetNamespace = "http://service.sair.ntnu.edu/")
 public interface UserService {
 
     public String register(
-            @WebParam(name = "username")String username,
-            @WebParam(name = "password")String password,
-            @WebParam(name = "name")String name,
-            @WebParam(name = "teamId")String teamId);
+            @WebParam(name = "username") String username,
+            @WebParam(name = "password") String password,
+            @WebParam(name = "name") String name,
+            @WebParam(name = "teamId") String teamId);
 
     public String login(
-            @WebParam(name = "username")String username,
-            @WebParam(name = "uuid")String uuid,
-            @WebParam(name = "password")String password,
-            @WebParam(name = "loginTime")String loginTime);
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "password") String password,
+            @WebParam(name = "loginTime") String loginTime);
 
     public String checkLogin(
-            @WebParam(name = "username")String username,
-            @WebParam(name = "uuid")String uuid);
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid);
 
 }

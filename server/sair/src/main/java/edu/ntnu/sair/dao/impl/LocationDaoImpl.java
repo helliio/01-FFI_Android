@@ -2,6 +2,7 @@ package edu.ntnu.sair.dao.impl;
 
 import edu.ntnu.sair.dao.LocationDao;
 import edu.ntnu.sair.model.Location;
+import edu.ntnu.sair.model.Member;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -57,6 +58,30 @@ public class LocationDaoImpl implements LocationDao {
     public List<Location> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location");
+        List<Location> list = new ArrayList<>();
+        for (Object o : q.list()) {
+            list.add((Location) o);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Location> getByMember(Member member) {
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createQuery("from Location where memberid = " + member.getId());
+        List<Location> list = new ArrayList<>();
+        for (Object o : q.list()) {
+            list.add((Location) o);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Location> getByTeam(String teamId) {
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createQuery("from Location l" +
+                " where l.member.teamId = '" + teamId +"'" +
+                " group by l.member.id, l.id order by l.clientTimestamp");
         List<Location> list = new ArrayList<>();
         for (Object o : q.list()) {
             list.add((Location) o);

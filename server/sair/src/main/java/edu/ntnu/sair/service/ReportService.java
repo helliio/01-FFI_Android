@@ -7,7 +7,7 @@ import javax.jws.WebService;
  * Created by chun on 2/16/15.
  */
 
-@WebService
+@WebService(endpointInterface = "edu.ntnu.sair.service.ReportService", targetNamespace = "http://service.sair.ntnu.edu/")
 public interface ReportService {
 
     public String sendLocationReport(

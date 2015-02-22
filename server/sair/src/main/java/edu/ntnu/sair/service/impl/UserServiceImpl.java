@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.jws.WebService;
 import java.util.Calendar;
 
 /**
  * Created by chun on 2/16/15.
  */
 
-@WebService(endpointInterface = "edu.ntnu.sair.service.UserService", targetNamespace = "http://service.sair.ntnu.edu/")
 @Service("userService")
 public class UserServiceImpl implements UserService {
     private MemberDao memberDao;
