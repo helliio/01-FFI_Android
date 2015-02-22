@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -28,6 +30,10 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
+
+import ffiandroid.situationawareness.datahandling.Reporting;
+import ffiandroid.situationawareness.datahandling.UserInfo;
+import ffiandroid.situationawareness.service.RequestService;
 
 /**
  * This file is part of project: Situation Awareness
@@ -109,7 +115,8 @@ public class MapActivity extends Activity implements LocationListener {
         startMarker = new Marker(mMapView);
         onLocationChanged(myCurrentLocation);
         //        addMarkersOnMapView();
-        //        Reporting.reportMyLocation(myCurrentLocation);
+        Reporting.reportMyLocation(myCurrentLocation);
+        //        getCoworkersLocation();
     }
 
     /**
@@ -133,6 +140,15 @@ public class MapActivity extends Activity implements LocationListener {
             Looper.prepare();
             //            ArrayList<OverlayItem> markersOverlayItemArray = new ArrayList();
             //            Query.updatePosition(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude(), 2);
+            JSONArray jsonArray =
+                    new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    System.out.println(jsonArray.get(i).toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
             //            reportMyLocation(myCurrentLocation);
             Looper.loop();
