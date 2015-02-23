@@ -9,9 +9,9 @@ package ffiandroid.situationawareness.datahandling;
  */
 public class CoworkerLocation {
 
-    String name;
-    int memberid;
-    double latitude, longitude;
+    private String name;
+    private int memberid;
+    private double latitude, longitude;
 
     public CoworkerLocation() {
     }

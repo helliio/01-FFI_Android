@@ -14,12 +14,9 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -31,6 +28,7 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
 
+import ffiandroid.situationawareness.datahandling.MyCoworkers;
 import ffiandroid.situationawareness.datahandling.Reporting;
 import ffiandroid.situationawareness.datahandling.UserInfo;
 import ffiandroid.situationawareness.service.RequestService;
@@ -57,16 +55,6 @@ public class MapActivity extends Activity implements LocationListener {
         setContentView(R.layout.map_view);
         activeOpenStreetMap();
         checkGpsAvailability();
-        showTitle();
-    }
-
-    public void showTitle() {
-        try {
-            ((View) findViewById(android.R.id.title).getParent()).setVisibility(View.VISIBLE);
-        } catch (Exception e) {
-        }
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override protected void onResume() {
@@ -114,47 +102,64 @@ public class MapActivity extends Activity implements LocationListener {
         }
         startMarker = new Marker(mMapView);
         onLocationChanged(myCurrentLocation);
-        //        addMarkersOnMapView();
         Reporting.reportMyLocation(myCurrentLocation);
-        //        getCoworkersLocation();
     }
 
     /**
-     * add markers on the map view
+     * get coworkers location and add the to map view
+     *
+     * @return
      */
-    private void addMarkersOnMapView() {
-        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-                new ItemizedIconOverlay(this, getCoworkersLocation(), null);
-        mMapView.getOverlays().add(markerItemizedIconOverlay);
-        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-        mMapView.getOverlays().add(myScaleBarOverlay);
-    }
-
     private ArrayList<OverlayItem> getCoworkersLocation() {
         new Thread(queryThread).start();
         return null;
     }
 
+    /**
+     * use thread to run the server request
+     */
     private Runnable queryThread = new Runnable() {
         @Override public void run() {
             Looper.prepare();
-            //            ArrayList<OverlayItem> markersOverlayItemArray = new ArrayList();
-            //            Query.updatePosition(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude(), 2);
             JSONArray jsonArray =
                     new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID());
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    System.out.println(jsonArray.get(i).toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+            System.out.println(jsonArray);
+            if (jsonArray != null) {
+                addAllMarkers(jsonArray);
 
-            //            reportMyLocation(myCurrentLocation);
+            }
             Looper.loop();
         }
     };
 
+    /**
+     * add markers to map view
+     *
+     * @param jsonArray
+     */
+    private void addAllMarkers(JSONArray jsonArray) {
+        ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
+                printteammarkers(markersOverlayItemArray);
+        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+        mMapView.getOverlays().add(markerItemizedIconOverlay);
+        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+        mMapView.getOverlays().add(myScaleBarOverlay);
+
+    }
+
+    /**
+     * temporary function to print team markers
+     *
+     * @param a
+     */
+    private void printteammarkers(ArrayList<OverlayItem> a) {
+        for (OverlayItem oi : a) {
+            System.out.println(">>>>>>>>>>>:" + oi.getTitle().toString() + " La: " + oi.getPoint().getLatitude() + " " +
+                    "Lo: " + oi.getPoint().getLongitude());
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -186,6 +191,8 @@ public class MapActivity extends Activity implements LocationListener {
     @Override public void onLocationChanged(Location location) {
         mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         updateMyPositionMarker(location);
+        //        addMarkersOnMapView();
+        getCoworkersLocation();
     }
 
     /**
@@ -201,20 +208,6 @@ public class MapActivity extends Activity implements LocationListener {
         startMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
         startMarker.setTitle("My point");
     }
-
-    /**
-     * report my location to server
-     *
-     * @param location
-     */
-    private void reportMyLocation(Location location) {
-        //        Toast.makeText(this,
-        //                ReportService.sendLocationReport("1", myAndroidId, location.getLatitude(), 
-        // location.getLongitude()),
-        //                Toast.LENGTH_LONG).show();
-        //        new Thread(queryThread).start();
-    }
-
 
     @Override public void onStatusChanged(String provider, int status, Bundle extras) {
 

@@ -65,12 +65,13 @@ public class Register extends ActionBarActivity {
             Looper.prepare();
             String feedback = new UserService().register(userid, userpass, username, "1");
             if (feedback != null && feedback.equals("success")) {
-                Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT).show();
                 gotoLogin();
             } else {
-                Toast.makeText(getBaseContext(), feedback, Toast.LENGTH_LONG).show();
-                Looper.loop();
+                Toast.makeText(getBaseContext(), "connecting server failed, please try again ! " + feedback,
+                        Toast.LENGTH_LONG).show();
             }
+            Looper.loop();
         }
     };
 
