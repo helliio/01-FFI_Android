@@ -46,7 +46,6 @@ public class Reporting {
                     .sendLocationReport(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID(), getLocation().getLatitude(),
                             getLocation().getLongitude());
             if (feedback != null && feedback.equals("success")) {
-                //                System.out.println("send location report success !!!!!");
             } else {
             }
             Looper.loop();

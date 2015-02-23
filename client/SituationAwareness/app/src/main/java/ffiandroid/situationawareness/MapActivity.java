@@ -59,7 +59,7 @@ public class MapActivity extends Activity implements LocationListener {
 
     @Override protected void onResume() {
         super.onResume();
-        locationManager.requestLocationUpdates(bestProvider, 2000, 1, this);
+        locationManager.requestLocationUpdates(bestProvider, 20000, 2, this);
 
     }
 
@@ -139,14 +139,25 @@ public class MapActivity extends Activity implements LocationListener {
      */
     private void addAllMarkers(JSONArray jsonArray) {
         ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
-        markersOverlayItemArray.add(new OverlayItem("test", "text",
-                new GeoPoint((myCurrentLocation.getLatitude() - 0.001), myCurrentLocation.getLongitude())));
-        System.out.println("add markers : -------- " + markersOverlayItemArray.toString());
+                printteammarkers(markersOverlayItemArray);
         ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
                 new ItemizedIconOverlay(this, markersOverlayItemArray, null);
         mMapView.getOverlays().add(markerItemizedIconOverlay);
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         mMapView.getOverlays().add(myScaleBarOverlay);
+
+    }
+
+    /**
+     * temporary function to print team markers
+     *
+     * @param a
+     */
+    private void printteammarkers(ArrayList<OverlayItem> a) {
+        for (OverlayItem oi : a) {
+            System.out.println(">>>>>>>>>>>:" + oi.getTitle().toString() + " La: " + oi.getPoint().getLatitude() + " " +
+                    "Lo: " + oi.getPoint().getLongitude());
+        }
 
     }
 

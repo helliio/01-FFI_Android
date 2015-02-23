@@ -15,7 +15,7 @@ import ffiandroid.situationawareness.util.Constant;
  * Created by chun on 2/18/15.
  */
 public class ReportService {
-    public String sendLocationReport(String username, String deviceId, double longitude, double latitude) {
+    public String sendLocationReport(String username, String deviceId, double latitude, double longitude) {
         try {
             SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReport");
             // arg0: username
