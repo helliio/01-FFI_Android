@@ -26,7 +26,7 @@ public class UserService {
             // arg3: teamId
             soapObject.addProperty("teamId", teamId);
 
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
             envelope.bodyOut = soapObject;
 
             HttpTransportSE ht = new HttpTransportSE(Constant.SERVICE_URL + "UserService?wsdl");
@@ -52,7 +52,7 @@ public class UserService {
             // arg3: loginTime
             soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
             envelope.bodyOut = soapObject;
 
             HttpTransportSE ht = new HttpTransportSE(Constant.SERVICE_URL + "UserService?wsdl");

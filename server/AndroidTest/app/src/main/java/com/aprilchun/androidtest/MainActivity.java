@@ -1,6 +1,8 @@
 package com.aprilchun.androidtest;
 
+import android.os.Environment;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +22,11 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -28,74 +35,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button but1 = (Button) this.findViewById(R.id.button1);
-        Button but2 = (Button) this.findViewById(R.id.button2);
-        Button but3 = (Button) this.findViewById(R.id.button3);
-        Button but4 = (Button) this.findViewById(R.id.button4);
-        Button but5 = (Button) this.findViewById(R.id.button5);
+        Button bt1 = (Button) this.findViewById(R.id.button1);
+        Button bt2 = (Button) this.findViewById(R.id.button2);
+        Button bt3 = (Button) this.findViewById(R.id.button3);
+        Button bt4 = (Button) this.findViewById(R.id.button4);
+        Button bt5 = (Button) this.findViewById(R.id.button5);
+        Button bt6 = (Button) this.findViewById(R.id.button6);
 
-        but1.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                new Thread(serviceThread).start();
-            }
-
-
-            Runnable serviceThread = new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    System.out.println("Start");
-                    String androidId = Settings.Secure.getString(getContentResolver(),
-                            Settings.Secure.ANDROID_ID);
-                    new RequestService().getLocationsByTeam("bb", androidId);
-                    Looper.loop();
-                }
-            };
-        });
-
-        but2.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Log.v("MyTag", "111111111111111111111");
-                Log.v("MyTag", "onClick");
-                new Thread(serviceThread).start();
-            }
-
-
-            Runnable serviceThread = new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    // TODO Auto-generated method stub
-                    SoapObject request = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReport");
-                    request.addProperty("arg0", "my dear");
-                    request.addProperty("arg1", "I am here");
-                    Toast.makeText(MainActivity.this, "test", Toast.LENGTH_LONG).show();
-                    //request.addProperty("sayHi", "");
-                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                    envelope.bodyOut = request;
-                    HttpTransportSE ht = new HttpTransportSE("http://192.168.2.101:8080/ReportService?wsdl");
-                    try {
-
-                        System.out.println("aaaaaa");
-                        ht.call(null, envelope);
-                        System.out.println("bbbbbb");
-                        //SoapObject soapObject = (SoapObject) envelope.getResponse();
-                        //Log.v("MyTag", soapObject.getNamespace());
-
-                        Toast.makeText(MainActivity.this, envelope.getResponse().getClass().getName(), Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Looper.loop();
-                }
-            };
-        });
-
-        but3.setOnClickListener(new View.OnClickListener() {
+        bt1.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 new Thread(serviceThread).start();
@@ -105,13 +52,13 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    new UserService().register("bb", "bb", "bb", "aa");
+                    new UserService().register("bb", "bb", "bb", "1");
                     Looper.loop();
                 }
             };
         });
 
-        but4.setOnClickListener(new View.OnClickListener() {
+        bt2.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 new Thread(serviceThread).start();
@@ -129,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
             };
         });
 
-        but5.setOnClickListener(new View.OnClickListener() {
+        bt3.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 new Thread(serviceThread).start();
@@ -141,11 +88,74 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    Log.d("aa", new ReportService().sendLocationReport("bb", androidId, 1, 1));
+                    new ReportService().sendLocationReport("bb", androidId, 1, 1);
                     Looper.loop();
                 }
             };
         });
+
+        bt4.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                new Thread(serviceThread).start();
+            }
+
+            Runnable serviceThread = new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    String androidId = Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    new ReportService().sendLocationReport("bb", androidId, 1, 1);
+                    Looper.loop();
+                }
+            };
+        });
+
+        bt5.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                new Thread(serviceThread).start();
+            }
+
+            Runnable serviceThread = new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    String androidId = Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    File file = new File(getFilesDir(), "test.txt");
+                    try {
+                        file = new File("/storage/emulated/0/DCIM/Screenshots/", "test.png");
+                        System.out.println(file.length());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    new ReportService().sendPhotoReport("bb", androidId, 1, 1, 1, file, "test");
+                    Looper.loop();
+                }
+            };
+        });
+
+        bt6.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                new Thread(serviceThread).start();
+            }
+
+            Runnable serviceThread = new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    String androidId = Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    new RequestService().getTeamLocations("bb", androidId);
+                    Looper.loop();
+                }
+            };
+        });
+
+
     }
 
 

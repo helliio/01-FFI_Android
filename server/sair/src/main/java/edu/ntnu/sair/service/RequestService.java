@@ -1,17 +1,16 @@
 package edu.ntnu.sair.service;
 
-import edu.ntnu.sair.model.Location;
+import org.apache.cxf.annotations.GZIP;
+import org.apache.cxf.interceptor.OutInterceptors;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by chun on 2/16/15.
  */
 
-@WebService(endpointInterface = "edu.ntnu.sair.service.RequestService", targetNamespace = "http://service.sair.ntnu.edu/")
+@WebService
 public interface RequestService {
 
     public String getTeamMembers(
@@ -24,15 +23,15 @@ public interface RequestService {
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getLocationsByMember(
+    public String getMemberLocations(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getLocationsByPeriod(
+    public String getPeriodLocations(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
             @WebParam(name = "startTime") String startTime,
-            @WebParam(name = "endTime") String endTime,
-            @WebParam(name = "sendingTime") String sendingTime);
+            @WebParam(name = "endTime") String endTime);
 }

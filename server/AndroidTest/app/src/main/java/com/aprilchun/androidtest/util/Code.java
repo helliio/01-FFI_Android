@@ -3,6 +3,9 @@ package com.aprilchun.androidtest.util;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.security.MessageDigest;
 
 public class Code {
@@ -43,6 +46,30 @@ public class Code {
         }
     }
 
+    public static String encryptBASE64(File file) {
+        try {
+            FileInputStream in = new FileInputStream(file);
+            byte[] resultByteArray = new byte[(int) file.length()];
+            in.read(resultByteArray);
+            in.close();
+            return encryptBASE64(resultByteArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void decryptBASE64(File file, String input) {
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            out.write(decryptBASE64(input));
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     protected static byte[] encryptAES128(String input) {
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(
@@ -80,12 +107,13 @@ public class Code {
         return null;
     }
 
-    protected static byte[] decryptBASE64(String str) {
+    protected static byte[] decryptBASE64(String input) {
         try {
-            return Base64Coder.decode(str);
+            return Base64Coder.decode(input);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

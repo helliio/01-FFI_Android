@@ -4,16 +4,25 @@ import edu.ntnu.sair.dao.MemberDao;
 import edu.ntnu.sair.model.Member;
 import edu.ntnu.sair.service.UserService;
 import edu.ntnu.sair.util.Constant;
+import org.apache.cxf.annotations.GZIP;
+import org.apache.cxf.interceptor.OutInterceptors;
+import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jws.WebService;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.soap.SOAPBinding;
 import java.util.Calendar;
 
 /**
  * Created by chun on 2/16/15.
  */
 
+@GZIP(force = true, threshold = 0)
+@BindingType(value = SOAPBinding.SOAP12HTTP_BINDING)
+@WebService(endpointInterface = "edu.ntnu.sair.service.UserService", targetNamespace = "http://service.sair.ntnu.edu/")
 @Service("userService")
 public class UserServiceImpl implements UserService {
     private MemberDao memberDao;
@@ -23,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String register(String username, String password, String name, String teamId) {
         Member member = this.memberDao.getByUsername(username);
-        if(member != null){
+        if (member != null) {
             return "Username exists";
         }
         member = new Member();
@@ -63,7 +72,7 @@ public class UserServiceImpl implements UserService {
             return "Invalid request: member has not logged in";
         }
         Calendar calendar = Calendar.getInstance(Constant.TIME_ZONE);
-        if (calendar.after(member.getValidTime())){
+        if (calendar.after(member.getValidTime())) {
             return "Invalid request: login timeout";
         }
         calendar.add(Calendar.HOUR_OF_DAY, Constant.LOGIN_PERIOD);
