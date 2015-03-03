@@ -2,7 +2,6 @@
 
 package ffiandroid.situationawareness;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -12,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -40,7 +40,7 @@ import ffiandroid.situationawareness.service.RequestService;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-public class MapActivity extends Activity implements LocationListener {
+public class MapActivity extends ActionBarActivity implements LocationListener {
     private MapView mMapView;
     private MapController mMapController;
     private LocationManager locationManager;
@@ -60,7 +60,6 @@ public class MapActivity extends Activity implements LocationListener {
     @Override protected void onResume() {
         super.onResume();
         locationManager.requestLocationUpdates(bestProvider, 20000, 2, this);
-
     }
 
     /**
@@ -139,7 +138,7 @@ public class MapActivity extends Activity implements LocationListener {
      */
     private void addAllMarkers(JSONArray jsonArray) {
         ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
-                printteammarkers(markersOverlayItemArray);
+//                printteammarkers(markersOverlayItemArray);
         ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
                 new ItemizedIconOverlay(this, markersOverlayItemArray, null);
         mMapView.getOverlays().add(markerItemizedIconOverlay);
@@ -190,9 +189,9 @@ public class MapActivity extends Activity implements LocationListener {
 
     @Override public void onLocationChanged(Location location) {
         mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
-        updateMyPositionMarker(location);
-        //        addMarkersOnMapView();
         getCoworkersLocation();
+        //        addMarkersOnMapView();
+        updateMyPositionMarker(location);
     }
 
     /**
