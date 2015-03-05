@@ -1,8 +1,5 @@
 package edu.ntnu.sair.service;
 
-import org.apache.cxf.annotations.GZIP;
-import org.apache.cxf.interceptor.OutInterceptors;
-
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
@@ -13,22 +10,54 @@ import javax.jws.WebService;
 @WebService
 public interface RequestService {
 
-    public String getTeamMembers(
+    public String getAllTeamLocations(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getTeamAllLocations(
+    public String getLatestTeamLocations(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getMemberLocations(
+
+    public String getPeriodTeamLocations(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime);
+
+    public String getAllTeamTexts(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getPeriodLocations(
+    public String getLatestTeamTexts(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+
+    public String getPeriodTeamTexts(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime);
+
+    public String getAllTeamPhotos(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+    public String getLatestTeamPhotos(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+
+    public String getPeriodTeamPhotos(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime,

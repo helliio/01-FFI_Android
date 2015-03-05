@@ -36,13 +36,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Transactional
     @Override
-    public String getTeamMembers(String username, String uuid, String sendingTime) {
-        return null;
-    }
-
-    @Transactional
-    @Override
-    public String getTeamAllLocations(String username, String uuid, String sendingTime) {
+    public String getAllTeamLocations(String username, String uuid, String sendingTime) {
         String checkLogin = this.userService.checkLogin(username, uuid);
         if (!checkLogin.equals("success")) {
             return null;
@@ -70,36 +64,46 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    @Transactional
     @Override
-    public String getMemberLocations(String username, String uuid, String sendingTime) {
-        String checkLogin = this.userService.checkLogin(username, uuid);
-        if (!checkLogin.equals("success")) {
-            return null;
-        }
-
-        try {
-            Member member = this.memberDao.getByUsername(username);
-            List<Location> list = this.locationDao.getByMember(member);
-            JSONObject resultObj = new JSONObject();
-            for (Location location : list) {
-                JSONObject locationObj = new JSONObject();
-                locationObj.put("latitude", String.valueOf(location.getLatitude()));
-                locationObj.put("longitude", String.valueOf(location.getLongitude()));
-                resultObj.put(String.valueOf(location.getId()), locationObj);
-            }
-            return resultObj.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Transactional
-    @Override
-    public String getPeriodLocations(String username, String uuid, String sendingTime, String startTime, String endTime) {
+    public String getLatestTeamLocations(String username, String uuid, String sendingTime) {
         return null;
     }
+
+    @Override
+    public String getPeriodTeamLocations(String username, String uuid, String sendingTime, String startTime, String endTime) {
+        return null;
+    }
+
+    @Override
+    public String getAllTeamTexts(String username, String uuid, String sendingTime) {
+        return null;
+    }
+
+    @Override
+    public String getLatestTeamTexts(String username, String uuid, String sendingTime) {
+        return null;
+    }
+
+    @Override
+    public String getPeriodTeamTexts(String username, String uuid, String sendingTime, String startTime, String endTime) {
+        return null;
+    }
+
+    @Override
+    public String getAllTeamPhotos(String username, String uuid, String sendingTime) {
+        return null;
+    }
+
+    @Override
+    public String getLatestTeamPhotos(String username, String uuid, String sendingTime) {
+        return null;
+    }
+
+    @Override
+    public String getPeriodTeamPhotos(String username, String uuid, String sendingTime, String startTime, String endTime) {
+        return null;
+    }
+
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -115,4 +119,5 @@ public class RequestServiceImpl implements RequestService {
     public void setLocationDao(LocationDao locationDao) {
         this.locationDao = locationDao;
     }
+
 }

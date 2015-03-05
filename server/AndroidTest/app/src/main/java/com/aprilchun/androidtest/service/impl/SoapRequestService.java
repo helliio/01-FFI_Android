@@ -39,7 +39,7 @@ public class SoapRequestService implements RequestService {
 //
 //    }
 
-    public JSONArray getTeamAllLocations(String username, String deviceId) {
+    public JSONArray getAllTeamLocations(String username, String deviceId) {
         try {
             SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getTeamLocations");
             // arg0: username
