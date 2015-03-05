@@ -42,7 +42,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Transactional
     @Override
-    public String getTeamLocations(String username, String uuid, String sendingTime) {
+    public String getTeamAllLocations(String username, String uuid, String sendingTime) {
         String checkLogin = this.userService.checkLogin(username, uuid);
         if (!checkLogin.equals("success")) {
             return null;
@@ -61,10 +61,8 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
-                System.out.println(s = s + obj.toString());
                 array.put(obj);
             }
-            System.out.println(array.toString().length());
             return array.toString();
         } catch (Exception e) {
             e.printStackTrace();

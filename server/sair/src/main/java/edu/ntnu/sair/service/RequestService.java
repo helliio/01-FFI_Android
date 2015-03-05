@@ -18,7 +18,7 @@ public interface RequestService {
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getTeamLocations(
+    public String getTeamAllLocations(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);

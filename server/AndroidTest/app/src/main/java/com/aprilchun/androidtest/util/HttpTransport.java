@@ -1,4 +1,4 @@
-package com.aprilchun.androidtest.service;
+package com.aprilchun.androidtest.util;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -27,13 +27,13 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Created by chun on 2/26/15.
  */
-public class HttpTransportService extends Transport {
+public class HttpTransport extends Transport {
     /**
      * Creates instance of HttpTransportSE with set url
      *
      * @param url the destination to POST SOAP data
      */
-    public HttpTransportService(String url) {
+    public HttpTransport(String url) {
         super(null, url);
     }
 
@@ -44,7 +44,7 @@ public class HttpTransportService extends Transport {
      * @param proxy Proxy information or <code>null</code> for direct access
      * @param url   The destination to POST SOAP data
      */
-    public HttpTransportService(Proxy proxy, String url) {
+    public HttpTransport(Proxy proxy, String url) {
         super(proxy, url);
     }
 
@@ -54,11 +54,11 @@ public class HttpTransportService extends Transport {
      * @param url     the destination to POST SOAP data
      * @param timeout timeout for connection and Read Timeouts (milliseconds)
      */
-    public HttpTransportService(String url, int timeout) {
+    public HttpTransport(String url, int timeout) {
         super(url, timeout);
     }
 
-    public HttpTransportService(Proxy proxy, String url, int timeout) {
+    public HttpTransport(Proxy proxy, String url, int timeout) {
         super(proxy, url, timeout);
     }
 
@@ -69,11 +69,11 @@ public class HttpTransportService extends Transport {
      * @param timeout       timeout for connection and Read Timeouts (milliseconds)
      * @param contentLength Content Lenght in bytes if known in advance
      */
-    public HttpTransportService(String url, int timeout, int contentLength) {
+    public HttpTransport(String url, int timeout, int contentLength) {
         super(url, timeout);
     }
 
-    public HttpTransportService(Proxy proxy, String url, int timeout, int contentLength) {
+    public HttpTransport(Proxy proxy, String url, int timeout, int contentLength) {
         super(proxy, url, timeout);
     }
 
@@ -199,8 +199,6 @@ public class HttpTransportService extends Transport {
                         && hp.getValue().equalsIgnoreCase("gzip")) {
                     gZippedContent = true;
                 }
-//                System.out.println(hp.getKey());
-//                System.out.println(hp.getValue());
             }
 
             //first check the response code....
