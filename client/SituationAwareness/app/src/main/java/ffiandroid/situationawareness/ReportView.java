@@ -34,7 +34,6 @@ public class ReportView extends ActionBarActivity {
 
     @Override protected void onResume() {
         super.onResume();
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getList());
         ListView listView = (ListView) findViewById(R.id.report_view_listview);
         listView.setAdapter(adapter);
@@ -82,21 +81,20 @@ public class ReportView extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_item_map_view:
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
             case R.id.menu_item_app_settings:
-                finish();
                 startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_report:
-                finish();
                 startActivity(new Intent(this, Report.class));
                 return true;
             case R.id.menu_item_status:
-                finish();
                 startActivity(new Intent(this, Status.class));
                 return true;
-            case R.id.menu_item_map_view:
-                finish();
-                startActivity(new Intent(this, MapActivity.class));
+            case R.id.menu_item_logout:
+                startActivity(new Intent(this, Login.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

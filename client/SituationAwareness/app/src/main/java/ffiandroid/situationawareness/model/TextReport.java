@@ -33,6 +33,19 @@ public class TextReport {
         this.isreported = false;
     }
 
+    /**
+     * current data time will be generated when insert to database; isreported by default is set to false;
+     *
+     * @param report
+     */
+    public TextReport(String report) {
+        this.longitude = UserInfo.getCurrentLongitude();
+        this.latitude = UserInfo.getCurrentLatitude();
+        this.userid = UserInfo.getUserID();
+        this.report = report;
+        this.isreported = false;
+    }
+
     public TextReport() {
     }
 
@@ -140,5 +153,4 @@ public class TextReport {
                 "\nlatitude=" + latitude +
                 ", longitude=" + longitude;
     }
-
 }

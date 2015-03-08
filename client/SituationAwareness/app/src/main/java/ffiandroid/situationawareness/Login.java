@@ -34,7 +34,7 @@ public class Login extends ActionBarActivity {
         setContentView(R.layout.login);
 
         softkeyboardDone();
-        UserInfo.setMYANDROIDID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        UserInfo.setMyAndroidID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
     }
 
     /**
@@ -87,11 +87,11 @@ public class Login extends ActionBarActivity {
         @Override public void run() {
             Looper.prepare();
             String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
-            String message = new UserService().login(userName, UserInfo.getMYANDROIDID(),
+            String message = new UserService().login(userName, UserInfo.getMyAndroidID(),
                     ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
             if (message != null && message.equals("success")) {
                 Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
-                UserInfo.setUSERID(userName);
+                UserInfo.setUserID(userName);
                 toMapWindow();
             } else {
                 Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_LONG);
@@ -116,7 +116,6 @@ public class Login extends ActionBarActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_item_register:
-                finish();
                 startActivity(new Intent(this, Register.class));
                 return true;
             default:

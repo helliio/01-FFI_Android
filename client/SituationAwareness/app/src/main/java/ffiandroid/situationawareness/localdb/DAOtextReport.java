@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,13 +76,17 @@ public class DAOtextReport {
         Cursor cursor =
                 database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS, null, null, null,
                         null, DBtables.TextReportTB.COLUMN_DATETIME + " DESC");
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            TextReport textReport = cursorToTextReport(cursor);
-            textReports.add(textReport);
-            cursor.moveToNext();
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                TextReport textReport = cursorToTextReport(cursor);
+                textReports.add(textReport);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            Log.i("DATABASE: ", "database read");
+        } else {
+            Log.i("DATABASE: ", "database empty");
         }
-        cursor.close();
         return textReports;
     }
 

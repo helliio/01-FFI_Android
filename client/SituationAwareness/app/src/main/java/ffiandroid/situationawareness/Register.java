@@ -106,7 +106,6 @@ public class Register extends ActionBarActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_item_login:
-                finish();
                 startActivity(new Intent(this, Login.class));
                 return true;
             default:

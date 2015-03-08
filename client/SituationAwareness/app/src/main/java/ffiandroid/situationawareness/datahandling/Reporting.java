@@ -44,7 +44,7 @@ public class Reporting {
         @Override public void run() {
             Looper.prepare();
             String feedback = new ReportService()
-                    .sendLocationReport(UserInfo.getUSERID(), UserInfo.getMYANDROIDID(), getLocation().getLatitude(),
+                    .sendLocationReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), getLocation().getLatitude(),
                             getLocation().getLongitude());
             if (feedback != null && feedback.equals("success")) {
             } else {

@@ -33,20 +33,19 @@ public class Status extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_app_settings:
-                finish();
                 startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_report:
-                finish();
                 startActivity(new Intent(this, Report.class));
                 return true;
             case R.id.menu_item_map_view:
-                finish();
                 startActivity(new Intent(this, MapActivity.class));
                 return true;
             case R.id.menu_item_report_view:
-                finish();
                 startActivity(new Intent(this, ReportView.class));
+                return true;
+            case R.id.menu_item_logout:
+                startActivity(new Intent(this, Login.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
