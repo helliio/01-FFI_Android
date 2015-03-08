@@ -1,4 +1,4 @@
-package ffiandroid.situationawareness.datahandling;
+package ffiandroid.situationawareness.model;
 
 /**
  * Constant information of android id & user name
@@ -10,7 +10,7 @@ package ffiandroid.situationawareness.datahandling;
  * responsible for this file: GuoJunjun
  */
 public class UserInfo {
-    private static String MYANDROIDID, USERNAME;
+    private static String MYANDROIDID, USERID;
 
     public static String getMYANDROIDID() {
         return MYANDROIDID;
@@ -20,11 +20,11 @@ public class UserInfo {
         UserInfo.MYANDROIDID = MYANDROIDID;
     }
 
-    public static String getUSERNAME() {
-        return USERNAME;
+    public static String getUSERID() {
+        return USERID;
     }
 
-    public static void setUSERNAME(String USERNAME) {
-        UserInfo.USERNAME = USERNAME;
+    public static void setUSERID(String USERID) {
+        UserInfo.USERID = USERID;
     }
 }

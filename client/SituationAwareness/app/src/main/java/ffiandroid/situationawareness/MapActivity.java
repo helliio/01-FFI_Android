@@ -1,5 +1,3 @@
-
-
 package ffiandroid.situationawareness;
 
 import android.content.Context;
@@ -9,14 +7,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -28,10 +24,8 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
 
-import ffiandroid.situationawareness.datahandling.MyCoworkers;
-import ffiandroid.situationawareness.datahandling.Reporting;
-import ffiandroid.situationawareness.datahandling.UserInfo;
-import ffiandroid.situationawareness.service.RequestService;
+import ffiandroid.situationawareness.model.OSMmap;
+import ffiandroid.situationawareness.model.ParameterSetting;
 
 /**
  * This file is part of project: Situation Awareness
@@ -59,7 +53,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     @Override protected void onResume() {
         super.onResume();
-        locationManager.requestLocationUpdates(bestProvider, 20000, 2, this);
+        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
+                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
     }
 
     /**
@@ -101,64 +96,66 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         }
         startMarker = new Marker(mMapView);
         onLocationChanged(myCurrentLocation);
-        Reporting.reportMyLocation(myCurrentLocation);
+        updateCoworkersPositionMarker();
+        //        Reporting.reportMyLocation(myCurrentLocation);
     }
 
-    /**
-     * get coworkers location and add the to map view
-     *
-     * @return
-     */
-    private ArrayList<OverlayItem> getCoworkersLocation() {
-        new Thread(queryThread).start();
-        return null;
-    }
-
-    /**
-     * use thread to run the server request
-     */
-    private Runnable queryThread = new Runnable() {
-        @Override public void run() {
-            Looper.prepare();
-            JSONArray jsonArray =
-                    new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID());
-            System.out.println(jsonArray);
-            if (jsonArray != null) {
-                addAllMarkers(jsonArray);
-
-            }
-            Looper.loop();
-        }
-    };
-
-    /**
-     * add markers to map view
-     *
-     * @param jsonArray
-     */
-    private void addAllMarkers(JSONArray jsonArray) {
-        ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
-//                printteammarkers(markersOverlayItemArray);
-        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-        mMapView.getOverlays().add(markerItemizedIconOverlay);
-        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-        mMapView.getOverlays().add(myScaleBarOverlay);
-
-    }
-
-    /**
-     * temporary function to print team markers
-     *
-     * @param a
-     */
-    private void printteammarkers(ArrayList<OverlayItem> a) {
-        for (OverlayItem oi : a) {
-            System.out.println(">>>>>>>>>>>:" + oi.getTitle().toString() + " La: " + oi.getPoint().getLatitude() + " " +
-                    "Lo: " + oi.getPoint().getLongitude());
-        }
-
-    }
+    //    /**
+    //     * get coworkers location and add the to map view
+    //     *
+    //     * @return
+    //     */
+    //    private ArrayList<OverlayItem> getCoworkersLocation() {
+    //        new Thread(queryThread).start();
+    //        return null;
+    //    }
+    //
+    //    /**
+    //     * use thread to run the server request
+    //     */
+    //    private Runnable queryThread = new Runnable() {
+    //        @Override public void run() {
+    //            Looper.prepare();
+    //            JSONArray jsonArray =
+    //                    new RequestService().getLocationsByTeam(UserInfo.getUSERID(), UserInfo.getMYANDROIDID());
+    //            System.out.println(jsonArray);
+    //            if (jsonArray != null) {
+    //                addAllMarkers(jsonArray);
+    //
+    //            }
+    //            Looper.loop();
+    //        }
+    //    };
+    //
+    //    /**
+    //     * add markers to map view
+    //     *
+    //     * @param jsonArray
+    //     */
+    //    private void addAllMarkers(JSONArray jsonArray) {
+    //        ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
+    //        //                printteammarkers(markersOverlayItemArray);
+    //        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+    //                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+    //        mMapView.getOverlays().add(markerItemizedIconOverlay);
+    //        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+    //        mMapView.getOverlays().add(myScaleBarOverlay);
+    //
+    //    }
+    //
+    //    /**
+    //     * temporary function to print team markers
+    //     *
+    //     * @param a
+    //     */
+    //    private void printteammarkers(ArrayList<OverlayItem> a) {
+    //        for (OverlayItem oi : a) {
+    //            System.out.println(">>>>>>>>>>>:" + oi.getTitle().toString() + " La: " + oi.getPoint().getLatitude
+    // () + " " +
+    //                    "Lo: " + oi.getPoint().getLongitude());
+    //        }
+    //
+    //    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,18 +166,22 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menu_item_app_settings:
+                finish();
                 startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_report:
+                finish();
                 startActivity(new Intent(this, Report.class));
                 return true;
             case R.id.menu_item_status:
+                finish();
                 startActivity(new Intent(this, Status.class));
+                return true;
+            case R.id.menu_item_report_view:
+                finish();
+                startActivity(new Intent(this, ReportView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -189,9 +190,20 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     @Override public void onLocationChanged(Location location) {
         mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
-        getCoworkersLocation();
-        //        addMarkersOnMapView();
         updateMyPositionMarker(location);
+    }
+
+    /**
+     * update coworkers position marker
+     */
+    public void updateCoworkersPositionMarker() {
+        ArrayList<OverlayItem> markersOverlayItemArray =
+                new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
+        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+        mMapView.getOverlays().add(markerItemizedIconOverlay);
+        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+        mMapView.getOverlays().add(myScaleBarOverlay);
     }
 
     /**

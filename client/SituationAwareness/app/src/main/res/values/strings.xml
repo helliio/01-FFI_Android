@@ -22,5 +22,11 @@
     <string name="user_name">User Name</string>
     <string name="report_issues_about_this_area">Report issues about this area:</string>
     <string name="send_text_report">Send text Report</string>
+    <string name="title_activity_report_view">ReportView</string>
+    <string name="title_report_view">Report View</string>
+    <string name="title_logout">Logout</string>
+    <string name="menu_item_register">Register</string>
+    <string name="menu_item_login">Login</string>
+    <string name="map_view">Map View</string>
 
 </resources>

@@ -3,6 +3,7 @@ package ffiandroid.situationawareness.datahandling;
 import android.location.Location;
 import android.os.Looper;
 
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.service.ReportService;
 
 /**
@@ -43,7 +44,7 @@ public class Reporting {
         @Override public void run() {
             Looper.prepare();
             String feedback = new ReportService()
-                    .sendLocationReport(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID(), getLocation().getLatitude(),
+                    .sendLocationReport(UserInfo.getUSERID(), UserInfo.getMYANDROIDID(), getLocation().getLatitude(),
                             getLocation().getLongitude());
             if (feedback != null && feedback.equals("success")) {
             } else {

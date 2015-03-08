@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ffiandroid.situationawareness.datahandling.UserInfo;
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.service.UserService;
 
 /**
@@ -91,7 +91,7 @@ public class Login extends ActionBarActivity {
                     ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
             if (message != null && message.equals("success")) {
                 Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
-                UserInfo.setUSERNAME(userName);
+                UserInfo.setUSERID(userName);
                 toMapWindow();
             } else {
                 Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_LONG);
@@ -115,14 +115,9 @@ public class Login extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_item_app_settings:
-                startActivity(new Intent(this, AppSettings.class));
-                return true;
-            case R.id.menu_item_report:
-                startActivity(new Intent(this, Report.class));
-                return true;
-            case R.id.menu_item_status:
-                startActivity(new Intent(this, Status.class));
+            case R.id.menu_item_register:
+                finish();
+                startActivity(new Intent(this, Register.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

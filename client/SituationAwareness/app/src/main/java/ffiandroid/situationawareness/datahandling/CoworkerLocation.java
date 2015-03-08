@@ -1,11 +1,11 @@
 package ffiandroid.situationawareness.datahandling;
 
 /**
- * This CoworkerLocation Class is part of project: Situation Awareness
+ * This CoworkerLocation File is part of project: Situation Awareness
  * <p/>
- * Created by GuoJunjun <junjunguo.com> on 2/20/2015.
+ * Created by GuoJunjun <junjunguo.com> on 3/8/2015.
  * <p/>
- * responsible for this file: GuoJunjun
+ * Responsible for this file: GuoJunjun
  */
 public class CoworkerLocation {
 
