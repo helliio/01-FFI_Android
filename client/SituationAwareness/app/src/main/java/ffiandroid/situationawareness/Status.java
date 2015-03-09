@@ -47,6 +47,9 @@ public class Status extends ActionBarActivity {
             case R.id.menu_item_logout:
                 startActivity(new Intent(this, Login.class));
                 return true;
+            case R.id.menu_item_location_view:
+                startActivity(new Intent(this, LocationView.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

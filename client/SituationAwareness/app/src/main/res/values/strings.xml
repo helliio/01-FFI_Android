@@ -28,5 +28,7 @@
     <string name="menu_item_register">Register</string>
     <string name="menu_item_login">Login</string>
     <string name="map_view">Map View</string>
+    <string name="title_activity_location_view">LocationView</string>
+    <string name="location_view">Location View</string>
 
 </resources>

@@ -15,8 +15,26 @@ public class LocationReport {
     private boolean isreported;
     private Calendar datetime;
     private double latitude, longitude;
+    private SimpleDateFormat df = new SimpleDateFormat("MMMM d, yy  h:mm");
 
-    private SimpleDateFormat df = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a");
+    /**
+     * If autoFill True
+     * <p/>
+     * auto fill up: user id, isreported set to false, latitude, and longitude get from UserInfo
+     *
+     * @param autoFill
+     */
+    public LocationReport(boolean autoFill) {
+        if (autoFill) {
+            this.longitude = UserInfo.getCurrentLongitude();
+            this.latitude = UserInfo.getCurrentLatitude();
+            this.userid = UserInfo.getUserID();
+            this.isreported = false;
+        }
+    }
+
+    public LocationReport() {
+    }
 
     /**
      * Sets new longitude.
@@ -100,10 +118,10 @@ public class LocationReport {
     public void setIsreported(boolean isreported) { this.isreported = isreported; }
 
     @Override public String toString() {
-        return "userid='" + userid +
-                ", isreported=" + isreported +
-                "\ndatetime=" + df.format(datetime.getTime()) +
-                "\nlatitude=" + latitude +
-                ", longitude=" + longitude;
+        return "id:" + userid +
+                ", reported:" + isreported +
+                ", " + df.format(datetime.getTime()) +
+                ", " + latitude +
+                ", " + longitude;
     }
 }

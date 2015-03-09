@@ -85,18 +85,20 @@ public class DAOlocation {
 
     /**
      * @param myUserID
-     * @return all team members location except my location
+     * @return all team members location except the given user id' location (my location)
      */
     public List<LocationReport> getCoWorkerLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_NUSER_ID + "!=" + myUserID, null, null, null,
+                DBtables.LocationTB.COLUMN_NUSER_ID + " != ?", new String[]{myUserID}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            LocationReport locationReport = cursorToTextReport(cursor);
-            locationReports.add(locationReport);
-            cursor.moveToNext();
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                LocationReport locationReport = cursorToTextReport(cursor);
+                locationReports.add(locationReport);
+                cursor.moveToNext();
+            }
         }
         cursor.close();
         return locationReports;
@@ -109,7 +111,7 @@ public class DAOlocation {
     public List<LocationReport> getMyLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_NUSER_ID + "=" + myUserID, null, null, null,
+                DBtables.LocationTB.COLUMN_NUSER_ID + " = ?", new String[]{myUserID}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

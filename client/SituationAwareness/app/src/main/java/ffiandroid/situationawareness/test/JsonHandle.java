@@ -4,8 +4,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ffiandroid.situationawareness.datahandling.CoworkerLocation;
-
 /**
  * handle Json
  * <p/>

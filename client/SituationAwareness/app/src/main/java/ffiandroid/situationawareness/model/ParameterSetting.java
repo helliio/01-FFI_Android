@@ -20,5 +20,9 @@ public class ParameterSetting {
      */
     public static final int LOCATION_UPDATE_DISTANCE = 5;
 
+    /**
+     * do Asynchronous Task in every given millisecond
+     */
+    public static final int SYNC_LOOP_TIME_MS = 1000;
 
 }

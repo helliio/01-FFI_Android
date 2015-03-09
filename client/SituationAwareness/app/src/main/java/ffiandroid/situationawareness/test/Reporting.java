@@ -1,4 +1,4 @@
-package ffiandroid.situationawareness.datahandling;
+package ffiandroid.situationawareness.test;
 
 import android.location.Location;
 import android.os.Looper;

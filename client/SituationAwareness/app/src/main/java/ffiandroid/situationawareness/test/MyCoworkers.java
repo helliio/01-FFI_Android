@@ -1,4 +1,4 @@
-package ffiandroid.situationawareness.datahandling;
+package ffiandroid.situationawareness.test;
 
 import org.json.JSONArray;
 import org.json.JSONException;

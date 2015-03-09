@@ -24,6 +24,9 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
 
+import ffiandroid.situationawareness.datahandling.ClientServerSync;
+import ffiandroid.situationawareness.localdb.DAOlocation;
+import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
 import ffiandroid.situationawareness.model.ParameterSetting;
 import ffiandroid.situationawareness.model.UserInfo;
@@ -51,7 +54,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         checkGpsAvailability();
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
                 ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
+
+        ClientServerSync css = new ClientServerSync(getApplicationContext());
+        css.start();
     }
+
 
     @Override protected void onResume() {
         super.onResume();
@@ -124,6 +131,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
             case R.id.menu_item_logout:
                 startActivity(new Intent(this, Login.class));
                 return true;
+            case R.id.menu_item_location_view:
+                startActivity(new Intent(this, LocationView.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -134,6 +144,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         UserInfo.setCurrentLongitude(location.getLongitude());
         mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         updateMyPositionMarker(location);
+        addMyNewPositionToDB();
+    }
+
+    /**
+     * add my new position to local database
+     */
+    private void addMyNewPositionToDB() {
+        new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
     }
 
     /**

@@ -31,23 +31,22 @@
         </activity>
         <activity
             android:name=".MapActivity"
-            android:noHistory="true"
             android:label="@string/title_activity_map_view">
         </activity>
         <activity
             android:name=".AppSettings"
-            android:noHistory="true"
-            android:label="@string/title_activity_app_settings">
+            android:label="@string/title_activity_app_settings"
+            android:noHistory="true">
         </activity>
         <activity
             android:name=".Status"
-            android:noHistory="true"
-            android:label="@string/title_activity_status">
+            android:label="@string/title_activity_status"
+            android:noHistory="true">
         </activity>
         <activity
             android:name=".Report"
-            android:noHistory="true"
-            android:label="@string/title_activity_report">
+            android:label="@string/title_activity_report"
+            android:noHistory="true">
         </activity>
         <activity
             android:name=".Register"
@@ -57,8 +56,12 @@
         </activity>
         <activity
             android:name=".ReportView"
-            android:noHistory="true"
-            android:label="@string/title_activity_report_view">
+            android:label="@string/title_activity_report_view"
+            android:noHistory="true">
+        </activity>
+        <activity
+            android:name=".LocationView"
+            android:label="@string/title_activity_location_view">
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package ffiandroid.situationawareness.datahandling;
+package ffiandroid.situationawareness.test;
 
 /**
  * This CoworkerLocation File is part of project: Situation Awareness

@@ -13,29 +13,30 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import ffiandroid.situationawareness.localdb.DAOtextReport;
-import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.localdb.DAOlocation;
+import ffiandroid.situationawareness.model.LocationReport;
+import ffiandroid.situationawareness.model.UserInfo;
 
 /**
  * This ReportView File is part of project: Situation Awareness
  * <p/>
- * Created by GuoJunjun <junjunguo.com> on 3/8/2015.
+ * Created by GuoJunjun <junjunguo.com> on 9/8/2015.
  * <p/>
  * Responsible for this file: GuoJunjun
  */
-public class ReportView extends ActionBarActivity {
-    private DAOtextReport daOtextReport;
+public class LocationView extends ActionBarActivity {
+    private DAOlocation daOlocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report_view);
+        setContentView(R.layout.activity_location_view);
     }
 
     @Override protected void onResume() {
         super.onResume();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getList());
-        ListView listView = (ListView) findViewById(R.id.report_view_listview);
+        ListView listView = (ListView) findViewById(R.id.location_view_listview);
         listView.setAdapter(adapter);
         addItemClickListener(listView);
     }
@@ -46,13 +47,13 @@ public class ReportView extends ActionBarActivity {
      * @return String [] list
      */
     public String[] getList() {
-        daOtextReport = new DAOtextReport(getApplicationContext());
-        List<TextReport> alist = daOtextReport.getAllTextReports();
+        daOlocation = new DAOlocation(getApplicationContext());
+        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
         String[] list = new String[alist.size()];
         for (int i = 0; i < alist.size(); i++) {
             list[i] = alist.get(i).toString();
         }
-        daOtextReport.close();
+        daOlocation.close();
         return list;
     }
 
@@ -95,9 +96,6 @@ public class ReportView extends ActionBarActivity {
                 return true;
             case R.id.menu_item_logout:
                 startActivity(new Intent(this, Login.class));
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

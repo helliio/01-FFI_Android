@@ -20,13 +20,12 @@ import ffiandroid.situationawareness.localdb.DAOlocation;
 public class OSMmap {
     /**
      * @param context
-     * @return a markers Overlay Item Array
+     * @return a markers Overlay Item Array with my coworkers location
      */
     public ArrayList<OverlayItem> getCoworkerMarkersOverlay(Context context) {
         ArrayList<OverlayItem> markersOverlayItemArray = new ArrayList();
         DAOlocation daOlocation = new DAOlocation(context);
         List<LocationReport> locationReports = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
-
         for (LocationReport lr : locationReports) {
             markersOverlayItemArray.add(new OverlayItem(lr.getUserid(), lr.getUserid(),
                     new GeoPoint(lr.getLatitude(), lr.getLongitude())));
@@ -34,5 +33,4 @@ public class OSMmap {
         daOlocation.close();
         return markersOverlayItemArray;
     }
-
 }

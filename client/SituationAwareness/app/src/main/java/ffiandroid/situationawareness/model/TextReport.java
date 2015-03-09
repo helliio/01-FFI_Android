@@ -45,7 +45,6 @@ public class TextReport {
         this.report = report;
         this.isreported = false;
     }
-
     public TextReport() {
     }
 
