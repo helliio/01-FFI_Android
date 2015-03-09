@@ -73,13 +73,13 @@ public class ReportServiceImpl implements ReportService {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 Location location = new Location();
-                location.setMember(this.memberDao.getByUsername((String) object.get("username")));
-                location.setLongitude(Double.valueOf((String) object.get("longitude")));
-                location.setLatitude(Double.valueOf((String) object.get("latitude")));
+                location.setMember(this.memberDao.getByUsername(username));
+                location.setLongitude((double) (int) object.get("longitude"));
+                location.setLatitude((double) (int) object.get("latitude"));
                 Calendar calendar = Calendar.getInstance();
                 location.setServerTimestamp(calendar);
                 Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTimeInMillis(Long.valueOf((String) object.get("sendingTime")));
+                calendar2.setTimeInMillis(((long) object.get("sendingTime")));
                 location.setClientTimestamp(calendar2);
                 this.locationDao.add(location);
             }
@@ -130,15 +130,15 @@ public class ReportServiceImpl implements ReportService {
                 JSONObject object = array.getJSONObject(i);
                 Location location = new Location();
                 location.setMember(this.memberDao.getByUsername(username));
-                location.setLongitude(Double.valueOf((String) object.get("longitude")));
-                location.setLatitude(Double.valueOf((String) object.get("latitude")));
+                location.setLongitude((double) (int) object.get("longitude"));
+                location.setLatitude((double) (int) object.get("latitude"));
                 Calendar calendar = Calendar.getInstance();
                 location.setServerTimestamp(calendar);
                 Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTimeInMillis(Long.valueOf(sendingTime));
+                calendar2.setTimeInMillis(((long) object.get("sendingTime")));
                 location.setClientTimestamp(calendar2);
                 this.locationDao.add(location);
-                
+
                 TextReport textReport = new TextReport();
                 textReport.setLocation(location);
                 textReport.setContent((String) object.get("content"));

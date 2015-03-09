@@ -116,8 +116,16 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    String response = reportService.sendLocationReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1);
+                    //String response = reportService.sendLocationReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1);
                     try {
+                        JSONObject locationJObj = new JSONObject();
+                        locationJObj.put("longitude", 1);
+                        locationJObj.put("latitude", 1);
+                        locationJObj.put("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+                        JSONArray array = new JSONArray();
+                        array.put(locationJObj);
+                        array.put(locationJObj);
+                        String response = reportService.sendLocationReportList("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), array);
                         Message msg = handler.obtainMessage();
                         JSONObject jsonObject = new JSONObject(response);
                         msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
@@ -143,8 +151,17 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    String response = reportService.sendTextReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1, "test");
+//                    String response = reportService.sendTextReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1, "test");
                     try {
+                        JSONObject obj = new JSONObject();
+                        obj.put("longitude", 1);
+                        obj.put("latitude", 1);
+                        obj.put("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+                        obj.put("content", "listTest");
+                        JSONArray array = new JSONArray();
+                        array.put(obj);
+                        array.put(obj);
+                        String response = reportService.sendTextReportList("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), array);
                         Message msg = handler.obtainMessage();
                         JSONObject jsonObject = new JSONObject(response);
                         msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
