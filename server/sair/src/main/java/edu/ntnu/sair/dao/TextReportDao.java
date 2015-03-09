@@ -1,5 +1,6 @@
 package edu.ntnu.sair.dao;
 
+import edu.ntnu.sair.model.Member;
 import edu.ntnu.sair.model.TextReport;
 
 import java.util.List;
@@ -18,4 +19,14 @@ public interface TextReportDao {
     public TextReport getById(long id);
 
     public List<TextReport> getAll();
+
+    public List<TextReport> getByMember(Member member);
+
+    public TextReport getByMemberLatest(Member member);
+
+    public List<TextReport> getByTeam(String teamId);
+
+    public List<TextReport> getByTeamLatest(String teamId);
+
+    public List<TextReport> getByTeamPeriod(String teamId, long startTime, long endTime);
 }
