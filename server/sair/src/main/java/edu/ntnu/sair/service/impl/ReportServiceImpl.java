@@ -124,27 +124,37 @@ public class ReportServiceImpl implements ReportService {
         if (!checkLogin.equals("success")) {
             return checkLogin;
         }
-        Location location = new Location();
-        location.setMember(this.memberDao.getByUsername(username));
-        location.setLongitude(Double.valueOf(longitude));
-        location.setLatitude(Double.valueOf(latitude));
-        Calendar calendar = Calendar.getInstance();
-        location.setServerTimestamp(calendar);
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.setTimeInMillis(Long.valueOf(sendingTime));
-        location.setClientTimestamp(calendar2);
-        this.locationDao.add(location);
+        try {
+            JSONArray array = new JSONArray(list);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                Location location = new Location();
+                location.setMember(this.memberDao.getByUsername(username));
+                location.setLongitude(Double.valueOf((String) object.get("longitude")));
+                location.setLatitude(Double.valueOf((String) object.get("latitude")));
+                Calendar calendar = Calendar.getInstance();
+                location.setServerTimestamp(calendar);
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTimeInMillis(Long.valueOf(sendingTime));
+                location.setClientTimestamp(calendar2);
+                this.locationDao.add(location);
+                
+                TextReport textReport = new TextReport();
+                textReport.setLocation(location);
+                textReport.setContent((String) object.get("content"));
+                this.textReportDao.add(textReport);
+            }
+            return new Result("sendTextReportList", "success").toString();
+        } catch (Exception e) {
+            return new Result("sendTextReportList", "server error").toString();
+        }
 
-        TextReport textReport = new TextReport();
-        textReport.setLocation(location);
-        textReport.setContent(content);
-        this.textReportDao.add(textReport);
-        return new Result("sendTextReport", "success").toString();
     }
 
     @Transactional
     @Override
-    public String sendPhotoReport(String username, String uuid, String sendingTime, String latitude, String longitude, String direction, String file, String extension, String description) {
+    public String sendPhotoReport(String username, String uuid, String sendingTime, String latitude, String
+            longitude, String direction, String file, String extension, String description) {
         String checkLogin = this.userService.checkLogin(username, uuid);
         if (!checkLogin.equals("success")) {
             return checkLogin;
