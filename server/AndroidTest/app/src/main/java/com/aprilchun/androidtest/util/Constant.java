@@ -10,12 +10,15 @@ public class Constant {
     public static final String AES_KEY = "01FFIAndroid2015";
 
     // URL of the server
-    public static final String SERVICE_URL = "http://192.168.2.101:8080/";
+    public static final String SERVICE_URL = "http://78.91.50.148:8080/SOAP/";
 
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");
 
     // Time format
     public static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    // Gzip buffer size
+    public static final int GZIP_BUFFER_SIZE = 1024;
 
 }

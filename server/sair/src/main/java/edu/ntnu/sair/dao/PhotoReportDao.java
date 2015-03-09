@@ -1,5 +1,6 @@
 package edu.ntnu.sair.dao;
 
+import edu.ntnu.sair.model.Member;
 import edu.ntnu.sair.model.PhotoReport;
 
 import java.util.List;
@@ -18,4 +19,14 @@ public interface PhotoReportDao {
     public PhotoReport getById(long id);
 
     public List<PhotoReport> getAll();
+
+    public List<PhotoReport> getByMember(Member member);
+
+    public PhotoReport getByMemberLatest(Member member);
+
+    public List<PhotoReport> getByTeam(String teamId);
+
+    public List<PhotoReport> getByTeamLatest(String teamId);
+
+    public List<PhotoReport> getByTeamPeriod(String teamId, long startTime, long endTime);
 }
