@@ -1,5 +1,7 @@
 package com.aprilchun.androidtest.service;
 
+import org.json.JSONArray;
+
 import java.io.File;
 import java.util.Calendar;
 
@@ -9,11 +11,11 @@ import java.util.Calendar;
 public interface ReportService {
     public String sendLocationReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude);
 
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, String list);
+    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
 
     public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content);
 
-    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String list);
+    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
 
     public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description);
 }

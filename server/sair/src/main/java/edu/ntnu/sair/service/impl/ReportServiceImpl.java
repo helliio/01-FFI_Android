@@ -120,7 +120,26 @@ public class ReportServiceImpl implements ReportService {
     @Transactional
     @Override
     public String sendTextReportList(String username, String uuid, String sendingTime, String list) {
-        return null;
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+        Location location = new Location();
+        location.setMember(this.memberDao.getByUsername(username));
+        location.setLongitude(Double.valueOf(longitude));
+        location.setLatitude(Double.valueOf(latitude));
+        Calendar calendar = Calendar.getInstance();
+        location.setServerTimestamp(calendar);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTimeInMillis(Long.valueOf(sendingTime));
+        location.setClientTimestamp(calendar2);
+        this.locationDao.add(location);
+
+        TextReport textReport = new TextReport();
+        textReport.setLocation(location);
+        textReport.setContent(content);
+        this.textReportDao.add(textReport);
+        return new Result("sendTextReport", "success").toString();
     }
 
     @Transactional

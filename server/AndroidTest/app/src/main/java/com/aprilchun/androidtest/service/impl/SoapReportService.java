@@ -6,6 +6,7 @@ import com.aprilchun.androidtest.util.Constant;
 import com.aprilchun.androidtest.util.HttpTransport;
 import com.aprilchun.androidtest.util.Sender;
 
+import org.json.JSONArray;
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -37,7 +38,7 @@ public class SoapReportService implements ReportService {
     }
 
     @Override
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, String list) {
+    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReportList");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
@@ -46,7 +47,7 @@ public class SoapReportService implements ReportService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
         // arg3: list
-        soapObject.addProperty("list", list);
+        soapObject.addProperty("list", list.toString());
 
         return Sender.send(soapObject, "ReportService?wsdl");
     }
@@ -70,7 +71,7 @@ public class SoapReportService implements ReportService {
     }
 
     @Override
-    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String list) {
+    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendTextReportList");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
@@ -79,7 +80,7 @@ public class SoapReportService implements ReportService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
         // arg3: list
-        soapObject.addProperty("list", list);
+        soapObject.addProperty("list", list.toString());
 
         return Sender.send(soapObject, "ReportService?wsdl");
     }
