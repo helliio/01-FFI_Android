@@ -1,5 +1,7 @@
 package com.aprilchun.androidtest.util;
 
+import android.os.Handler;
+
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -11,7 +13,7 @@ import java.util.List;
 /**
  * Created by chun on 3/4/15.
  */
-public class Sender extends Thread{
+public class Sender extends Thread {
 
     public static String send(SoapObject soapObject, String wsdl) {
         try {

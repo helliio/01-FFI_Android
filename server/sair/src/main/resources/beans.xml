@@ -26,7 +26,7 @@
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url"
-                  value="jdbc:mysql://aprilchun.com:3306/sair?characterEncoding=utf-8"/>
+                  value="jdbc:mysql://chun.no:3306/sair?characterEncoding=utf-8"/>
         <property name="username" value="sair"/>
         <property name="password" value="ffiandroid2015"/>
 

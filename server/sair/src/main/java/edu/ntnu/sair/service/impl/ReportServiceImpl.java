@@ -6,12 +6,15 @@ import edu.ntnu.sair.dao.PhotoReportDao;
 import edu.ntnu.sair.dao.TextReportDao;
 import edu.ntnu.sair.model.Location;
 import edu.ntnu.sair.model.PhotoReport;
+import edu.ntnu.sair.model.Result;
 import edu.ntnu.sair.model.TextReport;
 import edu.ntnu.sair.service.ReportService;
 import edu.ntnu.sair.service.UserService;
-import edu.ntnu.sair.util.Code;
+import edu.ntnu.sair.util.Coder;
 import edu.ntnu.sair.util.Constant;
 import org.apache.cxf.annotations.GZIP;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +58,38 @@ public class ReportServiceImpl implements ReportService {
         calendar2.setTimeInMillis(Long.valueOf(sendingTime));
         location.setClientTimestamp(calendar2);
         this.locationDao.add(location);
-        return "success";
+        return new Result("sendLocationReport", "success").toString();
+    }
+
+    @Transactional
+    @Override
+    public String sendLocationReportList(String username, String uuid, String sendingTime, String list) {
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+        try {
+            JSONArray array = new JSONArray(list);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                Location location = new Location();
+                location.setMember(this.memberDao.getByUsername((String) object.get("username")));
+                location.setLongitude(Double.valueOf((String) object.get("longitude")));
+                location.setLatitude(Double.valueOf((String) object.get("latitude")));
+                Calendar calendar = Calendar.getInstance();
+                location.setServerTimestamp(calendar);
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTimeInMillis(Long.valueOf((String) object.get("sendingTime")));
+                location.setClientTimestamp(calendar2);
+                this.locationDao.add(location);
+            }
+
+            return new Result("sendLocationReportList", "success").toString();
+        } catch (Exception e) {
+            return new Result("sendLocationReportList", "server error").toString();
+        }
+
+
     }
 
     @Transactional
@@ -80,7 +114,13 @@ public class ReportServiceImpl implements ReportService {
         textReport.setLocation(location);
         textReport.setContent(content);
         this.textReportDao.add(textReport);
-        return "success";
+        return new Result("sendTextReport", "success").toString();
+    }
+
+    @Transactional
+    @Override
+    public String sendTextReportList(String username, String uuid, String sendingTime, String list) {
+        return null;
     }
 
     @Transactional
@@ -110,8 +150,8 @@ public class ReportServiceImpl implements ReportService {
         this.photoReportDao.add(photoReport);
 
         File serverFile = new File(Constant.PHOTO_PATH, photoReport.getName() + "." + photoReport.getExtension());
-        Code.decryptBASE64(serverFile, file);
-        return "success";
+        Coder.decryptBASE64(serverFile, file);
+        return new Result("sendPhotoReport", "success").toString();
     }
 
     @Autowired

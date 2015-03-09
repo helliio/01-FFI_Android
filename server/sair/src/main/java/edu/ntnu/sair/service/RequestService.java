@@ -28,39 +28,100 @@ public interface RequestService {
             @WebParam(name = "startTime") String startTime,
             @WebParam(name = "endTime") String endTime);
 
-    public String getAllTeamTexts(
+    public String getAllTeamTextReports(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getLatestTeamTexts(
+    public String getLatestTeamTextReports(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
 
-    public String getPeriodTeamTexts(
+    public String getPeriodTeamTextReports(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime,
             @WebParam(name = "startTime") String startTime,
             @WebParam(name = "endTime") String endTime);
 
-    public String getAllTeamPhotos(
+    public String getAllTeamPhotoReports(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
-    public String getLatestTeamPhotos(
+    public String getLatestTeamPhotoReports(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime);
 
 
-    public String getPeriodTeamPhotos(
+    public String getPeriodTeamPhotoReports(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
             @WebParam(name = "sendingTime") String sendingTime,
             @WebParam(name = "startTime") String startTime,
             @WebParam(name = "endTime") String endTime);
+
+    public String getAllSelfLocations(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+    public String getLatestSelfLocations(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+
+    public String getPeriodSelfLocations(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime);
+
+    public String getAllSelfTextReports(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+    public String getLatestSelfTextReport(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+
+    public String getPeriodSelfTextReports(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime);
+
+    public String getAllSelfPhotoReports(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+    public String getLatestSelfPhotoReport(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime);
+
+
+    public String getPeriodSelfPhotoReports(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime);
+
+    public String getPhoto(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "picId") String picId);
+
 }

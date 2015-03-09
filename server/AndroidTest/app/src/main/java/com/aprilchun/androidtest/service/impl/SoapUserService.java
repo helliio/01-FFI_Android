@@ -17,42 +17,31 @@ import java.util.Calendar;
  */
 public class SoapUserService implements UserService {
     public String register(String username, String password, String name, String teamId) {
-        try {
-            SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "register");
-            // arg0: username
-            soapObject.addProperty("username", Coder.encryptMD5(username));
-            // arg1: password
-            soapObject.addProperty("password", Coder.encryptMD5(password));
-            // arg2: name
-            soapObject.addProperty("name", name);
-            // arg3: teamId
-            soapObject.addProperty("teamId", teamId);
+        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "register");
+        // arg0: username
+        soapObject.addProperty("username", Coder.encryptMD5(username));
+        // arg1: password
+        soapObject.addProperty("password", Coder.encryptMD5(password));
+        // arg2: name
+        soapObject.addProperty("name", name);
+        // arg3: teamId
+        soapObject.addProperty("teamId", teamId);
 
-            return Sender.send(soapObject, "UserService?wsdl");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
+        return Sender.send(soapObject, "UserService?wsdl");
     }
 
     public String login(String username, String deviceId, String password) {
-        try {
-            SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "login");
-            // arg0: username
-            soapObject.addProperty("username", Coder.encryptMD5(username));
-            // arg1: uuid
-            soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
-            // arg2: password
-            soapObject.addProperty("password", Coder.encryptMD5(password));
-            // arg3: loginTime
-            soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "login");
+        // arg0: username
+        soapObject.addProperty("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: password
+        soapObject.addProperty("password", Coder.encryptMD5(password));
+        // arg3: loginTime
+        soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-            return Sender.send(soapObject, "UserService?wsdl");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return Sender.send(soapObject, "UserService?wsdl");
     }
 
 }

@@ -18,10 +18,15 @@ import com.aprilchun.androidtest.service.UserService;
 import com.aprilchun.androidtest.service.impl.SoapReportService;
 import com.aprilchun.androidtest.service.impl.SoapRequestService;
 import com.aprilchun.androidtest.service.impl.SoapUserService;
+import com.aprilchun.androidtest.util.Coder;
+import com.aprilchun.androidtest.util.Constant;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Calendar;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -53,10 +58,17 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
+
                     String response = userService.register("bb", "bb", "bb", "1");
-                    Message msg = handler.obtainMessage();
-                    msg.obj = response;
-                    handler.sendMessage(msg);
+                    try {
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     Looper.loop();
                 }
             };
@@ -73,12 +85,19 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
+
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
                     String response = userService.login("bb", androidId, "bb");
-                    Message msg = handler.obtainMessage();
-                    msg.obj = response;
-                    handler.sendMessage(msg);
+                    try {
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     Looper.loop();
                 }
             };
@@ -97,10 +116,15 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    String response = reportService.sendLocationReport("bb", androidId, 1, 1);
-                    Message msg = handler.obtainMessage();
-                    msg.obj = response;
-                    handler.sendMessage(msg);
+                    String response = reportService.sendLocationReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1);
+                    try {
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Looper.loop();
                 }
             };
@@ -119,10 +143,15 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    String response = reportService.sendTextReport("bb", androidId, 1, 1, "test");
-                    Message msg = handler.obtainMessage();
-                    msg.obj = response;
-                    handler.sendMessage(msg);
+                    String response = reportService.sendTextReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1, "test");
+                    try {
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Looper.loop();
                 }
             };
@@ -148,10 +177,15 @@ public class MainActivity extends ActionBarActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    String response = reportService.sendPhotoReport("bb", androidId, 1, 1, 1, file, "test");
-                    Message msg = handler.obtainMessage();
-                    msg.obj = response;
-                    handler.sendMessage(msg);
+                    String response = reportService.sendPhotoReport("bb", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1, 1, file, "test");
+                    try {
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Looper.loop();
                 }
             };
@@ -169,9 +203,36 @@ public class MainActivity extends ActionBarActivity {
                     Looper.prepare();
                     String androidId = Settings.Secure.getString(getContentResolver(),
                             Settings.Secure.ANDROID_ID);
-                    Message msg = handler.obtainMessage();
-                    msg.obj = ((JSONArray)requestService.getTeamAllLocations("bb", androidId)).toString();
-                    handler.sendMessage(msg);
+                    Calendar calendar = Calendar.getInstance(Constant.TIME_ZONE);
+                    calendar.set(2015, 1, 1);
+                    String startTime = String.valueOf(calendar.getTimeInMillis());
+                    calendar.set(2015, 2, 28);
+                    String endTime = String.valueOf(calendar.getTimeInMillis());
+//                    String response = requestService.getAllTeamLocations("bb", androidId);
+//                    String response = requestService.getLatestTeamLocations("bb", androidId);
+//                    String response = requestService.getPeriodTeamLocations("bb", androidId, startTime, endTime);
+//                    String response = requestService.getAllTeamTextReports("bb", androidId);
+//                    String response = requestService.getLatestTeamTextReports("bb", androidId);
+//                    String response = requestService.getPeriodTeamTextReports("bb", androidId, startTime, endTime);
+//                    String response = requestService.getAllTeamPhotoReports("bb", androidId);
+//                    String response = requestService.getLatestTeamPhotoReports("bb", androidId);
+                    String response = requestService.getPeriodTeamPhotoReports("bb", androidId, startTime, endTime);
+//                    String response = requestService.getPhoto("bb", androidId, "19");
+                    try {
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                        String obj = (String) jsonObject.get("obj");
+                        JSONArray array = new JSONArray(obj);
+                        for (int i = 0; i < array.length(); i++) {
+                            System.out.println(array.get(i));
+                        }
+
+//                        System.out.println(obj);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Looper.loop();
                 }
             };

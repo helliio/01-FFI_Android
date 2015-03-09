@@ -17,6 +17,12 @@ public interface ReportService {
             @WebParam(name = "latitude") String latitude,
             @WebParam(name = "longitude") String longitude);
 
+    public String sendLocationReportList(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "list") String list);
+
     public String sendTextReport(
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid,
@@ -24,6 +30,12 @@ public interface ReportService {
             @WebParam(name = "latitude") String latitude,
             @WebParam(name = "longitude") String longitude,
             @WebParam(name = "content") String content);
+
+    public String sendTextReportList(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "list") String list);
 
     public String sendPhotoReport(
             @WebParam(name = "username") String username,
