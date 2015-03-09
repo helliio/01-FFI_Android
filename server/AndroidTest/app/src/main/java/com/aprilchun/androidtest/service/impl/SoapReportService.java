@@ -71,7 +71,7 @@ public class SoapReportService implements ReportService {
 
     @Override
     public String sendTextReportList(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String list) {
-        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendTextReport");
+        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendTextReportList");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
