@@ -24,7 +24,7 @@ public class SoapUserService implements UserService {
         // arg3: teamId
         soapObject.addProperty("teamId", teamId);
 
-        return Sender.send(soapObject, "UserService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "UserService?wsdl");
     }
 
     public String login(String username, String deviceId, String password) {
@@ -38,7 +38,7 @@ public class SoapUserService implements UserService {
         // arg3: loginTime
         soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "UserService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "UserService?wsdl");
     }
 
 }

@@ -24,7 +24,7 @@ public class SoapRequestService implements RequestService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SoapRequestService implements RequestService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -54,7 +54,7 @@ public class SoapRequestService implements RequestService {
         // arg4: endTime
         soapObject.addProperty("endTime", endTime);
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SoapRequestService implements RequestService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SoapRequestService implements RequestService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -97,7 +97,7 @@ public class SoapRequestService implements RequestService {
         // arg4: endTime
         soapObject.addProperty("endTime", endTime);
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -110,7 +110,7 @@ public class SoapRequestService implements RequestService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -123,7 +123,7 @@ public class SoapRequestService implements RequestService {
         // arg2: sendingTime
         soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
     @Override
@@ -140,7 +140,7 @@ public class SoapRequestService implements RequestService {
         // arg4: endTime
         soapObject.addProperty("endTime", endTime);
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
 
@@ -156,6 +156,6 @@ public class SoapRequestService implements RequestService {
         // arg3: picId
         soapObject.addProperty("picId", picId);
 
-        return Sender.send(soapObject, "RequestService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 }
