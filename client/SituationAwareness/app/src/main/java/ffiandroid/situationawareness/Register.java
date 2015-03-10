@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.service.UserService;
+import ffiandroid.situationawareness.service.impl.SoapUserService;
 
 /**
  * This file is part of project: Situation Awareness
@@ -19,6 +20,8 @@ import ffiandroid.situationawareness.service.UserService;
  */
 public class Register extends ActionBarActivity {
     private String userid, username, userpass;
+    private UserService userService = new SoapUserService();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,7 @@ public class Register extends ActionBarActivity {
     private Runnable registerThread = new Runnable() {
         @Override public void run() {
             Looper.prepare();
-            String feedback = new UserService().register(userid, userpass, username, "1");
+            String feedback = userService.register(userid, userpass, username, "1");
             if (feedback != null && feedback.equals("success")) {
                 Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT).show();
                 gotoLogin();
@@ -103,13 +106,13 @@ public class Register extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_item_login:
+                startActivity(new Intent(this, Login.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

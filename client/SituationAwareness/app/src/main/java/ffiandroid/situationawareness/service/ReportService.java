@@ -1,46 +1,21 @@
 package ffiandroid.situationawareness.service;
 
+import org.json.JSONArray;
 
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-
+import java.io.File;
 import java.util.Calendar;
 
-import ffiandroid.situationawareness.util.Code;
-import ffiandroid.situationawareness.util.Constant;
-
 /**
- * Created by chun on 2/18/15.
+ * Created by chun on 3/4/15.
  */
-public class ReportService {
-    public String sendLocationReport(String username, String deviceId, double latitude, double longitude) {
-        try {
-            SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReport");
-            // arg0: username
-            soapObject.addProperty("username", Code.encryptMD5(username));
-            // arg1: uuid
-            soapObject.addProperty("uuid", Code.encryptMD5(username + deviceId));
-            // arg2: longitude
-            soapObject.addProperty("longitude", String.valueOf(longitude));
-            // arg3: latitude
-            soapObject.addProperty("latitude", String.valueOf(latitude));
-            // arg4: sendingTime
-            soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+public interface ReportService {
+    public String sendLocationReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude);
 
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            envelope.bodyOut = soapObject;
+    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
 
-            HttpTransportSE ht = new HttpTransportSE(Constant.SERVICE_URL + "ReportService?wsdl");
-            ht.call(null, envelope);
+    public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content);
 
-            return envelope.getResponse().toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
 
-    }
-
+    public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description);
 }

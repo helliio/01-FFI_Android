@@ -4,18 +4,8 @@
       tools:context=".Login">
 
     <item
-        android:id="@+id/menu_item_report"
-        android:title="@string/title_report"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_item_status"
-        android:title="@string/title_status"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_item_app_settings"
-        android:title="@string/title_settings"
+        android:id="@+id/menu_item_register"
+        android:title="@string/menu_item_register"
         android:orderInCategory="100"
         app:showAsAction="never"/>
 </menu>
