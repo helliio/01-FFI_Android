@@ -18,7 +18,4 @@ public class Constant {
     // Time format
     public static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
-    // Gzip buffer size
-    public static final int GZIP_BUFFER_SIZE = 1024;
-
 }

@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import ffiandroid.situationawareness.service.UserService;
 import ffiandroid.situationawareness.service.impl.SoapUserService;
 
@@ -64,15 +66,20 @@ public class Register extends ActionBarActivity {
     }
 
     private Runnable registerThread = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             Looper.prepare();
-            String feedback = userService.register(userid, userpass, username, "1");
-            if (feedback != null && feedback.equals("success")) {
-                Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT).show();
-                gotoLogin();
-            } else {
-                Toast.makeText(getBaseContext(), "connecting server failed, please try again ! " + feedback,
-                        Toast.LENGTH_LONG).show();
+            try {
+                String message = userService.register(userid, userpass, username, "1");
+                JSONObject jsonMessage = new JSONObject(message);
+                if (message != null && jsonMessage.get("desc").equals("success")) {
+                    Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT).show();
+                    gotoLogin();
+                } else {
+                    Toast.makeText(getBaseContext(), "connecting server failed, please try again ! " + jsonMessage.get("desc"),
+                            Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
             }
             Looper.loop();
         }

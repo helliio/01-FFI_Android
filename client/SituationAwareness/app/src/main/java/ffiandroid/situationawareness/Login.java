@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.service.UserService;
 import ffiandroid.situationawareness.service.impl.SoapUserService;
@@ -44,7 +46,8 @@ public class Login extends ActionBarActivity {
     public void softkeyboardDone() {
         EditText editTextpass = (EditText) findViewById(R.id.editTextLoginPass);
         editTextpass.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     login();
                 }
@@ -93,18 +96,23 @@ public class Login extends ActionBarActivity {
     }
 
     private Runnable loginThread = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             Looper.prepare();
-            String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
-            String message = userService.login(userName, UserInfo.getMyAndroidID(),
-                    ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
-            //            if (message != null && message.equals("success")) {
-            if (hasinput()) {
-                Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
-                UserInfo.setUserID(userName);
-                toMapWindow();
-            } else {
-                Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT);
+            try {
+                String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
+                String message = userService.login(userName, UserInfo.getMyAndroidID(),
+                        ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
+                JSONObject jsonMessage = new JSONObject(message);
+                if (message != null && jsonMessage.get("desc").equals("success")) {
+//            if (hasinput()) {
+                    Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
+                    UserInfo.setUserID(userName);
+                    toMapWindow();
+                } else {
+                    Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT);
+                }
+            } catch (Exception e) {
             }
             Looper.loop();
         }

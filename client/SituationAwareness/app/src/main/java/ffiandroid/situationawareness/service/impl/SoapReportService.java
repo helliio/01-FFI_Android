@@ -27,7 +27,7 @@ public class SoapReportService implements ReportService {
         // arg4: longitude
         soapObject.addProperty("longitude", String.valueOf(longitude));
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SoapReportService implements ReportService {
         // arg3: list
         soapObject.addProperty("list", list.toString());
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content) {
@@ -60,7 +60,7 @@ public class SoapReportService implements ReportService {
         // arg5: content
         soapObject.addProperty("content", content);
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     @Override
@@ -75,7 +75,7 @@ public class SoapReportService implements ReportService {
         // arg3: list
         soapObject.addProperty("list", list.toString());
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description) {
@@ -99,8 +99,8 @@ public class SoapReportService implements ReportService {
         // arg8: description
         soapObject.addProperty("description", description);
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
-
 }
+

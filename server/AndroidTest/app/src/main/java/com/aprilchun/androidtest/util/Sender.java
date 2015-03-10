@@ -5,7 +5,6 @@ import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.springframework.http.ContentCodingType;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * Created by chun on 3/4/15.
  */
-public class Sender extends Thread {
+public class Sender {
 
     public static String sendSOAPRequest(SoapObject soapObject, String wsdl) {
         try {

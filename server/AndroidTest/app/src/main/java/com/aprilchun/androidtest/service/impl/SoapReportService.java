@@ -102,5 +102,4 @@ public class SoapReportService implements ReportService {
         return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
-
 }
