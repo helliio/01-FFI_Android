@@ -10,7 +10,6 @@ import edu.ntnu.sair.service.UserService;
 import edu.ntnu.sair.util.Coder;
 import edu.ntnu.sair.util.Constant;
 import org.apache.cxf.annotations.GZIP;
-import org.apache.cxf.interceptor.OutInterceptors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
-import javax.ws.rs.Produces;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**

@@ -5,7 +5,8 @@ import com.aprilchun.androidtest.util.Coder;
 import com.aprilchun.androidtest.util.Constant;
 import com.aprilchun.androidtest.util.Sender;
 
-import org.ksoap2.serialization.SoapObject;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Calendar;
 
@@ -14,31 +15,31 @@ import java.util.Calendar;
  */
 public class RestUserService implements UserService {
     public String register(String username, String password, String name, String teamId) {
-        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "register");
+        MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
-        soapObject.addProperty("username", Coder.encryptMD5(username));
+        requestData.put("username", Coder.encryptMD5(username));
         // arg1: password
-        soapObject.addProperty("password", Coder.encryptMD5(password));
+        requestData.put("password", Coder.encryptMD5(password));
         // arg2: name
-        soapObject.addProperty("name", name);
+        requestData.put("name", name);
         // arg3: teamId
-        soapObject.addProperty("teamId", teamId);
+        requestData.put("teamId", teamId);
 
-        return Sender.sendSOAPRequest(soapObject, "UserService?wsdl");
+        return Sender.sendRESTRequest(requestData, "user/register");
     }
 
     public String login(String username, String deviceId, String password) {
-        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "login");
+        MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
-        soapObject.addProperty("username", Coder.encryptMD5(username));
+        requestData.add("username", Coder.encryptMD5(username));
         // arg1: uuid
-        soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
+        requestData.add("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: password
-        soapObject.addProperty("password", Coder.encryptMD5(password));
+        requestData.add("password", Coder.encryptMD5(password));
         // arg3: loginTime
-        soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+        requestData.add("loginTime", String.valueOf(Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis()));
 
-        return Sender.sendRESTRequest();
+        return Sender.sendRESTRequest(requestData, "user/login");
     }
 
 }
