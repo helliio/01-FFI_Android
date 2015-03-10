@@ -55,8 +55,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
                 ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
 
-        ClientServerSync css = new ClientServerSync(getApplicationContext());
-        css.start();
+        new ClientServerSync(getApplicationContext()).start();
     }
 
 

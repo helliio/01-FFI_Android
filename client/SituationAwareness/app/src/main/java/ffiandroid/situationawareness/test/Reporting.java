@@ -1,10 +1,9 @@
 package ffiandroid.situationawareness.test;
 
 import android.location.Location;
-import android.os.Looper;
 
-import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.service.ReportService;
+import ffiandroid.situationawareness.service.impl.SoapReportService;
 
 /**
  * Send report: text, image & location to server
@@ -17,6 +16,7 @@ import ffiandroid.situationawareness.service.ReportService;
  */
 public class Reporting {
     private static Location location;
+    private ReportService reportService = new SoapReportService();
 
     public static Location getLocation() {
         return location;
@@ -26,31 +26,32 @@ public class Reporting {
         Reporting.location = location;
     }
 
-    /**
-     * *
-     *
-     * @param location
-     * @return feedback message from server: "success" if succeed, otherwise error information
-     */
-    public static void reportMyLocation(Location location) {
-        setLocation(location);
-        new Thread(reportThread).start();
-    }
-
-    /**
-     *
-     */
-    private static Runnable reportThread = new Runnable() {
-        @Override public void run() {
-            Looper.prepare();
-            String feedback = new ReportService()
-                    .sendLocationReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), getLocation().getLatitude(),
-                            getLocation().getLongitude());
-            if (feedback != null && feedback.equals("success")) {
-            } else {
-            }
-            Looper.loop();
-        }
-    };
+    //    /**
+    //     * *
+    //     *
+    //     * @param location
+    //     * @return feedback message from server: "success" if succeed, otherwise error information
+    //     */
+    //    public static void reportMyLocation(Location location) {
+    //        setLocation(location);
+    //        new Thread(reportThread).start();
+    //    }
+//
+//    /**
+//     *
+//     */
+//    private static Runnable reportThread = new Runnable() {
+//        @Override public void run() {
+//            Looper.prepare();
+//            String feedback =
+//                    reportService.sendLocationReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+//                            getLocation().getLatitude(),
+//                            getLocation().getLongitude());
+//            if (feedback != null && feedback.equals("success")) {
+//            } else {
+//            }
+//            Looper.loop();
+//        }
+//    };
 
 }

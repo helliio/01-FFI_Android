@@ -21,9 +21,8 @@ public class PerformBackgroundTask extends AsyncTask {
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
-            System.out.println("---------------------------------------------------------------------------");
+            System.out.println("----------------------------------------------------------------------");
         }
-
         return null;
     }
 
