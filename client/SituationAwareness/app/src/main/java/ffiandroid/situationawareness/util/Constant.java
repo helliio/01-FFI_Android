@@ -10,7 +10,7 @@ public class Constant {
     public static final String AES_KEY = "01FFIAndroid2015";
 
     // URL of the server
-    public static final String SERVICE_URL = "http://78.91.50.148:8080/SOAP/";
+    public static final String SERVICE_URL = "http://chun.no:8080";
 
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");

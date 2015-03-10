@@ -19,11 +19,9 @@ import ffiandroid.situationawareness.model.ParameterSetting;
  */
 public class ClientServerSync {
     private Context context;
-
     public ClientServerSync(Context context) {
         this.context = context;
     }
-
     public void start() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
