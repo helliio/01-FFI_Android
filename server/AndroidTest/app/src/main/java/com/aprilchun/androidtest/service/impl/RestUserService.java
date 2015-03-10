@@ -12,7 +12,7 @@ import java.util.Calendar;
 /**
  * Created by chun on 2/18/15.
  */
-public class SoapUserService implements UserService {
+public class RestUserService implements UserService {
     public String register(String username, String password, String name, String teamId) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "register");
         // arg0: username
@@ -38,7 +38,7 @@ public class SoapUserService implements UserService {
         // arg3: loginTime
         soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.sendSOAPRequest(soapObject, "UserService?wsdl");
+        return Sender.sendRESTRequest();
     }
 
 }

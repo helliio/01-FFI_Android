@@ -2,20 +2,13 @@ package com.aprilchun.androidtest.service.impl;
 
 import com.aprilchun.androidtest.service.ReportService;
 import com.aprilchun.androidtest.util.Coder;
-import com.aprilchun.androidtest.util.Constant;
-import com.aprilchun.androidtest.util.HttpTransport;
 import com.aprilchun.androidtest.util.Sender;
 
 import org.json.JSONArray;
-import org.ksoap2.HeaderProperty;
-import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by chun on 2/18/15.
@@ -34,7 +27,7 @@ public class SoapReportService implements ReportService {
         // arg4: longitude
         soapObject.addProperty("longitude", String.valueOf(longitude));
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     @Override
@@ -49,7 +42,7 @@ public class SoapReportService implements ReportService {
         // arg3: list
         soapObject.addProperty("list", list.toString());
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content) {
@@ -67,7 +60,7 @@ public class SoapReportService implements ReportService {
         // arg5: content
         soapObject.addProperty("content", content);
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     @Override
@@ -82,7 +75,7 @@ public class SoapReportService implements ReportService {
         // arg3: list
         soapObject.addProperty("list", list.toString());
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
     public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description) {
@@ -106,7 +99,7 @@ public class SoapReportService implements ReportService {
         // arg8: description
         soapObject.addProperty("description", description);
 
-        return Sender.send(soapObject, "ReportService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
 

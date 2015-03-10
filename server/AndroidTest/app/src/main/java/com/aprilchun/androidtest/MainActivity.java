@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.aprilchun.androidtest.service.ReportService;
 import com.aprilchun.androidtest.service.RequestService;
 import com.aprilchun.androidtest.service.UserService;
+import com.aprilchun.androidtest.service.impl.RestUserService;
 import com.aprilchun.androidtest.service.impl.SoapReportService;
 import com.aprilchun.androidtest.service.impl.SoapRequestService;
 import com.aprilchun.androidtest.service.impl.SoapUserService;
@@ -31,7 +32,7 @@ import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity {
 
-    private UserService userService = new SoapUserService();
+    private UserService userService = new RestUserService();
     private ReportService reportService = new SoapReportService();
     private RequestService requestService = new SoapRequestService();
 
