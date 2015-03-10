@@ -17,8 +17,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         repositories {
-            maven { url 'http://ksoap2-android.googlecode.com/svn/m2-repo' }
+            maven {
+                url 'http://ksoap2-android.googlecode.com/svn/m2-repo'
+            }
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
     }
 }
 
@@ -26,4 +32,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.code.ksoap2-android:ksoap2-android:3.4.0'
+    compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
 }

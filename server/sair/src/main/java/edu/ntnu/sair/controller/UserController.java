@@ -26,7 +26,7 @@ public class UserController {
 
     @Scope("prototype")
     @ResponseBody
-    @RequestMapping(value = "login", method = RequestMethod.GET)
+    @RequestMapping(value = "login", method = RequestMethod.POST)
     public String addElement(
             @RequestParam("username") String username,
             @RequestParam("uuid") String uuid,

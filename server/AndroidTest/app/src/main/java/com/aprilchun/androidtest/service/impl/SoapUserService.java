@@ -5,10 +5,7 @@ import com.aprilchun.androidtest.util.Coder;
 import com.aprilchun.androidtest.util.Constant;
 import com.aprilchun.androidtest.util.Sender;
 
-import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.Calendar;
 
@@ -27,7 +24,7 @@ public class SoapUserService implements UserService {
         // arg3: teamId
         soapObject.addProperty("teamId", teamId);
 
-        return Sender.send(soapObject, "UserService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "UserService?wsdl");
     }
 
     public String login(String username, String deviceId, String password) {
@@ -41,7 +38,7 @@ public class SoapUserService implements UserService {
         // arg3: loginTime
         soapObject.addProperty("loginTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
 
-        return Sender.send(soapObject, "UserService?wsdl");
+        return Sender.sendSOAPRequest(soapObject, "UserService?wsdl");
     }
 
 }

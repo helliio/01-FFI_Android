@@ -24,11 +24,9 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
 
-import ffiandroid.situationawareness.datahandling.ClientServerSync;
 import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
-import ffiandroid.situationawareness.model.ParameterSetting;
 import ffiandroid.situationawareness.model.UserInfo;
 
 /**
@@ -50,12 +48,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
-        activeOpenStreetMap();
-        checkGpsAvailability();
-        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
-                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
-
-        new ClientServerSync(getApplicationContext()).start();
+//        activeOpenStreetMap();
+//        checkGpsAvailability();
+//        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
+//                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
+//
+//        new ClientServerSync(getApplicationContext()).start();
     }
 
 
