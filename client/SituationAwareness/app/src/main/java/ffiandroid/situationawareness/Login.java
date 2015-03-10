@@ -16,8 +16,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ffiandroid.situationawareness.datahandling.UserInfo;
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.service.UserService;
+import ffiandroid.situationawareness.service.impl.SoapUserService;
 
 /**
  * This file is part of project: Situation Awareness
@@ -27,14 +28,14 @@ import ffiandroid.situationawareness.service.UserService;
  * responsible for this file: GuoJunjun & Simen
  */
 public class Login extends ActionBarActivity {
+    private UserService userService = new SoapUserService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-
         softkeyboardDone();
-        UserInfo.setMYANDROIDID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        UserInfo.setMyAndroidID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
     }
 
     /**
@@ -58,10 +59,18 @@ public class Login extends ActionBarActivity {
      * @param view
      */
     public void loginClicked(View view) {
-        Toast.makeText(this, "Login .....", Toast.LENGTH_LONG).show();
-        login();
+        Toast.makeText(this, "Login ....." + hasinput(), Toast.LENGTH_SHORT).show();
+        if (hasinput()) {
+            login();
+        } else {
+            Toast.makeText(getApplicationContext(), "Check you input !", Toast.LENGTH_SHORT);
+        }
     }
 
+    private boolean hasinput() {
+        return (((EditText) findViewById(R.id.editTextLoginID)).getText().toString().length() > 1 &&
+                ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString().length() > 1);
+    }
 
     /**
      * go to register screen
@@ -87,19 +96,19 @@ public class Login extends ActionBarActivity {
         @Override public void run() {
             Looper.prepare();
             String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
-            String message = new UserService().login(userName, UserInfo.getMYANDROIDID(),
+            String message = userService.login(userName, UserInfo.getMyAndroidID(),
                     ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
-            if (message != null && message.equals("success")) {
+            //            if (message != null && message.equals("success")) {
+            if (hasinput()) {
                 Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
-                UserInfo.setUSERNAME(userName);
+                UserInfo.setUserID(userName);
                 toMapWindow();
             } else {
-                Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_LONG);
+                Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT);
             }
             Looper.loop();
         }
     };
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -115,14 +124,8 @@ public class Login extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_item_app_settings:
-                startActivity(new Intent(this, AppSettings.class));
-                return true;
-            case R.id.menu_item_report:
-                startActivity(new Intent(this, Report.class));
-                return true;
-            case R.id.menu_item_status:
-                startActivity(new Intent(this, Status.class));
+            case R.id.menu_item_register:
+                startActivity(new Intent(this, Register.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,4 +1,4 @@
-package ffiandroid.situationawareness.datahandling;
+package ffiandroid.situationawareness.test;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +24,7 @@ public class MyCoworkers {
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 CoworkerLocation cl = getCoworkerLocation(jsonArray.getJSONObject(i));
-                System.out.println("cl: - - - - - -" + cl.getName() + " " + cl.getLatitude() + " " + cl.getLongitude());
+//                System.out.println("cl: - - - - - -" + cl.getName() + " " + cl.getLatitude() + " " + cl.getLongitude());
                 markersOverlayItemArray.add(new OverlayItem(cl.getName(), cl.getName(),
                         new GeoPoint(cl.getLatitude(), cl.getLongitude())));
             }
