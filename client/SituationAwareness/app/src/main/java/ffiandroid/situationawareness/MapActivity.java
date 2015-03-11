@@ -2,6 +2,7 @@
 
 package ffiandroid.situationawareness;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,20 +13,27 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.bonuspack.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
+import org.osmdroid.util.BoundingBoxE6;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.datahandling.MyCoworkers;
@@ -40,28 +48,36 @@ import ffiandroid.situationawareness.service.RequestService;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-public class MapActivity extends Activity implements LocationListener {
+public class MapActivity extends ActionBarActivity implements LocationListener {
     private MapView mMapView;
     private MapController mMapController;
     private LocationManager locationManager;
     private Location myCurrentLocation;
     private String bestProvider;
     private Marker startMarker;
+    private CacheManager cacheManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
-        activeOpenStreetMap();
         checkGpsAvailability();
+        activeOpenStreetMap();
+        cacheTiles();
+
+
     }
+
+
+
 
     @Override protected void onResume() {
         super.onResume();
         locationManager.requestLocationUpdates(bestProvider, 20000, 2, this);
 
     }
+
 
     /**
      * check if GPS enabled and if not send user to the GSP settings
@@ -80,31 +96,77 @@ public class MapActivity extends Activity implements LocationListener {
      */
     private void activeOpenStreetMap() {
         mMapView = (MapView) findViewById(R.id.mapview);
-        mMapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+        mMapView.setTileSource(new XYTileSource("MapQuest",
+                ResourceProxy.string.mapquest_osm, 0, 18, 256, ".jpg", new String[] {
+                "http://otile1.mqcdn.com/tiles/1.0.0/map/",
+                "http://otile2.mqcdn.com/tiles/1.0.0/map/",
+                "http://otile3.mqcdn.com/tiles/1.0.0/map/",
+                "http://otile4.mqcdn.com/tiles/1.0.0/map/"}));
+
+
         mMapView.setBuiltInZoomControls(true);
         mMapView.setMultiTouchControls(true);
+        mMapView.setUseDataConnection(true);
+
         mMapController = (MapController) mMapView.getController();
-        mMapController.setZoom(16);
+        mMapController.setZoom(15);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        updateLocation();
+
+    }
+
+    private void updateLocation(){
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
         // Get the name of the best provider
         bestProvider = locationManager.getBestProvider(criteria, false);
         // Get Current Location
 
-        if (myCurrentLocation != null) {
-            myCurrentLocation = locationManager.getLastKnownLocation(bestProvider);
-            Toast.makeText(getApplicationContext(), "Using Location from your GPS!", Toast.LENGTH_LONG).show();
-        } else {
-            myCurrentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Toast.makeText(getApplicationContext(), "No GPS Single, getting Location form your Network Provider!",
-                    Toast.LENGTH_LONG).show();
-        }
-        startMarker = new Marker(mMapView);
-        onLocationChanged(myCurrentLocation);
-        Reporting.reportMyLocation(myCurrentLocation);
-    }
+        /*
+        If The best provider is GPS, it will first try to find the location
+        using the device's GPS functionality. If that is not possible it will
+        instead use networks to determine location
+         */
+       if (bestProvider.equals("gps")){
+           if(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)!= null){
+               myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+               Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
+               System.out.println("Updated with GPS");
+           }
+           else if(locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)!= null){
+               myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+               Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
+               System.out.println("Updated with Network");
 
+           }
+           else
+               Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
+            System.out.println("No location found");
+        }
+        else
+       if(locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)!= null) {
+           myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+           Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
+           System.out.println("Updated with Network");
+       }
+       else if(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)!= null){
+           myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+           Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
+           System.out.println("Updated with GPS");
+       }
+       else
+           Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
+        System.out.println("No location found");
+
+
+
+        startMarker = new Marker(mMapView);
+
+        Reporting.reportMyLocation(myCurrentLocation);
+        onLocationChanged(myCurrentLocation);
+
+    }
     /**
      * get coworkers location and add the to map view
      *
@@ -161,6 +223,23 @@ public class MapActivity extends Activity implements LocationListener {
 
     }
 
+//    public void textReportOnClicked(View view) {
+//        String report = textReport.getText().toString();
+//        if (validTextInput(report)) {
+//            Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
+//            sendTextReportToServer(report);
+//        } else {
+//            Toast.makeText(this, "input text not valid !", Toast.LENGTH_LONG).show();
+//        }
+//    }
+    public void  refreshOnCLicked(View view){
+        updateLocation();
+        System.out.println("Refreshed");
+        Toast.makeText(getApplicationContext(), "Refreshing", Toast.LENGTH_LONG).show();
+
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -195,6 +274,12 @@ public class MapActivity extends Activity implements LocationListener {
         getCoworkersLocation();
     }
 
+    private void cacheTiles(){
+        cacheManager = new CacheManager(mMapView);
+        int zoomMin = 11;
+        int zoomMax = 17;
+        cacheManager.downloadAreaAsync(this, mMapView.getBoundingBox(), zoomMin, zoomMax);
+    }
     /**
      * my position marker
      *
@@ -202,7 +287,7 @@ public class MapActivity extends Activity implements LocationListener {
      */
     private void updateMyPositionMarker(Location location) {
         startMarker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
         mMapView.getOverlays().add(startMarker);
         mMapView.invalidate();
         startMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));

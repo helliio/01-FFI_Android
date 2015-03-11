@@ -1,13 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              tools:context=".MapActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:tools="http://schemas.android.com/tools"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   tools:context=".MapActivity">
 
-    <org.osmdroid.views.MapView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/mapview">
-    </org.osmdroid.views.MapView>
-</LinearLayout>
+   <org.osmdroid.views.MapView
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:id="@+id/mapview">
+   </org.osmdroid.views.MapView>
+   <ImageButton
+       android:id="@+id/button_refresh"
+       android:layout_alignParentRight="true"
+       android:layout_alignParentBottom="true"
+       android:layout_width="64dp"
+       android:layout_height="64dp"
+       android:scaleType="fitXY"
+       android:src="@drawable/refreshicon"
+       android:background="@android:color/transparent"
+       android:onClick="refreshOnCLicked"
+
+   />
+
+
+
+
+
+</RelativeLayout>
