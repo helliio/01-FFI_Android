@@ -73,4 +73,15 @@ public class MemberDaoImpl implements MemberDao {
         }
         return (Member) q.list().get(0);
     }
+
+    @Override
+    public List<Member> getByTeamId(String teamId) {
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createQuery("from Member where teamid = '" + teamId + "'");
+        List<Member> list = new ArrayList<>();
+        for (Object o : q.list()) {
+            list.add((Member) o);
+        }
+        return list;
+    }
 }

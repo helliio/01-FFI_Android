@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import ffiandroid.situationawareness.datahandling.CoworkerLocation;
-
 /**
  * This Query Class is part of project: Situation Awareness
  *

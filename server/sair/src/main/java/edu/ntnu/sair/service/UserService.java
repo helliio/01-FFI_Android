@@ -1,5 +1,7 @@
 package edu.ntnu.sair.service;
 
+import org.apache.cxf.annotations.GZIP;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
@@ -7,7 +9,7 @@ import javax.jws.WebService;
  * Created by chun on 2/16/15.
  */
 
-@WebService(endpointInterface = "edu.ntnu.sair.service.UserService", targetNamespace = "http://service.sair.ntnu.edu/")
+@WebService
 public interface UserService {
 
     public String register(

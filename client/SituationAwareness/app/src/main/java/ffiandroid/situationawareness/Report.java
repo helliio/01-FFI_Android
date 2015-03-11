@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ffiandroid.situationawareness.localdb.DAOtextReport;
+import ffiandroid.situationawareness.model.TextReport;
+
 /**
  * This Report Class is part of project: Situation Awareness
  * <p/>
@@ -37,20 +40,21 @@ public class Report extends ActionBarActivity {
         String report = textReport.getText().toString();
         if (validTextInput(report)) {
             Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
-            sendTextReportToServer(report);
+            sendTextReportToDB(report);
         } else {
-            Toast.makeText(this, "input text not valid !", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "input text not valid !", Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
-     * send text report to server
+     * send text report to database
      *
      * @param report
      */
-    private void sendTextReportToServer(String report) {
-        //waiting for server side to be ready ...
-        Toast.makeText(this, "server side is not ready for receive text report!", Toast.LENGTH_LONG).show();
+    private void sendTextReportToDB(String report) {
+        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report));
+        Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
+        textReport.getText().clear();
     }
 
     /**
@@ -60,7 +64,7 @@ public class Report extends ActionBarActivity {
      * @return true if input text is valid, false otherwise
      */
     private boolean validTextInput(String text) {
-        if (text != " ") {
+        if (text.length() > 0) {
             return true;
         }
         return false;
@@ -75,18 +79,24 @@ public class Report extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menu_item_app_settings:
-                //                startActivity(new Intent(this, AppSettings.class));
-                return true;
-            case R.id.menu_item_report:
-                startActivity(new Intent(this, Report.class));
+                startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_status:
                 startActivity(new Intent(this, Status.class));
+                return true;
+            case R.id.menu_item_map_view:
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
+            case R.id.menu_item_report_view:
+                startActivity(new Intent(this, ReportView.class));
+                return true;
+            case R.id.menu_item_logout:
+                startActivity(new Intent(this, Login.class));
+                return true;
+            case R.id.menu_item_location_view:
+                startActivity(new Intent(this, LocationView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

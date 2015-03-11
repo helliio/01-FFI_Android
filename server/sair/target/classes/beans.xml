@@ -22,12 +22,11 @@
 
     <context:component-scan base-package="edu.ntnu.sair"/>
 
-    <!--
     <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url"
-                  value="jdbc:mysql://aprilchun.com:3306/sair?characterEncoding=utf-8"/>
+                  value="jdbc:mysql://chun.no:3306/sair?characterEncoding=utf-8"/>
         <property name="username" value="sair"/>
         <property name="password" value="ffiandroid2015"/>
 
@@ -50,8 +49,8 @@
             </props>
         </property>
     </bean>
-    -->
 
+    <!--
     <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="org.h2.Driver"/>
@@ -77,6 +76,7 @@
             </props>
         </property>
     </bean>
+    -->
 
     <bean id="txManager"
           class="org.springframework.orm.hibernate4.HibernateTransactionManager">
