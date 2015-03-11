@@ -50,12 +50,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
-//        activeOpenStreetMap();
-//        checkGpsAvailability();
-//        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
-//                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
-//
-//        new ClientServerSync(getApplicationContext()).start();
+        activeOpenStreetMap();
+        checkGpsAvailability();
+        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
+                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
+
+        new ClientServerSync(getApplicationContext()).start();
     }
 
 
