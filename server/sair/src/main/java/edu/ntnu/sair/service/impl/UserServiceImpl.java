@@ -60,9 +60,11 @@ public class UserServiceImpl implements UserService {
         calendar.setTimeInMillis(Long.valueOf(loginTime));
         calendar.add(Calendar.HOUR_OF_DAY, Constant.LOGIN_PERIOD);
         member.setValidTime(calendar);
+        this.memberDao.update(member);
         return new Result("login", "success").toString();
     }
 
+    @Transactional
     @Override
     public String checkLogin(String username, String uuid) {
         Member member = this.memberDao.getByUsername(username);
@@ -78,6 +80,7 @@ public class UserServiceImpl implements UserService {
         }
         calendar.add(Calendar.HOUR_OF_DAY, Constant.LOGIN_PERIOD);
         member.setValidTime(calendar);
+        this.memberDao.update(member);
         return "success";
     }
 

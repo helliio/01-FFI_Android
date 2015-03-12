@@ -54,42 +54,28 @@ public class LocationDaoImpl implements LocationDao {
     public Location getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location where id = " + id);
-        if (q.list().size() == 0) {
-            return null;
-        }
-        return (Location) q.list().get(0);
+        return !q.list().isEmpty() ? (Location) q.list().get(0) : null;
     }
 
     @Override
     public List<Location> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location order by clienttimestamp desc");
-        List<Location> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((Location) o);
-        }
-        return list;
+        return q.list();
     }
 
     @Override
     public List<Location> getByMember(Member member) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location where memberid = " + member.getId() + " order by clienttimestamp desc");
-        List<Location> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((Location) o);
-        }
-        return list;
+        return q.list();
     }
 
     @Override
     public Location getByMemberLatest(Member member) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location where memberid = " + member.getId() + " order by clienttimestamp desc");
-        if (q.list().size() == 0) {
-            return null;
-        }
-        return (Location) q.list().get(0);
+        return !q.list().isEmpty() ? (Location) q.list().get(0) : null;
     }
 
     @Override
@@ -97,28 +83,30 @@ public class LocationDaoImpl implements LocationDao {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location l" +
                 " where l.member.teamId = '" + teamId + "'" +
-                " order by l.clientTimestamp desc, l.member.id asc");
-        List<Location> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((Location) o);
-        }
-        return list;
+                " order by l.member.id asc, l.clientTimestamp desc");
+        return q.list();
     }
 
     @Override
     public List<Location> getByTeamLatest(String teamId) {
         this.session = this.sessionFactory.getCurrentSession();
-        Criteria q = this.session.createCriteria(Member.class);
-
+        Query q1 = this.session.createQuery("select id from Member" +
+                " where teamId = '" + teamId + "'" +
+                " order by id asc");
+        Query q2 = this.session.createQuery("from Location l" +
+                " where l.member.teamId = '" + teamId + "'" +
+                " order by l.member.id asc, l.clientTimestamp desc");
+        List list1 = q1.list();
+        Location temp;
         List<Location> list = new ArrayList<>();
-        Iterator iterator = q.list().iterator();
+        Iterator iterator = q2.list().iterator();
         while (iterator.hasNext()) {
-            q = this.session.createCriteria(Location.class)
-                    .add(Restrictions.eq("member", iterator.next()))
-                    .addOrder(Order.desc("clientTimestamp")).setMaxResults(1);
-            if (q.list().size() > 0) {
-                list.add((Location) q.list().get(0));
+            temp = (Location) iterator.next();
+            if (!list1.contains(temp.getMember().getId())) {
+                continue;
             }
+            list.add(temp);
+            list1.remove(temp.getMember().getId());
         }
         return list;
     }
@@ -137,8 +125,9 @@ public class LocationDaoImpl implements LocationDao {
         q.setCalendar("startTime", calendar1);
         q.setCalendar("endTime", calendar2);
         List<Location> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((Location) o);
+        Iterator iterator = q.list().iterator();
+        while (iterator.hasNext()) {
+            list.add((Location) iterator.next());
         }
         return list;
     }

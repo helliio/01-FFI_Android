@@ -17,13 +17,13 @@ public class RestUserService implements UserService {
     public String register(String username, String password, String name, String teamId) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
-        requestData.put("username", Coder.encryptMD5(username));
+        requestData.add("username", Coder.encryptMD5(username));
         // arg1: password
-        requestData.put("password", Coder.encryptMD5(password));
+        requestData.add("password", Coder.encryptMD5(password));
         // arg2: name
-        requestData.put("name", name);
+        requestData.add("name", name);
         // arg3: teamId
-        requestData.put("teamId", teamId);
+        requestData.add("teamId", teamId);
 
         return Sender.sendRESTRequest(requestData, "user/register");
     }

@@ -34,9 +34,11 @@ import org.osmdroid.util.BoundingBoxE6;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 
+import ffiandroid.situationawareness.datahandling.ClientServerSync;
 import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
+import ffiandroid.situationawareness.model.ParameterSetting;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.service.RequestService;
 import ffiandroid.situationawareness.test.Reporting;
@@ -61,9 +63,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
-        checkGpsAvailability();
-        activeOpenStreetMap();
 
+        activeOpenStreetMap();
+        checkGpsAvailability();
+        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
+                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
+
+        new ClientServerSync(getApplicationContext()).start();
 
     }
 
@@ -94,7 +100,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private void activeOpenStreetMap() {
         mMapView = (MapView) findViewById(R.id.mapview);
         mMapView.setTileSource(new XYTileSource("MapQuest",
-                ResourceProxy.string.mapquest_osm, 0, 18, 256, ".jpg", new String[] {
+                ResourceProxy.string.mapquest_osm, 0, 18, 256, ".jpg", new String[]{
                 "http://otile1.mqcdn.com/tiles/1.0.0/map/",
                 "http://otile2.mqcdn.com/tiles/1.0.0/map/",
                 "http://otile3.mqcdn.com/tiles/1.0.0/map/",

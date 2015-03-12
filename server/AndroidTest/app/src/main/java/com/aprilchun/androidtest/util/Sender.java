@@ -58,7 +58,6 @@ public class Sender {
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
             // Make the HTTP POST request, marshaling the response to a String
             String result = restTemplate.postForObject(url, requestData, String.class);
-
             return result;
         } catch (Exception e) {
             e.printStackTrace();

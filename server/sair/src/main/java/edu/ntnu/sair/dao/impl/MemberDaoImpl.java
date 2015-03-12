@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -47,41 +48,27 @@ public class MemberDaoImpl implements MemberDao {
     public Member getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Member where id = " + id);
-        if (q.list().size() == 0) {
-            return null;
-        }
-        return (Member) q.list().get(0);
+        return !q.list().isEmpty() ? (Member) q.list().get(0) : null;
     }
 
     @Override
     public List<Member> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createQuery("from Member");
-        List<Member> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((Member) o);
-        }
-        return list;
+        Query q = this.session.createQuery("from Member order by id");
+        return q.list();
     }
 
     @Override
     public Member getByUsername(String username) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Member where username = '" + username + "'");
-        if (q.list().size() == 0) {
-            return null;
-        }
-        return (Member) q.list().get(0);
+        return !q.list().isEmpty() ? (Member) q.list().get(0) : null;
     }
 
     @Override
     public List<Member> getByTeamId(String teamId) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createQuery("from Member where teamid = '" + teamId + "'");
-        List<Member> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((Member) o);
-        }
-        return list;
+        Query q = this.session.createQuery("from Member where teamid = '" + teamId + "' order by id");
+        return q.list();
     }
 }
