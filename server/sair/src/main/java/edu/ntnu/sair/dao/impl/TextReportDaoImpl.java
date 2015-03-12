@@ -53,42 +53,28 @@ public class TextReportDaoImpl implements TextReportDao {
     public TextReport getById(long id) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from TextReport where id = " + id);
-        if (q.list().size() == 0) {
-            return null;
-        }
-        return (TextReport) q.list().get(0);
+        return !q.list().isEmpty() ? (TextReport) q.list().get(0) : null;
     }
 
     @Override
     public List<TextReport> getAll() {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from TextReport");
-        List<TextReport> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((TextReport) o);
-        }
-        return list;
+        return q.list();
     }
 
     @Override
     public List<TextReport> getByMember(Member member) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from TextReport where memberid = " + member.getId() + " order by location.clienttimestamp desc");
-        List<TextReport> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((TextReport) o);
-        }
-        return list;
+        return q.list();
     }
 
     @Override
     public TextReport getByMemberLatest(Member member) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from TextReport where memberid = " + member.getId() + " order by location.clienttimestamp desc");
-        if (q.list().size() == 0) {
-            return null;
-        }
-        return (TextReport) q.list().get(0);
+        return !q.list().isEmpty() ? (TextReport) q.list().get(0) : null;
     }
 
     @Override
@@ -97,27 +83,29 @@ public class TextReportDaoImpl implements TextReportDao {
         Query q = this.session.createQuery("from TextReport o" +
                 " where o.location.member.teamId = '" + teamId + "'" +
                 " order by o.location.clientTimestamp desc, o.location.member.id asc");
-        List<TextReport> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((TextReport) o);
-        }
-        return list;
+        return q.list();
     }
 
     @Override
     public List<TextReport> getByTeamLatest(String teamId) {
         this.session = this.sessionFactory.getCurrentSession();
-        Criteria q = this.session.createCriteria(Member.class);
-
+        Query q1 = this.session.createQuery("select id from Member" +
+                " where teamId = '" + teamId + "'" +
+                " order by id asc");
+        Query q2 = this.session.createQuery("from TextReport o" +
+                " where o.location.member.teamId = '" + teamId + "'" +
+                " order by o.location.member.id asc, o.location.clientTimestamp desc");
+        List list1 = q1.list();
+        TextReport temp;
         List<TextReport> list = new ArrayList<>();
-        Iterator iterator = q.list().iterator();
+        Iterator iterator = q2.list().iterator();
         while (iterator.hasNext()) {
-            Query query = this.session.createQuery("from TextReport o" +
-                    " where o.location.member.id = " + ((Member) iterator.next()).getId() +
-                    " order by o.location.clientTimestamp desc ").setMaxResults(1);
-            if (query.list().size() > 0) {
-                list.add((TextReport) query.list().get(0));
+            temp = (TextReport) iterator.next();
+            if (!list1.contains(temp.getLocation().getMember().getId())) {
+                continue;
             }
+            list.add(temp);
+            list1.remove(temp.getLocation().getMember().getId());
         }
         return list;
     }
@@ -136,8 +124,9 @@ public class TextReportDaoImpl implements TextReportDao {
         q.setCalendar("startTime", calendar1);
         q.setCalendar("endTime", calendar2);
         List<TextReport> list = new ArrayList<>();
-        for (Object o : q.list()) {
-            list.add((TextReport) o);
+        Iterator iterator = q.list().iterator();
+        while (iterator.hasNext()) {
+            list.add((TextReport) iterator.next());
         }
         return list;
     }
