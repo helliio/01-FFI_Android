@@ -16,12 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -29,19 +27,15 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
-import org.osmdroid.util.BoundingBoxE6;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
-import ffiandroid.situationawareness.datahandling.ClientServerSync;
+import ffiandroid.situationawareness.datahandling.StartSync;
 import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
 import ffiandroid.situationawareness.model.ParameterSetting;
 import ffiandroid.situationawareness.model.UserInfo;
-import ffiandroid.situationawareness.service.RequestService;
-import ffiandroid.situationawareness.test.Reporting;
 
 /**
  * This file is part of project: Situation Awareness
@@ -69,8 +63,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
                 ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
 
-        new ClientServerSync(getApplicationContext()).start();
-
+        StartSync.getInstance(getApplicationContext()).start();
     }
 
 
@@ -312,23 +305,23 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         //        new Thread(getCoWorkerMarkerThread).start();
     }
 
-    private Runnable getCoWorkerMarkerThread = new Runnable() {
-        @Override public void run() {
-            ArrayList<OverlayItem> markersOverlayItemArray =
-                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
-            if (markersOverlayItemArray.size() > 0) {
-                addCoWorkerMarkers(markersOverlayItemArray);
-            }
-        }
-    };
-
-    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
-        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-        mMapView.getOverlays().add(markerItemizedIconOverlay);
-        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-        mMapView.getOverlays().add(myScaleBarOverlay);
-    }
+//    private Runnable getCoWorkerMarkerThread = new Runnable() {
+//        @Override public void run() {
+//            ArrayList<OverlayItem> markersOverlayItemArray =
+//                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
+//            if (markersOverlayItemArray.size() > 0) {
+//                addCoWorkerMarkers(markersOverlayItemArray);
+//            }
+//        }
+//    };
+//
+//    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
+//        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+//                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+//        mMapView.getOverlays().add(markerItemizedIconOverlay);
+//        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+//        mMapView.getOverlays().add(myScaleBarOverlay);
+//    }
 
     private void cacheTiles(){
         cacheManager = new CacheManager(mMapView);
