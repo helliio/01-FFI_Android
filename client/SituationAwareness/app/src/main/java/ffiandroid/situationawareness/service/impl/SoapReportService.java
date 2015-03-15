@@ -31,14 +31,14 @@ public class SoapReportService implements ReportService {
     }
 
     @Override
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
+    public String sendLocationReportList(String username, String deviceId, long sendingTime, JSONArray list) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReportList");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
         soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
+        soapObject.addProperty("sendingTime", sendingTime);
         // arg3: list
         soapObject.addProperty("list", list.toString());
 

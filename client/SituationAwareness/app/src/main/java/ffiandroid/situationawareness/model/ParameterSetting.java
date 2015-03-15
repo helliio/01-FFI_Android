@@ -23,6 +23,6 @@ public class ParameterSetting {
     /**
      * do Asynchronous Task in every given millisecond
      */
-    public static final int SYNC_LOOP_TIME_MS = 3000;
+    public static final int SYNC_LOOP_TIME_MS = 80000;
 
 }

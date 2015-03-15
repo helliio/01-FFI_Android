@@ -30,7 +30,7 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
 
-import ffiandroid.situationawareness.datahandling.StartSync;
+import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
@@ -63,11 +63,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
                 ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
 
-        StartSync.getInstance(getApplicationContext()).start();
+        //        StartSync.getInstance(getApplicationContext()).start();
+
     }
-
-
-
 
 
     @Override protected void onResume() {
@@ -92,12 +90,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
      */
     private void activeOpenStreetMap() {
         mMapView = (MapView) findViewById(R.id.mapview);
-        mMapView.setTileSource(new XYTileSource("MapQuest",
-                ResourceProxy.string.mapquest_osm, 0, 18, 256, ".jpg", new String[]{
-                "http://otile1.mqcdn.com/tiles/1.0.0/map/",
-                "http://otile2.mqcdn.com/tiles/1.0.0/map/",
-                "http://otile3.mqcdn.com/tiles/1.0.0/map/",
-                "http://otile4.mqcdn.com/tiles/1.0.0/map/"}));
+        mMapView.setTileSource(new XYTileSource("MapQuest", ResourceProxy.string.mapquest_osm, 0, 18, 256, ".jpg",
+                new String[]{"http://otile1.mqcdn.com/tiles/1.0.0/map/", "http://otile2.mqcdn.com/tiles/1.0.0/map/",
+                        "http://otile3.mqcdn.com/tiles/1.0.0/map/", "http://otile4.mqcdn.com/tiles/1.0.0/map/"}));
 
 
         mMapView.setBuiltInZoomControls(true);
@@ -112,7 +107,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     }
 
-    private void updateLocation(){
+    private void updateLocation() {
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
         // Get the name of the best provider
@@ -124,47 +119,40 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         using the device's GPS functionality. If that is not possible it will
         instead use networks to determine location
          */
-       if (bestProvider.equals("gps")){
-           if(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)!= null){
-               myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-               Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
-               System.out.println("Updated with GPS");
-           }
-           else if(locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)!= null){
-               myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-               Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
-               System.out.println("Updated with Network");
+        if (bestProvider.equals("gps")) {
+            if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null) {
+                myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+                Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
+                System.out.println("Updated with GPS");
+            } else if (locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER) != null) {
+                myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+                Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG)
+                        .show();
+                System.out.println("Updated with Network");
 
-           }
-           else
-               Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
+            } else Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
             System.out.println("No location found");
 
-        }
-        else
-       if(locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)!= null) {
-           myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-           Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
-           System.out.println("Updated with Network");
-       }
-       else if(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)!= null){
-           myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-           Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
-           System.out.println("Updated with GPS");
-       }
-       else
-           Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
+        } else if (locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER) != null) {
+            myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+            Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
+            System.out.println("Updated with Network");
+        } else if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null) {
+            myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+            Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
+            System.out.println("Updated with GPS");
+        } else Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
         System.out.println("No location found");
-
 
 
         startMarker = new Marker(mMapView);
 
 
-//        Reporting.reportMyLocation(myCurrentLocation);
+        //        Reporting.reportMyLocation(myCurrentLocation);
         onLocationChanged(myCurrentLocation);
 
     }
+
     /**
      * get coworkers location and add the to map view
      *
@@ -181,13 +169,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private Runnable queryThread = new Runnable() {
         @Override public void run() {
             Looper.prepare();
-//            JSONArray jsonArray =
-//                    new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(), UserInfo.getMYANDROIDID());
-//            System.out.println(jsonArray);
-//            if (jsonArray != null) {
-//                addAllMarkers(jsonArray);
-//
-//            }
+            //            JSONArray jsonArray =
+            //                    new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(),
+            // UserInfo.getMYANDROIDID());
+            //            System.out.println(jsonArray);
+            //            if (jsonArray != null) {
+            //                addAllMarkers(jsonArray);
+            //
+            //            }
             Looper.loop();
         }
     };
@@ -198,13 +187,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
      * @param jsonArray
      */
     private void addAllMarkers(JSONArray jsonArray) {
-//        ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay(jsonArray);
-//                printteammarkers(markersOverlayItemArray);
-//        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-//                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-//        mMapView.getOverlays().add(markerItemizedIconOverlay);
-//        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-//        mMapView.getOverlays().add(myScaleBarOverlay);
+        //        ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay
+        // (jsonArray);
+        //                printteammarkers(markersOverlayItemArray);
+        //        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+        //                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+        //        mMapView.getOverlays().add(markerItemizedIconOverlay);
+        //        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+        //        mMapView.getOverlays().add(myScaleBarOverlay);
 
     }
 
@@ -222,16 +212,16 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     }
 
-//    public void textReportOnClicked(View view) {
-//        String report = textReport.getText().toString();
-//        if (validTextInput(report)) {
-//            Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
-//            sendTextReportToServer(report);
-//        } else {
-//            Toast.makeText(this, "input text not valid !", Toast.LENGTH_LONG).show();
-//        }
-//    }
-    public void  refreshOnCLicked(View view){
+    //    public void textReportOnClicked(View view) {
+    //        String report = textReport.getText().toString();
+    //        if (validTextInput(report)) {
+    //            Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
+    //            sendTextReportToServer(report);
+    //        } else {
+    //            Toast.makeText(this, "input text not valid !", Toast.LENGTH_LONG).show();
+    //        }
+    //    }
+    public void refreshOnCLicked(View view) {
         updateLocation();
         System.out.println("Refreshed");
         Toast.makeText(getApplicationContext(), "Refreshing", Toast.LENGTH_LONG).show();
@@ -269,9 +259,20 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
                 return true;
             case R.id.menu_item_cacheTiles:
                 cacheTiles();
+            case R.id.menu_item_status_and_send_button:
+                statusAndSendButtonClicked();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void statusAndSendButtonClicked() {
+        System.out.println("-------------------------------kk---------------------------------------");
+        runOnUiThread(new Runnable() {
+            @Override public void run() {
+                new PerformBackgroundTask(getApplicationContext()).execute();
+            }
+        });
     }
 
     @Override public void onLocationChanged(Location location) {
@@ -305,30 +306,31 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         //        new Thread(getCoWorkerMarkerThread).start();
     }
 
-//    private Runnable getCoWorkerMarkerThread = new Runnable() {
-//        @Override public void run() {
-//            ArrayList<OverlayItem> markersOverlayItemArray =
-//                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
-//            if (markersOverlayItemArray.size() > 0) {
-//                addCoWorkerMarkers(markersOverlayItemArray);
-//            }
-//        }
-//    };
-//
-//    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
-//        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-//                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-//        mMapView.getOverlays().add(markerItemizedIconOverlay);
-//        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-//        mMapView.getOverlays().add(myScaleBarOverlay);
-//    }
+    //    private Runnable getCoWorkerMarkerThread = new Runnable() {
+    //        @Override public void run() {
+    //            ArrayList<OverlayItem> markersOverlayItemArray =
+    //                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
+    //            if (markersOverlayItemArray.size() > 0) {
+    //                addCoWorkerMarkers(markersOverlayItemArray);
+    //            }
+    //        }
+    //    };
+    //
+    //    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
+    //        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+    //                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+    //        mMapView.getOverlays().add(markerItemizedIconOverlay);
+    //        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+    //        mMapView.getOverlays().add(myScaleBarOverlay);
+    //    }
 
-    private void cacheTiles(){
+    private void cacheTiles() {
         cacheManager = new CacheManager(mMapView);
         int zoomMin = 11;
         int zoomMax = 17;
         cacheManager.downloadAreaAsync(this, mMapView.getBoundingBox(), zoomMin, zoomMax);
     }
+
     /**
      * my position marker
      *

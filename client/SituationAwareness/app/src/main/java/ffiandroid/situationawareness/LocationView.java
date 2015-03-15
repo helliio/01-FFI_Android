@@ -48,7 +48,8 @@ public class LocationView extends ActionBarActivity {
      */
     public String[] getList() {
         daOlocation = new DAOlocation(getApplicationContext());
-        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
+//        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
+        List<LocationReport> alist = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
         String[] list = new String[alist.size()];
         for (int i = 0; i < alist.size(); i++) {
             list[i] = alist.get(i).toString();

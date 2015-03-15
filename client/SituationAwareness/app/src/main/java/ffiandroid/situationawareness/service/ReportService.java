@@ -11,7 +11,7 @@ import java.util.Calendar;
 public interface ReportService {
     public String sendLocationReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude);
 
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
+    public String sendLocationReportList(String username, String deviceId, long sendingTime, JSONArray list);
 
     public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content);
 

@@ -19,9 +19,11 @@ import ffiandroid.situationawareness.model.ParameterSetting;
  */
 public class ClientServerSync {
     private Context context;
+
     public ClientServerSync(Context context) {
         this.context = context;
     }
+
     public void start() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
@@ -33,6 +35,14 @@ public class ClientServerSync {
                         try {
                             PerformBackgroundTask performBackgroundTask = new PerformBackgroundTask(context);
                             performBackgroundTask.execute();
+                            //                            performBackgroundTask.execute(new Runnable() {
+                            //                                @Override public void run() {
+                            //                                    System.out.println(
+                            //
+                            // "----------------------------------------------------------------------");
+                            //                                    new DBsync(context).uploadLocation();
+                            //                                }
+                            //                            });
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -40,6 +50,6 @@ public class ClientServerSync {
                 });
             }
         };
-        timer.schedule(doAsynchronousTask, 0, ParameterSetting.SYNC_LOOP_TIME_MS);
+        timer.schedule(doAsynchronousTask, 5000, ParameterSetting.SYNC_LOOP_TIME_MS);
     }
 }

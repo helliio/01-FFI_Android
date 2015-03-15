@@ -13,15 +13,18 @@ import android.os.AsyncTask;
  * Responsible for this file: GuoJunjun
  */
 public class PerformBackgroundTask extends AsyncTask {
-    Context context;
+    private Context context;
+    private DBsync dBsync;
 
-    PerformBackgroundTask(Context context) {
+    public PerformBackgroundTask(Context context) {
         this.context = context;
+        dBsync = new DBsync(context);
     }
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
             System.out.println("----------------------------------------------------------------------");
+            dBsync.uploadLocation();
         }
         return null;
     }
@@ -31,5 +34,26 @@ public class PerformBackgroundTask extends AsyncTask {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+
+    //    public class PerformBackgroundTask implements Executor {
+    //        private Context context;
+    //
+    //        public PerformBackgroundTask(Context context) {
+    //            this.context = context;
+    //        }
+    //
+    //        @Override public void execute(Runnable command) {
+    //            if (isOnline()) {
+    //                command.run();
+    //            }
+    //        }
+    //
+    //        public boolean isOnline() {
+    //            ConnectivityManager cm = (ConnectivityManager) context
+    //                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+    //            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+    //            return netInfo != null && netInfo.isConnectedOrConnecting();
+    //        }
 
 }

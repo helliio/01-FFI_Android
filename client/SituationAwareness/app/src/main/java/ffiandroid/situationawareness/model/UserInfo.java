@@ -11,7 +11,16 @@ package ffiandroid.situationawareness.model;
  */
 public class UserInfo {
     private static String myAndroidID, userID;
-    public static double currentLatitude, currentLongitude;
+    private static double currentLatitude, currentLongitude;
+    private static boolean lastSyncSucceed;
+
+    public static boolean isLastSyncSucceed() {
+        return lastSyncSucceed;
+    }
+
+    public static void setLastSyncSucceed(boolean lastSyncSucceed) {
+        UserInfo.lastSyncSucceed = lastSyncSucceed;
+    }
 
     public static double getCurrentLatitude() {
         return currentLatitude;
