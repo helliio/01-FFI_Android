@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.List;
 
 import ffiandroid.situationawareness.localdb.DAOlocation;
@@ -24,6 +25,7 @@ import ffiandroid.situationawareness.service.impl.SoapReportService;
  */
 public class DBsync {
     private Context context;
+    private List<LocationReport> locationReports;
 
     public DBsync(Context context) {
         this.context = context;
@@ -57,24 +59,7 @@ public class DBsync {
      *
      * @return true if succeed, false otherwise
      */
-    //    public  boolean uploadLocation() {
-    //        DAOlocation daOlocation = new DAOlocation(context);
-    //        List<LocationReport> locationReports = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
-    //        String message = reportService
-    //                .sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
-    // System.currentTimeMillis(),
-    //                        getWaitingLocations(locationReports));
-    //
-    //        //        if (message.equalsIgnoreCase())
-    //        System.out.println(message);
-    //        if (true) {
-    //            myLocationStatusIsReported(locationReports);
-    //        }
-    //
-    //        daOlocation.close();
-    //
-    //        return false;
-    //    }
+
     public void uploadLocation() {
         new Thread(serviceThread).start();
     }
@@ -85,10 +70,11 @@ public class DBsync {
             DAOlocation daOlocation = new DAOlocation(context);
             Looper.prepare();
             try {
-                List<LocationReport> locationReports = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
-                String message = reportService.sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
-                        System.currentTimeMillis(), getWaitingLocations(locationReports));
-                                System.out.println(message);
+                locationReports = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
+                String message = reportService
+                        .sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), Calendar.getInstance(),
+                                getWaitingLocations(locationReports));
+                System.out.println(message);
                 //                JSONObject jsonObject = new JSONObject(message);
                 Message msg = handlerUploadLocation.obtainMessage();
                 JSONObject jsonObject = new JSONObject(message);
@@ -107,8 +93,12 @@ public class DBsync {
     private Handler handlerUploadLocation = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            System.out.println("================ " + msg);
-            //            if (msg.toString())
+            System.out.println("================ " + msg.obj);
+            if (msg.obj.toString().equalsIgnoreCase("success")) {
+                myLocationStatusIsReported(locationReports);
+            } else {
+
+            }
 
         }
     };
@@ -119,13 +109,14 @@ public class DBsync {
      * @param locationReports
      */
     private void myLocationStatusIsReported(List<LocationReport> locationReports) {
-        DAOlocation daOlocation = new DAOlocation(context);
-        for (LocationReport locationReport : locationReports) {
-            //            daOlocation.updateIsReported(locationReport);
-            System.out.println("update location report status number of rows affected: " +
-                    daOlocation.updateIsReported(locationReport));
+        if (locationReports.size() > 0) {
+            DAOlocation daOlocation = new DAOlocation(context);
+            for (LocationReport locationReport : locationReports) {
+                            daOlocation.updateIsReported(locationReport);
+                System.out.println("update location report status number of rows affected: " +
+                        daOlocation.updateIsReported(locationReport));
+            }
         }
-
     }
 
 
