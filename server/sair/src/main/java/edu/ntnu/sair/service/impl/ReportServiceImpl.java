@@ -23,7 +23,9 @@ import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by chun on 2/16/15.
@@ -70,19 +72,21 @@ public class ReportServiceImpl implements ReportService {
         }
         try {
             JSONArray array = new JSONArray(list);
+            List<Location> locationList = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 Location location = new Location();
                 location.setMember(this.memberDao.getByUsername(username));
-                location.setLongitude((double) (int) object.get("longitude"));
-                location.setLatitude((double) (int) object.get("latitude"));
+                location.setLongitude((double) object.get("longitude"));
+                location.setLatitude((double) object.get("latitude"));
                 Calendar calendar = Calendar.getInstance();
                 location.setServerTimestamp(calendar);
                 Calendar calendar2 = Calendar.getInstance();
                 calendar2.setTimeInMillis(((long) object.get("sendingTime")));
                 location.setClientTimestamp(calendar2);
-                this.locationDao.add(location);
+                locationList.add(location);
             }
+            this.locationDao.add(locationList);
 
             return new Result("sendLocationReportList", "success").toString();
         } catch (Exception e) {
@@ -126,24 +130,25 @@ public class ReportServiceImpl implements ReportService {
         }
         try {
             JSONArray array = new JSONArray(list);
+            List<TextReport> textReportList = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 Location location = new Location();
                 location.setMember(this.memberDao.getByUsername(username));
-                location.setLongitude((double) (int) object.get("longitude"));
-                location.setLatitude((double) (int) object.get("latitude"));
+                location.setLongitude((double) object.get("longitude"));
+                location.setLatitude((double) object.get("latitude"));
                 Calendar calendar = Calendar.getInstance();
                 location.setServerTimestamp(calendar);
                 Calendar calendar2 = Calendar.getInstance();
                 calendar2.setTimeInMillis(((long) object.get("sendingTime")));
                 location.setClientTimestamp(calendar2);
-                this.locationDao.add(location);
 
                 TextReport textReport = new TextReport();
                 textReport.setLocation(location);
                 textReport.setContent((String) object.get("content"));
-                this.textReportDao.add(textReport);
+                textReportList.add(textReport);
             }
+            this.textReportDao.add(textReportList);
             return new Result("sendTextReportList", "success").toString();
         } catch (Exception e) {
             return new Result("sendTextReportList", "server error").toString();

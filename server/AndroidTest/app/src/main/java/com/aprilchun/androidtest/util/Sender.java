@@ -32,7 +32,7 @@ public class Sender {
             headerProperty = new HeaderProperty("Content-Encoding", "gzip");
             headers.add(headerProperty);
 
-            HttpTransport ht = new HttpTransport(Constant.SERVICE_URL + "/SOAP/" + wsdl);
+            HttpTransport ht = new HttpTransport(Constant.SERVICE_URL + "/SOAP/" + wsdl, Constant.TIMEOUT);
             ht.call(null, envelope, headers);
 
             return envelope.getResponse().toString();

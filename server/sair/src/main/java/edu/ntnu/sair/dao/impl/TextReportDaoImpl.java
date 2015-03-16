@@ -38,6 +38,15 @@ public class TextReportDaoImpl implements TextReportDao {
     }
 
     @Override
+    public void add(List<TextReport> list) {
+        this.session = this.sessionFactory.getCurrentSession();
+        for (TextReport o : list) {
+            this.session.save(o.getLocation());
+            this.session.save(o);
+        }
+    }
+
+    @Override
     public void delete(TextReport textReport) {
         this.session = this.sessionFactory.getCurrentSession();
         this.session.delete(textReport);

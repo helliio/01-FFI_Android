@@ -78,7 +78,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<Location> list = this.locationDao.getByTeamLatest(member.getTeamId());
-            if (list == null){
+            if (list == null) {
                 return new Result("getLatestTeamLocations", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -110,7 +110,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<Location> list = this.locationDao.getByTeamPeriod(member.getTeamId(), Long.valueOf(startTime), Long.valueOf(endTime));
-            if (list == null){
+            if (list == null) {
                 return new Result("getPeriodTeamLocations", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -142,7 +142,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<TextReport> list = this.textReportDao.getByTeam(member.getTeamId());
-            if (list == null){
+            if (list == null) {
                 return new Result("getAllTeamTextReports", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -176,7 +176,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<TextReport> list = this.textReportDao.getByTeamLatest(member.getTeamId());
-            if (list == null){
+            if (list == null) {
                 return new Result("getLatestTeamTextReports", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -210,7 +210,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<TextReport> list = this.textReportDao.getByTeamPeriod(member.getTeamId(), Long.valueOf(startTime), Long.valueOf(endTime));
-            if (list == null){
+            if (list == null) {
                 return new Result("getPeriodTeamTextReports", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -244,7 +244,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<PhotoReport> list = this.photoReportDao.getByTeam(member.getTeamId());
-            if (list == null){
+            if (list == null) {
                 return new Result("getAllTeamPhotoReports", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -281,7 +281,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<PhotoReport> list = this.photoReportDao.getByTeamLatest(member.getTeamId());
-            if (list == null){
+            if (list == null) {
                 return new Result("getLatestTeamPhotoReports", "No result").toString();
             }
             JSONArray array = new JSONArray();
@@ -318,7 +318,7 @@ public class RequestServiceImpl implements RequestService {
         try {
             Member member = this.memberDao.getByUsername(username);
             List<PhotoReport> list = this.photoReportDao.getByTeamPeriod(member.getTeamId(), Long.valueOf(startTime), Long.valueOf(endTime));
-            if (list == null){
+            if (list == null) {
                 return new Result("getPeriodTeamPhotoReports", "No result").toString();
             }
             JSONArray array = new JSONArray();

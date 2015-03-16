@@ -15,14 +15,14 @@ import java.util.Calendar;
  * Created by chun on 2/18/15.
  */
 public class RestReportService implements ReportService {
-    public String sendLocationReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude) {
+    public String sendLocationReport(String username, String deviceId, long sendingTime, double latitude, double longitude) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));
         // arg1: uuid
         requestData.add("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        requestData.add("sendingTime", String.valueOf(sendingTime.getTimeInMillis()));
+        requestData.add("sendingTime", String.valueOf(sendingTime));
         // arg3: latitude
         requestData.add("latitude", String.valueOf(latitude));
         // arg4: longitude
@@ -32,28 +32,28 @@ public class RestReportService implements ReportService {
     }
 
     @Override
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
+    public String sendLocationReportList(String username, String deviceId, long sendingTime, JSONArray list) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));
         // arg1: uuid
         requestData.add("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        requestData.add("sendingTime", String.valueOf(sendingTime.getTimeInMillis()));
+        requestData.add("sendingTime", String.valueOf(sendingTime));
         // arg3: list
         requestData.add("list", list.toString());
 
         return Sender.sendRESTRequest(requestData, "report/sendLocationReportList");
     }
 
-    public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content) {
+    public String sendTextReport(String username, String deviceId, long sendingTime, double latitude, double longitude, String content) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));
         // arg1: uuid
         requestData.add("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        requestData.add("sendingTime", String.valueOf(sendingTime.getTimeInMillis()));
+        requestData.add("sendingTime", String.valueOf(sendingTime));
         // arg3: latitude
         requestData.add("latitude", String.valueOf(latitude));
         // arg4: longitude
@@ -65,28 +65,28 @@ public class RestReportService implements ReportService {
     }
 
     @Override
-    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
+    public String sendTextReportList(String username, String deviceId, long sendingTime, JSONArray list) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));
         // arg1: uuid
         requestData.add("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        requestData.add("sendingTime", String.valueOf(sendingTime.getTimeInMillis()));
+        requestData.add("sendingTime", String.valueOf(sendingTime));
         // arg3: list
         requestData.add("list", list.toString());
 
         return Sender.sendRESTRequest(requestData, "report/sendTextReportList");
     }
 
-    public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description) {
+    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String description) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));
         // arg1: uuid
         requestData.add("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        requestData.add("sendingTime", String.valueOf(sendingTime.getTimeInMillis()));
+        requestData.add("sendingTime", String.valueOf(sendingTime));
         // arg3: latitude
         requestData.add("latitude", String.valueOf(latitude));
         // arg4: longitude

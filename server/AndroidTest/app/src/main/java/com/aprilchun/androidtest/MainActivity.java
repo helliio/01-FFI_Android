@@ -34,9 +34,9 @@ import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity {
 
-    private UserService userService = new RestUserService();
+    private UserService userService = new SoapUserService();
     private ReportService reportService = new SoapReportService();
-    private RequestService requestService = new RestRequestService();
+    private RequestService requestService = new SoapRequestService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,10 +125,15 @@ public class MainActivity extends ActionBarActivity {
                         locationJObj.put("longitude", 1);
                         locationJObj.put("latitude", 1);
                         locationJObj.put("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+                        Calendar c1 = Calendar.getInstance();
                         JSONArray array = new JSONArray();
-                        array.put(locationJObj);
-                        array.put(locationJObj);
-                        String response = reportService.sendLocationReportList("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE), array);
+                        for (int i = 0; i < 100000; i++) {
+                            array.put(locationJObj);
+                        }
+                        System.out.println(Calendar.getInstance().getTimeInMillis() - c1.getTimeInMillis() + "ms");
+                        Calendar c2 = Calendar.getInstance();
+                        String response = reportService.sendLocationReportList("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis(), array);
+                        System.out.println(Calendar.getInstance().getTimeInMillis() - c2.getTimeInMillis() + "ms");
                         Message msg = handler.obtainMessage();
                         JSONObject jsonObject = new JSONObject(response);
                         msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
@@ -162,9 +167,13 @@ public class MainActivity extends ActionBarActivity {
                         obj.put("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
                         obj.put("content", "listTest");
                         JSONArray array = new JSONArray();
-                        array.put(obj);
-                        array.put(obj);
-                        String response = reportService.sendTextReportList("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE), array);
+                        for (int i = 0; i < 100000; i++) {
+                            array.put(obj);
+                        }
+                        Calendar c2 = Calendar.getInstance();
+//                        String response = reportService.sendTextReportList("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE), array);
+                        String response = reportService.sendTextReport("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis(), 1, 1, "test");
+                        System.out.println(Calendar.getInstance().getTimeInMillis() - c2.getTimeInMillis() + "ms");
                         Message msg = handler.obtainMessage();
                         JSONObject jsonObject = new JSONObject(response);
                         msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
@@ -197,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    String response = reportService.sendPhotoReport("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE), 1, 1, 1, file, "test");
+                    String response = reportService.sendPhotoReport("gg", androidId, Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis(), 1, 1, 1, file, "test");
                     try {
                         Message msg = handler.obtainMessage();
                         JSONObject jsonObject = new JSONObject(response);
@@ -222,36 +231,38 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    String androidId = Settings.Secure.getString(getContentResolver(),
-                            Settings.Secure.ANDROID_ID);
-                    Calendar calendar = Calendar.getInstance(Constant.TIME_ZONE);
-                    calendar.set(2015, 1, 1);
-                    String startTime = String.valueOf(calendar.getTimeInMillis());
-                    calendar.set(2015, 2, 28);
-                    String endTime = String.valueOf(calendar.getTimeInMillis());
+                    try {
+                        String androidId = Settings.Secure.getString(getContentResolver(),
+                                Settings.Secure.ANDROID_ID);
+                        Calendar calendar = Calendar.getInstance(Constant.TIME_ZONE);
+                        calendar.set(2015, 1, 1);
+                        String startTime = String.valueOf(calendar.getTimeInMillis());
+                        calendar.set(2015, 2, 28);
+                        String endTime = String.valueOf(calendar.getTimeInMillis());
+                        Calendar c2 = Calendar.getInstance();
 //                    String response = requestService.getAllTeamLocations("gg", androidId);
-                    String response = requestService.getLatestTeamLocations("bb", androidId);
+//                    String response = requestService.getLatestTeamLocations("bb", androidId);
 //                    String response = requestService.getPeriodTeamLocations("gg", androidId, startTime, endTime);
-//                    String response = requestService.getAllTeamTextReports("gg", androidId);
-//                    String response = requestService.getLatestTeamTextReports("gg", androidId);
+//                        String response = requestService.getAllTeamTextReports("gg", androidId);
+                        String response = requestService.getLatestTeamTextReports("gg", androidId);
 //                    String response = requestService.getPeriodTeamTextReports("gg", androidId, startTime, endTime);
 //                    String response = requestService.getAllTeamPhotoReports("gg", androidId);
 //                    String response = requestService.getLatestTeamPhotoReports("gg", androidId);
 //                    String response = requestService.getPeriodTeamPhotoReports("gg", androidId, startTime, endTime);
 //                    String response = requestService.getPhoto("gg", androidId, "19");
-                    try {
-                        Message msg = handler.obtainMessage();
-                        JSONObject jsonObject = new JSONObject(response);
-                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
-                        handler.sendMessage(msg);
-                        String obj = (String) jsonObject.get("obj");
-                        JSONArray array = new JSONArray(obj);
-                        for (int i = 0; i < array.length(); i++) {
-                            System.out.println(array.get(i));
-                        }
+                        System.out.println(Calendar.getInstance().getTimeInMillis() - c2.getTimeInMillis() + "ms");
+//                        Message msg = handler.obtainMessage();
+//                        JSONObject jsonObject = new JSONObject(response);
+//                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+//                        handler.sendMessage(msg);
+//                        String obj = (String) jsonObject.get("obj");
+//                        JSONArray array = new JSONArray(obj);
+//                        for (int i = 0; i < array.length(); i++) {
+//                            System.out.println(array.length());
+//                        }
 
 //                        System.out.println(obj);
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     Looper.loop();
@@ -288,7 +299,7 @@ public class MainActivity extends ActionBarActivity {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_SHORT).show();
         }
     };
 }
