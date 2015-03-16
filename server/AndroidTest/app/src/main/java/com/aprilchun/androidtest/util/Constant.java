@@ -18,7 +18,7 @@ public class Constant {
     // Time format
     public static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
-    // Timeout
+    // Timeout in ms
     public static final int TIMEOUT = 360000;
 
 }

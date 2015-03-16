@@ -1,14 +1,15 @@
-package com.aprilchun.androidtest.service.impl;
+package ffiandroid.situationawareness.service.impl;
 
-import com.aprilchun.androidtest.service.ReportService;
-import com.aprilchun.androidtest.util.Coder;
-import com.aprilchun.androidtest.util.Sender;
 
 import org.json.JSONArray;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.File;
+
+import ffiandroid.situationawareness.service.ReportService;
+import ffiandroid.situationawareness.util.Coder;
+import ffiandroid.situationawareness.util.Sender;
 
 /**
  * Created by chun on 2/18/15.
