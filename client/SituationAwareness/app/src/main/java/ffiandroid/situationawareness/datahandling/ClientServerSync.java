@@ -35,14 +35,6 @@ public class ClientServerSync {
                         try {
                             PerformBackgroundTask performBackgroundTask = new PerformBackgroundTask(context);
                             performBackgroundTask.execute();
-                            //                            performBackgroundTask.execute(new Runnable() {
-                            //                                @Override public void run() {
-                            //                                    System.out.println(
-                            //
-                            // "----------------------------------------------------------------------");
-                            //                                    new DBsync(context).uploadLocation();
-                            //                                }
-                            //                            });
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -50,6 +42,6 @@ public class ClientServerSync {
                 });
             }
         };
-        timer.schedule(doAsynchronousTask, 5000, ParameterSetting.SYNC_LOOP_TIME_MS);
+        timer.schedule(doAsynchronousTask, 2000, ParameterSetting.getAutoSyncTime());
     }
 }

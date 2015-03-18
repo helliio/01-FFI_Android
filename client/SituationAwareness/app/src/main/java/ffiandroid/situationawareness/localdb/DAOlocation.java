@@ -58,14 +58,12 @@ public class DAOlocation {
      */
     public long updateIsReported(LocationReport locationReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.LocationTB.COLUMN_ISREPOETED, 1);
+        cv.put(DBtables.LocationTB.COLUMN_ISREPOETED, true);
 
-        String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=" + locationReport.getUserid() + "AND" +
-                DBtables.LocationTB.COLUMN_DATETIME + "=" +
-                locationReport.getDatetime().getTimeInMillis();
-
-//        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, null);
-        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, null);
+        String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=?" + " AND " +
+                DBtables.LocationTB.COLUMN_DATETIME + "=?";
+        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where,
+                new String[]{locationReport.getUserid(), locationReport.getDatetime().getTimeInMillis() + ""});
     }
 
     /**

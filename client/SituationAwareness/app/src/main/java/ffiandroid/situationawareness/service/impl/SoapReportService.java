@@ -14,14 +14,14 @@ import ffiandroid.situationawareness.util.Sender;
  * Created by chun on 2/18/15.
  */
 public class SoapReportService implements ReportService {
-    public String sendLocationReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude) {
+    public String sendLocationReport(String username, String deviceId, long sendingTime, double latitude, double longitude) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReport");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
         soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
+        soapObject.addProperty("sendingTime", sendingTime);
         // arg3: latitude
         soapObject.addProperty("latitude", String.valueOf(latitude));
         // arg4: longitude
@@ -31,28 +31,28 @@ public class SoapReportService implements ReportService {
     }
 
     @Override
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
+    public String sendLocationReportList(String username, String deviceId, long sendingTime, JSONArray list) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendLocationReportList");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
         soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
+        soapObject.addProperty("sendingTime", sendingTime);
         // arg3: list
         soapObject.addProperty("list", list.toString());
 
         return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
-    public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content) {
+    public String sendTextReport(String username, String deviceId, long sendingTime, double latitude, double longitude, String content) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendTextReport");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
         soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
+        soapObject.addProperty("sendingTime", sendingTime);
         // arg3: latitude
         soapObject.addProperty("latitude", String.valueOf(latitude));
         // arg4: longitude
@@ -64,28 +64,28 @@ public class SoapReportService implements ReportService {
     }
 
     @Override
-    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, JSONArray list) {
+    public String sendTextReportList(String username, String deviceId, long sendingTime, JSONArray list) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendTextReportList");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
         soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
+        soapObject.addProperty("sendingTime", sendingTime);
         // arg3: list
         soapObject.addProperty("list", list.toString());
 
         return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
-    public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description) {
+    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String description) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendPhotoReport");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
         // arg1: uuid
         soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
         // arg2: sendingTime
-        soapObject.addProperty("sendingTime", sendingTime.getTimeInMillis());
+        soapObject.addProperty("sendingTime", sendingTime);
         // arg3: latitude
         soapObject.addProperty("latitude", String.valueOf(latitude));
         // arg4: longitude
@@ -103,4 +103,3 @@ public class SoapReportService implements ReportService {
     }
 
 }
-

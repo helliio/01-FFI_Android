@@ -30,5 +30,12 @@
     <string name="map_view">Map View</string>
     <string name="title_activity_location_view">LocationView</string>
     <string name="location_view">Location View</string>
+    <string name="auto_sync_text_view">Auto sync (minute):</string>
+    <string name="text_save">save settings</string>
+    <string name="last_sync_to_server">Last sync to server</string>
+    <string name="current_location">Current location</string>
+    <string name="not_reported_location_items">Not reported location items</string>
+    <string name="not_reported_photos">Not reported photos</string>
+    <string name="not_reported_text_items">Not reported text items</string>
 
 </resources>

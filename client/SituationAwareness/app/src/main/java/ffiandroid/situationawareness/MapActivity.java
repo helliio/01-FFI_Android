@@ -31,6 +31,7 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
+import ffiandroid.situationawareness.datahandling.StartSync;
 import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
@@ -60,10 +61,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
         activeOpenStreetMap();
         checkGpsAvailability();
-        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.LOCATION_UPDATE_TIME,
-                ParameterSetting.LOCATION_UPDATE_DISTANCE, this);
+        locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
+                ParameterSetting.getLocationUpdateDistance(), this);
 
-        //        StartSync.getInstance(getApplicationContext()).start();
+                StartSync.getInstance(getApplicationContext()).start();
 
     }
 
@@ -267,7 +268,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     }
 
     private void statusAndSendButtonClicked() {
-        System.out.println("-------------------------------kk---------------------------------------");
+        Toast.makeText(this, "status send button clicked", Toast.LENGTH_SHORT).show();
         runOnUiThread(new Runnable() {
             @Override public void run() {
                 new PerformBackgroundTask(getApplicationContext()).execute();

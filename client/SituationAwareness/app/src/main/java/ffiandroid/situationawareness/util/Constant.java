@@ -10,12 +10,15 @@ public class Constant {
     public static final String AES_KEY = "01FFIAndroid2015";
 
     // URL of the server
-    public static final String SERVICE_URL = "http://78.91.48.208:8080";//"http://sair.chun.no";
+    public static final String SERVICE_URL = "http://sair.chun.no";
 
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");
 
     // Time format
     public static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    // Timeout in ms
+    public static final int TIMEOUT = 360000;
 
 }

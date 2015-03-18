@@ -9,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.List;
 
 import ffiandroid.situationawareness.localdb.DAOlocation;
@@ -71,11 +70,8 @@ public class DBsync {
             Looper.prepare();
             try {
                 locationReports = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
-                String message = reportService
-                        .sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), Calendar.getInstance(),
-                                getWaitingLocations(locationReports));
-                System.out.println(message);
-                //                JSONObject jsonObject = new JSONObject(message);
+                String message = reportService.sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                        System.currentTimeMillis(), getWaitingLocations(locationReports));
                 Message msg = handlerUploadLocation.obtainMessage();
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
@@ -93,11 +89,11 @@ public class DBsync {
     private Handler handlerUploadLocation = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            System.out.println("================ " + msg.obj);
             if (msg.obj.toString().equalsIgnoreCase("success")) {
                 myLocationStatusIsReported(locationReports);
+                UserInfo.setLastSyncSucceed(true);
             } else {
-
+                UserInfo.setLastSyncSucceed(false);
             }
 
         }
@@ -112,7 +108,7 @@ public class DBsync {
         if (locationReports.size() > 0) {
             DAOlocation daOlocation = new DAOlocation(context);
             for (LocationReport locationReport : locationReports) {
-                            daOlocation.updateIsReported(locationReport);
+                daOlocation.updateIsReported(locationReport);
                 System.out.println("update location report status number of rows affected: " +
                         daOlocation.updateIsReported(locationReport));
             }
