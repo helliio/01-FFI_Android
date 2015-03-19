@@ -62,8 +62,8 @@ public class DAOlocation {
 
         String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=?" + " AND " +
                 DBtables.LocationTB.COLUMN_DATETIME + "=?";
-        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where,
-                new String[]{locationReport.getUserid(), locationReport.getDatetime().getTimeInMillis() + ""});
+        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid(),
+                        String.valueOf(locationReport.getDatetime().getTimeInMillis())});
     }
 
     /**

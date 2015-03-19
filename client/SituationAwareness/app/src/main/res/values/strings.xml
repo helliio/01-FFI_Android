@@ -21,7 +21,7 @@
     <string name="repeat_password">Repeat password</string>
     <string name="user_name">User Name</string>
     <string name="report_issues_about_this_area">Report issues about this area:</string>
-    <string name="send_text_report">Send text Report</string>
+    <string name="save_report">Save text Report</string>
     <string name="title_activity_report_view">ReportView</string>
     <string name="title_report_view">Report View</string>
     <string name="title_logout">Logout</string>

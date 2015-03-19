@@ -14,16 +14,26 @@ import android.os.AsyncTask;
  */
 public class PerformBackgroundTask extends AsyncTask {
     private Context context;
-    private DBsync dBsync;
+    private DBsync photo;
+    private DBsync report;
+    private DBsync location;
 
     public PerformBackgroundTask(Context context) {
         this.context = context;
-        dBsync = new DBsync(context);
+        photo = new DBsyncPhoto(context);
+        report = new DBsyncTextPeport(context);
+        location = new DBsyncLocation(context);
     }
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
-            dBsync.uploadLocation();
+//            photo.upload();
+            report.upload();
+//            location.upload();
+
+//            photo.download();
+//            report.download();
+//            location.download();
         }
         return null;
     }

@@ -64,7 +64,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
                 ParameterSetting.getLocationUpdateDistance(), this);
 
-                StartSync.getInstance(getApplicationContext()).start();
+        StartSync.getInstance(getApplicationContext()).start();
 
     }
 
@@ -267,6 +267,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         }
     }
 
+    /**
+     * status and send button at the top of each menu bar
+     */
     private void statusAndSendButtonClicked() {
         Toast.makeText(this, "status send button clicked", Toast.LENGTH_SHORT).show();
         runOnUiThread(new Runnable() {

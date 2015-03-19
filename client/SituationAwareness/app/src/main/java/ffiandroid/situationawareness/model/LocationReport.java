@@ -11,12 +11,12 @@ import java.util.Calendar;
  * Responsible for this file: GuoJunjun
  */
 public class LocationReport {
-    private String userid;
-    private boolean isreported;
-    private Calendar datetime;
-    private long datetimeLong;
-    private double latitude, longitude;
-    private SimpleDateFormat df = new SimpleDateFormat("MMMM d, yy  h:mm");
+    protected String userid;
+    protected boolean isreported;
+    protected Calendar datetime;
+    protected long datetimeLong;
+    protected double latitude, longitude;
+    protected SimpleDateFormat df = new SimpleDateFormat("MMMM d, yy  h:mm");
 
     /**
      * If autoFill True
