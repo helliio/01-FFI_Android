@@ -21,23 +21,26 @@ public class PerformBackgroundTask extends AsyncTask {
     public PerformBackgroundTask(Context context) {
         this.context = context;
         photo = new DBsyncPhoto(context);
-        report = new DBsyncTextPeport(context);
+        report = new DBsyncTextReport(context);
         location = new DBsyncLocation(context);
     }
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
-//            photo.upload();
+            //            photo.upload();
             report.upload();
-//            location.upload();
+            //            location.upload();
 
-//            photo.download();
-//            report.download();
-//            location.download();
+            //            photo.download();
+            report.download();
+            //            location.download();
         }
         return null;
     }
 
+    /**
+     * @return true is there is a network connection
+     */
     public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();

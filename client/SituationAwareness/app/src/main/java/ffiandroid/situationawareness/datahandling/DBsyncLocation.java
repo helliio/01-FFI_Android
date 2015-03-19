@@ -57,7 +57,9 @@ public class DBsyncLocation extends DBsync {
             Looper.loop();
         }
     };
-
+    /**
+     * handler the message from server
+     */
     private Handler handlerUploadLocation = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -135,6 +137,11 @@ public class DBsyncLocation extends DBsync {
         }
     };
 
+    /**
+     * save locations to local database
+     *
+     * @param jsonArray
+     */
     private void saveLocationToLocalDB(JSONArray jsonArray) {
         if (jsonArray != null) {
             DAOlocation daOlocation = new DAOlocation(context);
