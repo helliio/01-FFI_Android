@@ -71,8 +71,8 @@ public class Login extends ActionBarActivity {
     }
 
     private boolean hasinput() {
-        return (((EditText) findViewById(R.id.editTextLoginID)).getText().toString().length() > 1 &&
-                ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString().length() > 1);
+        return (((EditText) findViewById(R.id.editTextLoginID)).getText().toString().length() > 0 &&
+                ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString().length() > 0);
     }
 
     /**

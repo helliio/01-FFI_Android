@@ -11,10 +11,14 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Date;
 
 
 import org.json.JSONArray;
@@ -58,6 +62,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private String bestProvider;
     private Marker startMarker;
     private CacheManager cacheManager;
+    Calendar c = Calendar.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +80,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     }
 
 
-
-
-
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
     }
 
@@ -115,11 +119,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         mMapController.setZoom(15);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+
         updateLocation();
 
     }
 
-    private void updateLocation(){
+    private void updateLocation() {
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
         // Get the name of the best provider
@@ -127,42 +132,52 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         // Get Current Location
 
         /*
-        If The best provider is GPS, it will first try to find the location
-        using the device's GPS functionality. If that is not possible it will
-        instead use networks to determine location
-         */
-       if (bestProvider.equals("gps")){
-           if(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)!= null){
-               myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-               Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
-               System.out.println("Updated with GPS");
-           }
-           else if(locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)!= null){
-               myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-               Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
-               System.out.println("Updated with Network");
+        It will first try to find the location using the device's GPS functionality.
+        If that is not possible it will instead use networks to determine the users location, or if
+        that it also not possible it will just select a default position.
 
-           }
-           else
-               Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
-            System.out.println("No location found");
+        If there exists a GPS location that is not older than 10 minutes, use this as the position
+         */
+        if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null &&
+                System.currentTimeMillis() - locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER).getTime() < 600000) {
+            myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+            Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
+            System.out.println("Updated with GPS");
+            Log.i("gps", "Updated using recent GPS position from:" + Long.toString(myCurrentLocation.getTime())
+                    + " Current time is: " + System.currentTimeMillis());
+            /*
+            If the GPS location is old, it will try to use the network for determining location instead if possible
+             */
+        } else if (locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER) != null) {
+            myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+
+            Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
+            System.out.println("Updated with Network");
+            Log.i("gps", "Updated using Network location from:" + Long.toString(myCurrentLocation.getTime())
+                    + " Current time is: " + System.currentTimeMillis());
 
         }
-        else
-       if(locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER)!= null) {
-           myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-           Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
-           System.out.println("Updated with Network");
-       }
-       else if(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER)!= null){
-           myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-           Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
-           System.out.println("Updated with GPS");
-       }
-       else
-           Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
-        System.out.println("No location found");
+           /*
+           If the gps location is old, but there is no network location, it will still use the old GPS location.
+            */
+        else if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null) {
+            Toast.makeText(getApplicationContext(), "Updated position with old gps", Toast.LENGTH_LONG).show();
+            System.out.println("Updated with old GPS");
+            Log.i("gps", "Updated using Old GPS position from:" + Long.toString(myCurrentLocation.getTime())
+                    + " Current time is: " + System.currentTimeMillis());
 
+            /*
+            If there is no way of determining the location, it will just use a default lat long location(Here trondheim city centre)
+             */
+        } else {
+            Toast.makeText(getApplicationContext(), "Could not find location, Using default", Toast.LENGTH_LONG).show();
+        myCurrentLocation = new Location("none");
+        myCurrentLocation.setLatitude(63.4305939);
+        myCurrentLocation.setLongitude(10.3921571);
+
+        System.out.println("No location found");
+        Log.i("gps", "Could not find any locations stored on device");
+    }
 
 
         startMarker = new Marker(mMapView);
@@ -319,6 +334,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
             if (markersOverlayItemArray.size() > 0) {
                 addCoWorkerMarkers(markersOverlayItemArray);
             }
+
         }
     };
 
