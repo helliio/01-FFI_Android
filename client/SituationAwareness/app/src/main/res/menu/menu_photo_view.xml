@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="ffiandroid.situationawareness.ReportView">
+      tools:context="ffiandroid.situationawareness.PhotoView">
     <item
         android:id="@+id/menu_item_map_view"
         android:title="@string/map_view"
@@ -10,11 +10,6 @@
     <item
         android:id="@+id/menu_item_report_view"
         android:title="@string/title_report_view"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_item_photo_view"
-        android:title="@string/title_photo_report_view"
         android:orderInCategory="100"
         app:showAsAction="never"/>
     <item

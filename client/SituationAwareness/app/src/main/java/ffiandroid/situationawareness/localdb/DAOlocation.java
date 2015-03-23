@@ -63,7 +63,7 @@ public class DAOlocation {
         String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=?" + " AND " +
                 DBtables.LocationTB.COLUMN_DATETIME + "=?";
         return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid(),
-                        String.valueOf(locationReport.getDatetime().getTimeInMillis())});
+                String.valueOf(locationReport.getDatetime().getTimeInMillis())});
     }
 
     /**
@@ -126,7 +126,7 @@ public class DAOlocation {
 
     /**
      * @param myUserID
-     * @return all my locations
+     * @return all my not reported locations
      */
     public List<LocationReport> getMyNOTReportedLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
@@ -142,27 +142,6 @@ public class DAOlocation {
         cursor.close();
         return locationReports;
     }
-
-    //    /**
-    //     * @param myUserID
-    //     * @return all my locations as Json array list
-    //     */
-    //    public JSONArray getMyLocations(String myUserID) {
-    //        JSONArray locationReports = new JSONArray();
-    //
-    //        Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-    //                DBtables.LocationTB.COLUMN_NUSER_ID + " = ?", new String[]{myUserID}, null, null,
-    //                DBtables.LocationTB.COLUMN_DATETIME + " DESC");
-    //        cursor.moveToFirst();
-    //        while (!cursor.isAfterLast()) {
-    //            LocationReport locationReport = cursorToTextReport(cursor);
-    //
-    //            locationReports.add(locationReport);
-    //            cursor.moveToNext();
-    //        }
-    //        cursor.close();
-    //        return locationReports;
-    //    }
 
     /**
      * @return total row count of the table

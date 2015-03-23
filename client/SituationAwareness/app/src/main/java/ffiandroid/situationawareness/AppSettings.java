@@ -88,6 +88,9 @@ public class AppSettings extends ActionBarActivity {
             case R.id.menu_item_report_view:
                 startActivity(new Intent(this, ReportView.class));
                 return true;
+            case R.id.menu_item_photo_view:
+                startActivity(new Intent(this, PhotoView.class));
+                return true;
             case R.id.menu_item_logout:
                 startActivity(new Intent(this, Login.class));
                 return true;

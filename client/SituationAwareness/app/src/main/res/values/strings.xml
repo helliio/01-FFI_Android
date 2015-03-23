@@ -37,5 +37,11 @@
     <string name="not_reported_location_items">Not reported location items</string>
     <string name="not_reported_photos">Not reported photos</string>
     <string name="not_reported_text_items">Not reported text items</string>
+    <string name="title_activity_image_display">ImageDisplay</string>
+    <string name="title_activity_photo_view">PhotoView</string>
+    <string name="new_photo_report">New photo report</string>
+    <string name="take_a_photo">Take a Photo</string>
+    <string name="from_gallery">From Gallery</string>
+    <string name="title_photo_report_view">Photo report</string>
 
 </resources>
