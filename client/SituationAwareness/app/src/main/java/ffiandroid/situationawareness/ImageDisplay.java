@@ -2,9 +2,8 @@ package ffiandroid.situationawareness;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,11 +37,11 @@ public class ImageDisplay extends Activity {
         }
         photoReport = getPhotoReport(jstring);
         description.setText(photoReport.toString());
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+
         imageView.setImageBitmap(ImageResizer.decodeSampledBitmapFromFile(photoReport.getPath(), width, height));
     }
 

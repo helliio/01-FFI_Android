@@ -13,7 +13,7 @@ public class PhotoReport extends LocationReport {
         this.title = title;
         this.description = description;
         this.path = path;
-        this.datetimeLong = datetimeLong;
+        setDatetime(datetimeLong);
     }
 
     public PhotoReport() {

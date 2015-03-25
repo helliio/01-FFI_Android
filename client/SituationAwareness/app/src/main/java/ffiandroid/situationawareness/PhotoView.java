@@ -54,10 +54,10 @@ public class PhotoView extends ActionBarActivity {
      */
     private void initDB() {
         daOphoto = new DAOphoto(this);
-        //        add images from database to images ArrayList
-//        for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
-//            images.add(photoReport);
-//        }
+        //                add images from database to images ArrayList
+        for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
+            images.add(photoReport);
+        }
     }
 
     public void btnNewPhotoReportOnClick(View view) {
@@ -80,7 +80,6 @@ public class PhotoView extends ActionBarActivity {
                 activeTakePhoto();
             }
         });
-
         // show dialog on screen
         dialog.show();
     }
@@ -136,16 +135,20 @@ public class PhotoView extends ActionBarActivity {
                     int column_index_data = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     cursor.moveToFirst();
                     String picturePath = cursor.getString(column_index_data);
+
                     PhotoReport photoReport = new PhotoReport();
                     photoReport.setTitle("Test");
                     photoReport.setDescription("test take a photo and add it to list view");
                     photoReport.setDatetime(System.currentTimeMillis());
                     photoReport.setPath(picturePath);
+
                     images.add(photoReport);
+
                     daOphoto.addPhoto(photoReport);
                 }
         }
     }
+
 
     /**
      * Move to Image Display screen and show the selected photo

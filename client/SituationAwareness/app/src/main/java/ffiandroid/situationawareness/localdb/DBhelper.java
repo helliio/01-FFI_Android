@@ -41,9 +41,9 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private static final String CREATE_PHOTO_TABLE = "CREATE TABLE " + DBtables.PhotoTB.TABLE_NAME + " (" +
             DBtables.PhotoTB.COLUMN_NUSER_ID + TEXT_TYPE + COMMA_SEP +
-            DBtables.PhotoTB.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_DATETIME + NUMERIC_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_ISREPOETED + NUMERIC_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_LONGITUDE + REAL_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_LATITUDE + REAL_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +

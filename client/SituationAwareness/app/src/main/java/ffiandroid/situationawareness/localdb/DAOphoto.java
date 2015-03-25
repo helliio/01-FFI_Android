@@ -40,14 +40,14 @@ public class DAOphoto {
      */
     public long addPhoto(PhotoReport photoReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.PhotoTB.COLUMN_PATH, photoReport.getPath());
         cv.put(DBtables.PhotoTB.COLUMN_NUSER_ID, photoReport.getUserid());
+        cv.put(DBtables.PhotoTB.COLUMN_DATETIME, photoReport.getDatetimeLong());
         cv.put(DBtables.PhotoTB.COLUMN_ISREPOETED, photoReport.isIsreported());
+        cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
         cv.put(DBtables.PhotoTB.COLUMN_LONGITUDE, photoReport.getLongitude());
         cv.put(DBtables.PhotoTB.COLUMN_LATITUDE, photoReport.getLatitude());
-        cv.put(DBtables.PhotoTB.COLUMN_DATETIME, System.currentTimeMillis());
         cv.put(DBtables.PhotoTB.COLUMN_TITLE, photoReport.getTitle());
-        cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
+        cv.put(DBtables.PhotoTB.COLUMN_PATH, photoReport.getPath());
         return database.insert(DBtables.PhotoTB.TABLE_NAME, null, cv);
     }
 
@@ -72,9 +72,8 @@ public class DAOphoto {
      */
     public List<PhotoReport> getAllPhotos() {
         List<PhotoReport> photoReports = new ArrayList<>();
-        Cursor cursor =
-                database.query(DBtables.PhotoTB.TABLE_NAME, null, null, null, null, null,
-                        DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, null, null, null, null,
+                DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             PhotoReport photoReport = cursorToPhotoReport(cursor);
