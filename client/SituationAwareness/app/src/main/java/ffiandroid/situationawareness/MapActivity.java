@@ -16,14 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-<<<<<<< HEAD
 import java.util.Calendar;
 import java.util.Date;
-
-
-=======
->>>>>>> a6dff7b94d902598d29f4da487630e080ba3f339
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
@@ -35,9 +29,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
-
 import java.util.ArrayList;
-
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.datahandling.StartSync;
 import ffiandroid.situationawareness.localdb.DAOlocation;
@@ -79,12 +71,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     }
 
 
-<<<<<<< HEAD
+
     @Override
     protected void onResume() {
-=======
-    @Override protected void onResume() {
->>>>>>> a6dff7b94d902598d29f4da487630e080ba3f339
         super.onResume();
     }
 
@@ -92,7 +81,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     /**
      * check if GPS enabled and if not send user to the GSP settings
      */
-    private void checkGpsAvailability() {
+        private void checkGpsAvailability() {
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (!enabled) {
@@ -138,7 +127,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
         If there exists a GPS location that is not older than 10 minutes, use this as the position
          */
-<<<<<<< HEAD
         if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null &&
                 System.currentTimeMillis() - locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER).getTime() < 600000) {
             myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
@@ -175,32 +163,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         myCurrentLocation = new Location("none");
         myCurrentLocation.setLatitude(63.4305939);
         myCurrentLocation.setLongitude(10.3921571);
-=======
-        if (bestProvider.equals("gps")) {
-            if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null) {
-                myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-                Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
-                System.out.println("Updated with GPS");
-            } else if (locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER) != null) {
-                myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-                Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG)
-                        .show();
-                System.out.println("Updated with Network");
-
-            } else Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
-            System.out.println("No location found");
-
-        } else if (locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER) != null) {
-            myCurrentLocation = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-            Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
-            System.out.println("Updated with Network");
-        } else if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null) {
-            myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-            Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
-            System.out.println("Updated with GPS");
-        } else Toast.makeText(getApplicationContext(), "Could not find location", Toast.LENGTH_LONG).show();
-        System.out.println("No location found");
->>>>>>> a6dff7b94d902598d29f4da487630e080ba3f339
 
         System.out.println("No location found");
         Log.i("gps", "Could not find any locations stored on device");
@@ -373,28 +335,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         //        new Thread(getCoWorkerMarkerThread).start();
     }
 
-<<<<<<< HEAD
-    private Runnable getCoWorkerMarkerThread = new Runnable() {
-        @Override public void run() {
-            ArrayList<OverlayItem> markersOverlayItemArray =
-                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
-            if (markersOverlayItemArray.size() > 0) {
-                addCoWorkerMarkers(markersOverlayItemArray);
-            }
 
-        }
-    };
-
-    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
-        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-        mMapView.getOverlays().add(markerItemizedIconOverlay);
-        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-        mMapView.getOverlays().add(myScaleBarOverlay);
-    }
-
-    private void cacheTiles(){
-=======
     //    private Runnable getCoWorkerMarkerThread = new Runnable() {
     //        @Override public void run() {
     //            ArrayList<OverlayItem> markersOverlayItemArray =
@@ -414,7 +355,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     //    }
 
     private void cacheTiles() {
->>>>>>> a6dff7b94d902598d29f4da487630e080ba3f339
+
         cacheManager = new CacheManager(mMapView);
         int zoomMin = 11;
         int zoomMax = 17;
