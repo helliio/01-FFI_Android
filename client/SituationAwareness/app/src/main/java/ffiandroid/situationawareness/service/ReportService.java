@@ -9,13 +9,13 @@ import java.util.Calendar;
  * Created by chun on 3/4/15.
  */
 public interface ReportService {
-    public String sendLocationReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude);
+    public String sendLocationReport(String username, String deviceId, long sendingTime, double latitude, double longitude);
 
-    public String sendLocationReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
+    public String sendLocationReportList(String username, String deviceId, long sendingTime, JSONArray list);
 
-    public String sendTextReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, String content);
+    public String sendTextReport(String username, String deviceId, long sendingTime, double latitude, double longitude, String content);
 
-    public String sendTextReportList(String username, String deviceId, Calendar sendingTime, JSONArray list);
+    public String sendTextReportList(String username, String deviceId, long sendingTime, JSONArray list);
 
-    public String sendPhotoReport(String username, String deviceId, Calendar sendingTime, double latitude, double longitude, int direction, File file, String description);
+    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String description);
 }

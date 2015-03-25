@@ -1,7 +1,5 @@
 package com.aprilchun.androidtest.service;
 
-import org.json.JSONObject;
-
 /**
  * Created by chun on 3/4/15.
  */

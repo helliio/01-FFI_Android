@@ -265,7 +265,7 @@ public class HttpTransport extends Transport {
 //        os.flush();
 //        os.close();
 
-        System.out.println(requestData.length);
+//        System.out.println(requestData.length);
         // GZIP requestData
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream(requestData.length);
         GZIPOutputStream zos = new GZIPOutputStream(new BufferedOutputStream(byteStream));
@@ -274,7 +274,7 @@ public class HttpTransport extends Transport {
         zos.close();
         byteStream.close();
         requestData = byteStream.toByteArray();
-        System.out.println(requestData.length);
+//        System.out.println(requestData.length);
 
         connection.setRequestProperty("Content-Length", "" + requestData.length);
         connection.setFixedLengthStreamingMode(requestData.length);

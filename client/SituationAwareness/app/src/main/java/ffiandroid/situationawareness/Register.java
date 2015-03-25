@@ -18,7 +18,9 @@ import ffiandroid.situationawareness.service.impl.SoapUserService;
 /**
  * This file is part of project: Situation Awareness
  * <p/>
- * Created by GuoJunjun <junjunguo.com> on 2/20/15. responsible for this file: GuoJunjun
+ * Created by GuoJunjun <junjunguo.com> on 2/20/15.
+ * <p/>
+ * responsible for this file: GuoJunjun
  */
 public class Register extends ActionBarActivity {
     private String userid, username, userpass;
@@ -73,10 +75,12 @@ public class Register extends ActionBarActivity {
                 String message = userService.register(userid, userpass, username, "1");
                 JSONObject jsonMessage = new JSONObject(message);
                 if (message != null && jsonMessage.get("desc").equals("success")) {
-                    Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT)
+                            .show();
                     gotoLogin();
                 } else {
-                    Toast.makeText(getBaseContext(), "connecting server failed, please try again ! " + jsonMessage.get("desc"),
+                    Toast.makeText(getBaseContext(),
+                            "connecting server failed, please try again ! " + jsonMessage.get("desc"),
                             Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {

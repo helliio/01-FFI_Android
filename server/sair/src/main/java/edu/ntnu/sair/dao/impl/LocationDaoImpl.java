@@ -39,6 +39,14 @@ public class LocationDaoImpl implements LocationDao {
     }
 
     @Override
+    public void add(List<Location> list) {
+        this.session = this.sessionFactory.getCurrentSession();
+        for (Location o : list){
+            this.session.save(o);
+        }
+    }
+
+    @Override
     public void delete(Location location) {
         this.session = this.sessionFactory.getCurrentSession();
         this.session.delete(location);

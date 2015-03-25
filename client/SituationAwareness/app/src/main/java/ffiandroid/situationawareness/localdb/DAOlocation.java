@@ -31,6 +31,7 @@ public class DAOlocation {
      */
     public void close() {
         dbHelper.close();
+        database.close();
     }
 
     /**
@@ -50,19 +51,19 @@ public class DAOlocation {
     }
 
     /**
-     * update given location reports isReported value
+     * update given location reports isReported value to true
      *
      * @param locationReport
      * @return the number of rows affected
      */
     public long updateIsReported(LocationReport locationReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.LocationTB.COLUMN_ISREPOETED, locationReport.isIsreported());
+        cv.put(DBtables.LocationTB.COLUMN_ISREPOETED, true);
 
-        String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=" + locationReport.getUserid() + "AND" +
-                DBtables.LocationTB.COLUMN_DATETIME + "=" +
-                locationReport.getDatetime().getTimeInMillis();
-        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, null);
+        String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=?" + " AND " +
+                DBtables.LocationTB.COLUMN_DATETIME + "=?";
+        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid(),
+                String.valueOf(locationReport.getDatetime().getTimeInMillis())});
     }
 
     /**
@@ -113,6 +114,25 @@ public class DAOlocation {
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
                 DBtables.LocationTB.COLUMN_NUSER_ID + " = ?", new String[]{myUserID}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            LocationReport locationReport = cursorToTextReport(cursor);
+            locationReports.add(locationReport);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return locationReports;
+    }
+
+    /**
+     * @param myUserID
+     * @return all my not reported locations
+     */
+    public List<LocationReport> getMyNOTReportedLocations(String myUserID) {
+        List<LocationReport> locationReports = new ArrayList<>();
+        Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
+                DBtables.LocationTB.COLUMN_NUSER_ID + " = ?" + " AND " + DBtables.LocationTB.COLUMN_ISREPOETED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             LocationReport locationReport = cursorToTextReport(cursor);

@@ -39,8 +39,21 @@ public class DBhelper extends SQLiteOpenHelper {
             DBtables.LocationTB.PRIMARY_KEY +
             " )";
 
+    private static final String CREATE_PHOTO_TABLE = "CREATE TABLE " + DBtables.PhotoTB.TABLE_NAME + " (" +
+            DBtables.PhotoTB.COLUMN_NUSER_ID + TEXT_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_DATETIME + NUMERIC_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_ISREPOETED + NUMERIC_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_LONGITUDE + REAL_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_LATITUDE + REAL_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_PATH + TEXT_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.PRIMARY_KEY +
+            " )";
+
     private static final String DELETE_TEXTREPORT_TABLE = "DROP TABLE IF EXISTS " + DBtables.TextReportTB.TABLE_NAME;
     private static final String DELETE_LOCATION_TABLE = "DROP TABLE IF EXISTS " + DBtables.LocationTB.TABLE_NAME;
+    private static final String DELETE_PHOTO_TABLE = "DROP TABLE IF EXISTS " + DBtables.PhotoTB.TABLE_NAME;
 
     public DBhelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -49,11 +62,13 @@ public class DBhelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TEXTREPORT_TABLE);
         db.execSQL(CREATE_LOCATION_TABLE);
+        db.execSQL(CREATE_PHOTO_TABLE);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DELETE_TEXTREPORT_TABLE);
         db.execSQL(DELETE_LOCATION_TABLE);
+        db.execSQL(DELETE_PHOTO_TABLE);
         onCreate(db);
     }
 }

@@ -12,6 +12,8 @@ import java.util.List;
 public interface TextReportDao {
     public void add(TextReport textReport);
 
+    public void add(List<TextReport> list);
+
     public void delete(TextReport textReport);
 
     public void update(TextReport textReport);

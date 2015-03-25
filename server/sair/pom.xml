@@ -27,7 +27,7 @@
     <name>sair</name>
     <groupId>edu.ntnu</groupId>
     <artifactId>sair</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-SOAP-GZIP-RELEASE</version>
 
     <dependencies>
 

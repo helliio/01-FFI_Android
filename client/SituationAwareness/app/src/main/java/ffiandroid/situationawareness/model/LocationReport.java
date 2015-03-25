@@ -11,11 +11,12 @@ import java.util.Calendar;
  * Responsible for this file: GuoJunjun
  */
 public class LocationReport {
-    private String userid;
-    private boolean isreported;
-    private Calendar datetime;
-    private double latitude, longitude;
-    private SimpleDateFormat df = new SimpleDateFormat("MMMM d, yy  h:mm");
+    protected String userid;
+    protected boolean isreported;
+    protected Calendar datetime;
+    protected long datetimeLong;
+    protected double latitude, longitude;
+    protected SimpleDateFormat df = new SimpleDateFormat("MMMM d, yy  h:mm");
 
     /**
      * If autoFill True
@@ -77,6 +78,7 @@ public class LocationReport {
      * @param datetime New value of datetime.
      */
     public void setDatetime(long datetime) {
+        this.datetimeLong = datetime;
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(datetime);
         this.datetime = cal;
@@ -104,6 +106,14 @@ public class LocationReport {
     public Calendar getDatetime() { return datetime; }
 
     /**
+     * Gets datetimeLong.
+     *
+     * @return Value of datetimeLong.
+     */
+    public long getDatetimeLong() { return datetimeLong; }
+
+
+    /**
      * Gets userid.
      *
      * @return Value of userid.
@@ -124,4 +134,5 @@ public class LocationReport {
                 ", " + latitude +
                 ", " + longitude;
     }
+
 }

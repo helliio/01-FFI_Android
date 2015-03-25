@@ -13,6 +13,8 @@ import java.util.List;
 public interface LocationDao {
     public void add(Location location);
 
+    public void add(List<Location> list);
+
     public void delete(Location location);
 
     public void update(Location location);
