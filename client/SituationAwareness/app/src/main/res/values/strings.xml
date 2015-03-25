@@ -43,5 +43,9 @@
     <string name="take_a_photo">Take a Photo</string>
     <string name="from_gallery">From Gallery</string>
     <string name="title_photo_report_view">Photo report</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
 
 </resources>

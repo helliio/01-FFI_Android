@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ public class PhotoView extends ActionBarActivity {
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private DAOphoto daOphoto;
+    private String photoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,14 @@ public class PhotoView extends ActionBarActivity {
      */
     private void initDB() {
         daOphoto = new DAOphoto(this);
+        refreshImageList();
+    }
+
+    /**
+     * refresh image list
+     */
+    private void refreshImageList() {
+        images.clear();
         //                add images from database to images ArrayList
         for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
             images.add(photoReport);
@@ -73,11 +83,13 @@ public class PhotoView extends ActionBarActivity {
         dialog.findViewById(R.id.btnChoosePath).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 activeGallery();
+                dialog.dismiss();
             }
         });
         dialog.findViewById(R.id.btnTakePhoto).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 activeTakePhoto();
+                dialog.dismiss();
             }
         });
         // show dialog on screen
@@ -118,15 +130,9 @@ public class PhotoView extends ActionBarActivity {
                     Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                     cursor.moveToFirst();
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String picturePath = cursor.getString(columnIndex);
+                    photoPath = cursor.getString(columnIndex);
                     cursor.close();
-                    PhotoReport photoReport = new PhotoReport();
-                    photoReport.setTitle("Test");
-                    photoReport.setDescription("test choose a photo from gallery and add it to " + "list view");
-                    photoReport.setDatetime(System.currentTimeMillis());
-                    photoReport.setPath(picturePath);
-                    images.add(photoReport);
-                    daOphoto.addPhoto(photoReport);
+                    activePhotoReport();
                 }
             case REQUEST_IMAGE_CAPTURE:
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -134,21 +140,49 @@ public class PhotoView extends ActionBarActivity {
                     Cursor cursor = managedQuery(mCapturedImageURI, projection, null, null, null);
                     int column_index_data = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     cursor.moveToFirst();
-                    String picturePath = cursor.getString(column_index_data);
-
-                    PhotoReport photoReport = new PhotoReport();
-                    photoReport.setTitle("Test");
-                    photoReport.setDescription("test take a photo and add it to list view");
-                    photoReport.setDatetime(System.currentTimeMillis());
-                    photoReport.setPath(picturePath);
-
-                    images.add(photoReport);
-
-                    daOphoto.addPhoto(photoReport);
+                    photoPath = cursor.getString(column_index_data);
+                    activePhotoReport();
                 }
         }
     }
 
+    private void activePhotoReport() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog_box_des);
+        dialog.setTitle("Photo Description");
+
+        final EditText titleP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_title);
+        final EditText desP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_description);
+
+        dialog.findViewById(R.id.customDialogDesbtnBack).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                getPhotoInfor(false, dialog, titleP, desP);
+            }
+        });
+        dialog.findViewById(R.id.customDialogDesbtnSave).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                getPhotoInfor(true, dialog, titleP, desP);
+            }
+        });
+        // show dialog on screen
+        dialog.show();
+    }
+
+    private void getPhotoInfor(boolean b, Dialog dialog, EditText titleP, EditText desP) {
+        PhotoReport photoReport = new PhotoReport();
+        if (b) {
+            photoReport.setTitle(String.valueOf(titleP.getText()));
+            photoReport.setDescription((desP.getText().toString()));
+        } else {
+            photoReport.setTitle("Photo Report");
+            photoReport.setDescription("Photo Report Observation");
+        }
+        photoReport.setDatetime(System.currentTimeMillis());
+        photoReport.setPath(photoPath);
+        daOphoto.addPhoto(photoReport);
+        refreshImageList();
+        dialog.dismiss();
+    }
 
     /**
      * Move to Image Display screen and show the selected photo
