@@ -5,6 +5,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import ffiandroid.situationawareness.model.UserInfo;
 
 /**
  * This Status Class is part of project: Situation Awareness
@@ -14,11 +17,39 @@ import android.view.MenuItem;
  * responsible for this file: GuoJunjun
  */
 public class Status extends ActionBarActivity {
+    private TextView userId, lastSync, unReportedPhotos, unReportedText, unReportedLocations, currentLocationLatitude,
+            currentLocationLongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.status);
+
+        userId = (TextView) findViewById(R.id.status_userid);
+        lastSync = (TextView) findViewById(R.id.status_last_sync_to_server);
+        unReportedText = (TextView) findViewById(R.id.status_not_reported_text);
+        unReportedPhotos = (TextView) findViewById(R.id.status_not_reported_photos);
+        unReportedLocations = (TextView) findViewById(R.id.status_not_reported_location_items);
+        currentLocationLatitude = (TextView) findViewById(R.id.status_current_location_latitude);
+        currentLocationLongitude = (TextView) findViewById(R.id.status_current_location_longitude);
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        setStatusValues();
+    }
+
+    /**
+     * set status values in status view
+     */
+    private void setStatusValues() {
+        userId.setText(UserInfo.getUserID());
+        lastSync.setText((UserInfo.isLastSyncSucceed() ? "SUCCEED" : "NOT SUCCEED"));
+        unReportedText.setText(String.valueOf(UserInfo.getUnReportedText()));
+        unReportedPhotos.setText(String.valueOf(UserInfo.getUnReportedPhotos()));
+        unReportedLocations.setText(String.valueOf(UserInfo.getUnReportedLocations()));
+        currentLocationLatitude.setText("La: " + String.valueOf(UserInfo.getCurrentLatitude()));
+        currentLocationLongitude.setText("Lo: " + String.valueOf(UserInfo.getCurrentLongitude()));
     }
 
 
@@ -43,6 +74,9 @@ public class Status extends ActionBarActivity {
                 return true;
             case R.id.menu_item_report_view:
                 startActivity(new Intent(this, ReportView.class));
+                return true;
+            case R.id.menu_item_photo_view:
+                startActivity(new Intent(this, PhotoView.class));
                 return true;
             case R.id.menu_item_logout:
                 startActivity(new Intent(this, Login.class));

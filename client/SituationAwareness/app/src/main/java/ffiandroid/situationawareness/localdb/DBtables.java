@@ -40,4 +40,21 @@ public class DBtables {
         public static final String[] ALL_COLUMNS =
                 {COLUMN_NUSER_ID, COLUMN_ISREPOETED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
     }
+
+    public static abstract class PhotoTB implements BaseColumns {
+        public static final String TABLE_NAME = "photoreport";
+
+        public static final String COLUMN_NUSER_ID = "userid";
+        public static final String COLUMN_ISREPOETED = "isreported";
+        public static final String COLUMN_DATETIME = "datetime";
+        public static final String COLUMN_LATITUDE = "latitude";
+        public static final String COLUMN_LONGITUDE = "longtitude";
+        public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_PATH = "path";
+        public static final String PRIMARY_KEY = "PRIMARY KEY (" + COLUMN_NUSER_ID + "," + COLUMN_DATETIME + ")";
+        public static final String[] ALL_COLUMNS =
+                {COLUMN_NUSER_ID, COLUMN_ISREPOETED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE,
+                        COLUMN_DESCRIPTION, COLUMN_TITLE, COLUMN_PATH};
+    }
 }

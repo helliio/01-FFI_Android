@@ -53,19 +53,19 @@ public class DAOtextReport {
     }
 
     /**
-     * update given text reports isReported value
+     * update given text reports isReported value to isReported
      *
      * @param textReport
      * @return the number of rows affected
      */
     public long updateIsReported(TextReport textReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.TextReportTB.COLUMN_ISREPOETED, textReport.isIsreported());
-        String where = DBtables.TextReportTB.COLUMN_NUSER_ID + "=" + textReport.getUserid() + "AND" +
-                DBtables.TextReportTB.COLUMN_REPORT + "=" + textReport.getReport() + "AND" +
-                DBtables.TextReportTB.COLUMN_DATETIME + "=" +
-                textReport.getDatetime().getTimeInMillis();
-        return database.update(DBtables.TextReportTB.TABLE_NAME, cv, where, null);
+        cv.put(DBtables.TextReportTB.COLUMN_ISREPOETED, true);
+        String where = DBtables.TextReportTB.COLUMN_NUSER_ID + "=?" + " AND " +
+                DBtables.TextReportTB.COLUMN_DATETIME + "=?";
+
+        return database.update(DBtables.TextReportTB.TABLE_NAME, cv, where,
+                new String[]{textReport.getUserid(), String.valueOf(textReport.getDatetime().getTimeInMillis())});
     }
 
     /**
@@ -90,6 +90,27 @@ public class DAOtextReport {
         return textReports;
     }
 
+    /**
+     * @param myUserID
+     * @return all my unsent report
+     */
+    public List<TextReport> getMyUnsentReports(String myUserID) {
+        List<TextReport> textReports = new ArrayList<>();
+
+        Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
+                DBtables.TextReportTB.COLUMN_NUSER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPOETED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                TextReport textReport = cursorToTextReport(cursor);
+                textReports.add(textReport);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return textReports;
+    }
 
     /**
      * @return total row count of the table

@@ -105,7 +105,6 @@ public class Login extends ActionBarActivity {
                         ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
                 JSONObject jsonMessage = new JSONObject(message);
                 if (message != null && jsonMessage.get("desc").equals("success")) {
-//            if (hasinput()) {
                     Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
                     UserInfo.setUserID(userName);
                     toMapWindow();

@@ -1,10 +1,15 @@
 package ffiandroid.situationawareness;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import ffiandroid.situationawareness.model.ParameterSetting;
 
 /**
  * This AppSettings Class is part of project: Situation Awareness
@@ -14,11 +19,50 @@ import android.view.MenuItem;
  * responsible for this file: GuoJunjun & Simen
  */
 public class AppSettings extends ActionBarActivity {
+    private EditText autoSyncTime;
+    private EditText locationUpdateTime;
+    private EditText locationUpdateDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_settings);
+
+        autoSyncTime = (EditText) findViewById(R.id.set_auto_sync_minute);
+        locationUpdateTime = (EditText) findViewById(R.id.set_location_update_second);
+        locationUpdateDistance = (EditText) findViewById(R.id.set_location_update_distance);
+        initParameterSettings();
+    }
+
+    private void initParameterSettings() {
+        autoSyncTime.setText((ParameterSetting.getAutoSyncTime() / 60000) + "");
+        locationUpdateTime.setText((ParameterSetting.getLocationUpdateTime() / 1000) + "");
+        locationUpdateDistance.setText((ParameterSetting.getLocationUpdateDistance()) + "");
+    }
+
+    public void parameterSettingClicked(View v) {
+        int synctime, locauptime, locaupdis;
+        try {
+            synctime = Integer.parseInt(autoSyncTime.getText().toString());
+            locauptime = Integer.parseInt(locationUpdateTime.getText().toString());
+            locaupdis = Integer.parseInt(locationUpdateDistance.getText().toString());
+            if (synctime < 1 && synctime > 999) {
+                Toast.makeText(this, "Wrong Auto Sync input! 0 < AutoSync < 999", Toast.LENGTH_SHORT).show();
+            } else if (locauptime < 1 && locauptime > 999) {
+                Toast.makeText(this, "Wrong input! 0 < location update time < 999", Toast.LENGTH_SHORT).show();
+            } else if (locaupdis < 1 && locaupdis > 999) {
+                Toast.makeText(this, "Wrong input! 0 < location update distance < 999", Toast.LENGTH_SHORT).show();
+            } else {
+                ParameterSetting.setAutoSyncTime(synctime);
+                ParameterSetting.setLocationUpdateTime(locauptime);
+                ParameterSetting.setLocationUpdateDistance(locaupdis);
+                Toast.makeText(this, "settings saved !", Toast.LENGTH_SHORT).show();
+                initParameterSettings();
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Wrong input! please use Integer", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -43,6 +87,9 @@ public class AppSettings extends ActionBarActivity {
                 return true;
             case R.id.menu_item_report_view:
                 startActivity(new Intent(this, ReportView.class));
+                return true;
+            case R.id.menu_item_photo_view:
+                startActivity(new Intent(this, PhotoView.class));
                 return true;
             case R.id.menu_item_logout:
                 startActivity(new Intent(this, Login.class));

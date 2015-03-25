@@ -15,7 +15,6 @@ import java.util.List;
 
 import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
-import ffiandroid.situationawareness.model.UserInfo;
 
 /**
  * This ReportView File is part of project: Situation Awareness
@@ -48,7 +47,9 @@ public class LocationView extends ActionBarActivity {
      */
     public String[] getList() {
         daOlocation = new DAOlocation(getApplicationContext());
-        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
+        //        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
+        List<LocationReport> alist = daOlocation.getAllLocations();
+        //        List<LocationReport> alist = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
         String[] list = new String[alist.size()];
         for (int i = 0; i < alist.size(); i++) {
             list[i] = alist.get(i).toString();

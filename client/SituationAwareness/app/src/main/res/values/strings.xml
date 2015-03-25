@@ -21,7 +21,7 @@
     <string name="repeat_password">Repeat password</string>
     <string name="user_name">User Name</string>
     <string name="report_issues_about_this_area">Report issues about this area:</string>
-    <string name="send_text_report">Send text Report</string>
+    <string name="save_report">Save text Report</string>
     <string name="title_activity_report_view">ReportView</string>
     <string name="title_report_view">Report View</string>
     <string name="title_logout">Logout</string>
@@ -30,5 +30,22 @@
     <string name="map_view">Map View</string>
     <string name="title_activity_location_view">LocationView</string>
     <string name="location_view">Location View</string>
+    <string name="auto_sync_text_view">Auto sync (minute):</string>
+    <string name="text_save">save settings</string>
+    <string name="last_sync_to_server">Last sync to server</string>
+    <string name="current_location">Current location</string>
+    <string name="not_reported_location_items">Not reported location items</string>
+    <string name="not_reported_photos">Not reported photos</string>
+    <string name="not_reported_text_items">Not reported text items</string>
+    <string name="title_activity_image_display">ImageDisplay</string>
+    <string name="title_activity_photo_view">PhotoView</string>
+    <string name="new_photo_report">New photo report</string>
+    <string name="take_a_photo">Take a Photo</string>
+    <string name="from_gallery">From Gallery</string>
+    <string name="title_photo_report_view">Photo report</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
 
 </resources>
