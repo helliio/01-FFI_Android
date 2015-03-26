@@ -24,9 +24,7 @@ public class DBsyncLocation extends DBsync {
     public DBsyncLocation(Context context) {
         super(context);
     }
-
     private List<LocationReport> locationReports;
-
 
     /**
      * upload location from local to server
@@ -48,7 +46,6 @@ public class DBsyncLocation extends DBsync {
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
                 handlerUploadLocation.sendMessage(msg);
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -129,7 +126,7 @@ public class DBsyncLocation extends DBsync {
     Runnable downloadLocationThread = new Runnable() {
         @Override public void run() {
             try {
-                String message = requestService.getAllTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID());
+                String message = requestService.getLatestTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID());
                 saveLocationToLocalDB(stringToJsonArray(message));
             } catch (Exception e) {
                 e.printStackTrace();

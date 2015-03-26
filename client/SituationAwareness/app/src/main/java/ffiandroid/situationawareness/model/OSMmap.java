@@ -25,7 +25,7 @@ public class OSMmap {
     public ArrayList<OverlayItem> getCoworkerMarkersOverlay(Context context) {
         ArrayList<OverlayItem> markersOverlayItemArray = new ArrayList();
         DAOlocation daOlocation = new DAOlocation(context);
-        List<LocationReport> locationReports = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
+        List<LocationReport> locationReports = daOlocation.getLatestCoWorkerLocations(UserInfo.getUserID());
         for (LocationReport lr : locationReports) {
             markersOverlayItemArray.add(new OverlayItem(lr.getUserid(), lr.getUserid(),
                     new GeoPoint(lr.getLatitude(), lr.getLongitude())));

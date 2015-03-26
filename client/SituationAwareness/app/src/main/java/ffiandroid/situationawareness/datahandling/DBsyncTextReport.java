@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +45,7 @@ public class DBsyncTextReport extends DBsync {
                 String message = reportService
                         .sendTextReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
                                 getWaitingList(reports));
-                Log.i("test report", "------------" + message);
+//                Log.i("test report", "------------" + message);
                 Message msg = handlerUploadLocation.obtainMessage();
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");

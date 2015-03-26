@@ -16,8 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import java.util.Calendar;
-import java.util.Date;
+
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
@@ -29,7 +28,10 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.datahandling.StartSync;
 import ffiandroid.situationawareness.localdb.DAOlocation;
@@ -71,7 +73,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     }
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -81,7 +82,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     /**
      * check if GPS enabled and if not send user to the GSP settings
      */
-        private void checkGpsAvailability() {
+    private void checkGpsAvailability() {
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (!enabled) {
@@ -127,13 +128,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
         If there exists a GPS location that is not older than 10 minutes, use this as the position
          */
-        if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null &&
-                System.currentTimeMillis() - locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER).getTime() < 600000) {
+        if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null && System.currentTimeMillis() -
+                locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER).getTime() < 600000) {
             myCurrentLocation = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
             Toast.makeText(getApplicationContext(), "Updated position with gps", Toast.LENGTH_LONG).show();
             System.out.println("Updated with GPS");
-            Log.i("gps", "Updated using recent GPS position from:" + Long.toString(myCurrentLocation.getTime())
-                    + " Current time is: " + System.currentTimeMillis());
+            Log.i("gps", "Updated using recent GPS position from:" + Long.toString(myCurrentLocation.getTime()) +
+                    " Current time is: " + System.currentTimeMillis());
             /*
             If the GPS location is old, it will try to use the network for determining location instead if possible
              */
@@ -142,8 +143,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
             Toast.makeText(getApplicationContext(), "Updated position with Network location", Toast.LENGTH_LONG).show();
             System.out.println("Updated with Network");
-            Log.i("gps", "Updated using Network location from:" + Long.toString(myCurrentLocation.getTime())
-                    + " Current time is: " + System.currentTimeMillis());
+            Log.i("gps", "Updated using Network location from:" + Long.toString(myCurrentLocation.getTime()) +
+                    " Current time is: " + System.currentTimeMillis());
 
         }
            /*
@@ -152,21 +153,22 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         else if (locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER) != null) {
             Toast.makeText(getApplicationContext(), "Updated position with old gps", Toast.LENGTH_LONG).show();
             System.out.println("Updated with old GPS");
-            Log.i("gps", "Updated using Old GPS position from:" + Long.toString(myCurrentLocation.getTime())
-                    + " Current time is: " + System.currentTimeMillis());
+            Log.i("gps", "Updated using Old GPS position from:" + Long.toString(myCurrentLocation.getTime()) +
+                    " Current time is: " + System.currentTimeMillis());
 
             /*
-            If there is no way of determining the location, it will just use a default lat long location(Here trondheim city centre)
+            If there is no way of determining the location, it will just use a default lat long location(Here
+            trondheim city centre)
              */
         } else {
             Toast.makeText(getApplicationContext(), "Could not find location, Using default", Toast.LENGTH_LONG).show();
-        myCurrentLocation = new Location("none");
-        myCurrentLocation.setLatitude(63.4305939);
-        myCurrentLocation.setLongitude(10.3921571);
+            myCurrentLocation = new Location("none");
+            myCurrentLocation.setLatitude(63.4305939);
+            myCurrentLocation.setLongitude(10.3921571);
 
-        System.out.println("No location found");
-        Log.i("gps", "Could not find any locations stored on device");
-    }
+            System.out.println("No location found");
+            Log.i("gps", "Could not find any locations stored on device");
+        }
 
         startMarker = new Marker(mMapView);
 
@@ -309,6 +311,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         UserInfo.setCurrentLongitude(location.getLongitude());
         mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         updateMyPositionMarker(location);
+        updateCoworkersPositionMarker();
         addMyNewPositionToDB();
     }
 
@@ -323,36 +326,27 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
      * update coworkers position marker
      */
     public void updateCoworkersPositionMarker() {
-        ArrayList<OverlayItem> markersOverlayItemArray =
-                new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
-        if (markersOverlayItemArray.size() > 0) {
-            ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-                    new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-            mMapView.getOverlays().add(markerItemizedIconOverlay);
-            ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-            mMapView.getOverlays().add(myScaleBarOverlay);
-        }
-        //        new Thread(getCoWorkerMarkerThread).start();
+        new Thread(getCoWorkerMarkerThread).start();
     }
 
 
-    //    private Runnable getCoWorkerMarkerThread = new Runnable() {
-    //        @Override public void run() {
-    //            ArrayList<OverlayItem> markersOverlayItemArray =
-    //                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
-    //            if (markersOverlayItemArray.size() > 0) {
-    //                addCoWorkerMarkers(markersOverlayItemArray);
-    //            }
-    //        }
-    //    };
-    //
-    //    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
-    //        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-    //                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-    //        mMapView.getOverlays().add(markerItemizedIconOverlay);
-    //        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-    //        mMapView.getOverlays().add(myScaleBarOverlay);
-    //    }
+    private Runnable getCoWorkerMarkerThread = new Runnable() {
+        @Override public void run() {
+            ArrayList<OverlayItem> markersOverlayItemArray =
+                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
+            if (markersOverlayItemArray.size() > 0) {
+                addCoWorkerMarkers(markersOverlayItemArray);
+            }
+        }
+    };
+
+    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
+        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
+                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
+        mMapView.getOverlays().add(markerItemizedIconOverlay);
+        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+        mMapView.getOverlays().add(myScaleBarOverlay);
+    }
 
     private void cacheTiles() {
 

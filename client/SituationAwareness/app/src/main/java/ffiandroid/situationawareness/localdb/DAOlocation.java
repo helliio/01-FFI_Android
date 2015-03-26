@@ -105,6 +105,31 @@ public class DAOlocation {
         return locationReports;
     }
 
+
+    /**
+     * @param myUserID
+     * @return all team members location except the given user id' location (my location)
+     */
+    public List<LocationReport> getLatestCoWorkerLocations(String myUserID) {
+        List<LocationReport> locationReports = new ArrayList<>();
+        String lwQuery =
+                "SELECT *, MAX(" + DBtables.LocationTB.COLUMN_DATETIME + ") FROM " + DBtables.LocationTB.TABLE_NAME +
+                        " GROUP BY '" + DBtables.LocationTB.COLUMN_NUSER_ID + "' AND " +
+                        DBtables.LocationTB.COLUMN_NUSER_ID + " !=?";
+        Cursor cursor = database.rawQuery(lwQuery, new String[]{myUserID});
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                LocationReport locationReport = cursorToTextReport(cursor);
+                locationReports.add(locationReport);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return locationReports;
+    }
+
+
     /**
      * @param myUserID
      * @return all my locations

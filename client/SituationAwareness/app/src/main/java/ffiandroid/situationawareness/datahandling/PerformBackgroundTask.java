@@ -29,11 +29,11 @@ public class PerformBackgroundTask extends AsyncTask {
         if (isOnline()) {
             //            photo.upload();
             report.upload();
-            //            location.upload();
+            location.upload();
 
             //            photo.download();
             report.download();
-            //            location.download();
+            location.download();
         }
         return null;
     }
