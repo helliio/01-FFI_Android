@@ -66,7 +66,6 @@ public class DBsyncLocation extends DBsync {
             } else {
                 UserInfo.setLastSyncSucceed(false);
             }
-
         }
     };
 

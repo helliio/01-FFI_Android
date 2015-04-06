@@ -126,6 +126,25 @@ public class DAOphoto {
 
     /**
      * @param myUserID
+     * @return one of my not reported photo
+     */
+    public PhotoReport getOneNotReportedPhoto(String myUserID) {
+        PhotoReport photoReport;
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
+                DBtables.PhotoTB.COLUMN_NUSER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPOETED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+            photoReport = cursorToPhotoReport(cursor);
+        } else {
+            photoReport = null;
+        }
+        cursor.close();
+        return photoReport;
+    }
+
+    /**
+     * @param myUserID
      * @return all my not reported photos
      */
     public List<PhotoReport> getMyNOTReportedPhotos(String myUserID) {
