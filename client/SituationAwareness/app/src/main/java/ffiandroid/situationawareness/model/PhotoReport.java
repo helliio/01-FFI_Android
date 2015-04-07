@@ -65,7 +65,7 @@ public class PhotoReport extends LocationReport {
     public String getPath() { return path; }
 
     @Override public String toString() {
-        return "Title:" + title + "   " + df.format(getDatetime().getTime()) +
+        return "Title:" + title + "   " + df.format(getDatetime().getTime()) + " Reported: " + isIsreported() +
                 "\nDescription:" + description;
     }
 }

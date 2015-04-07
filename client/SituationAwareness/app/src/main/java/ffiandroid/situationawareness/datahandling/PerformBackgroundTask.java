@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
 import ffiandroid.situationawareness.localdb.DAOphoto;
+import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
 
 /**
@@ -17,7 +18,7 @@ import ffiandroid.situationawareness.model.UserInfo;
  */
 public class PerformBackgroundTask extends AsyncTask {
     private Context context;
-    private DBsync photo;
+    private DBsyncPhoto photo;
     private DBsync report;
     private DBsync location;
 
@@ -33,10 +34,10 @@ public class PerformBackgroundTask extends AsyncTask {
 
             report.upload();
             location.upload();
-            ReportUnsendPhotos();
-            //            photo.download();
+            reportUnsendPhotos();
             report.download();
             location.download();
+            downloadPhotoHandling();
         }
         return null;
     }
@@ -51,12 +52,26 @@ public class PerformBackgroundTask extends AsyncTask {
     }
 
     /**
-     * check if there is network connection and unsend photos, if true send one
+     * check if there is network connection and un-send photos, if true send one
      */
-    public void ReportUnsendPhotos() {
+    public void reportUnsendPhotos() {
         DAOphoto daOphoto = new DAOphoto(context);
         while (isOnline() && daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
             photo.upload();
+        }
+        daOphoto.close();
+    }
+
+    /**
+     * handle download photos: <li>first download latest photo list</li> <li>then if has network connection and
+     * un-downloaded photo from list, download until the condition is true</li>
+     */
+    private void downloadPhotoHandling() {
+        photo.download();
+        DAOphoto daOphoto = new DAOphoto(context);
+        PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+        while (isOnline() && photoReport != null) {
+            photo.downloadOnePhoto(photoReport);
         }
         daOphoto.close();
     }

@@ -42,8 +42,8 @@ public class DAOlocation {
      */
     public long addLocation(LocationReport locationReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.LocationTB.COLUMN_NUSER_ID, locationReport.getUserid());
-        cv.put(DBtables.LocationTB.COLUMN_ISREPOETED, locationReport.isIsreported());
+        cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
+        cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
         cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
         cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
         cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
@@ -58,9 +58,9 @@ public class DAOlocation {
      */
     public long updateIsReported(LocationReport locationReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.LocationTB.COLUMN_ISREPOETED, true);
+        cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, true);
 
-        String where = DBtables.LocationTB.COLUMN_NUSER_ID + "=?" + " AND " +
+        String where = DBtables.LocationTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.LocationTB.COLUMN_DATETIME + "=?";
         return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid(),
                 String.valueOf(locationReport.getDatetime().getTimeInMillis())});
@@ -91,7 +91,7 @@ public class DAOlocation {
     public List<LocationReport> getCoWorkerLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_NUSER_ID + " != ?", new String[]{myUserID}, null, null,
+                DBtables.LocationTB.COLUMN_USER_ID + " != ?", new String[]{myUserID}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
@@ -114,8 +114,8 @@ public class DAOlocation {
         List<LocationReport> locationReports = new ArrayList<>();
         String lwQuery =
                 "SELECT *, MAX(" + DBtables.LocationTB.COLUMN_DATETIME + ") FROM " + DBtables.LocationTB.TABLE_NAME +
-                        " GROUP BY '" + DBtables.LocationTB.COLUMN_NUSER_ID + "' AND " +
-                        DBtables.LocationTB.COLUMN_NUSER_ID + " !=?";
+                        " GROUP BY '" + DBtables.LocationTB.COLUMN_USER_ID + "' AND " +
+                        DBtables.LocationTB.COLUMN_USER_ID + " !=?";
         Cursor cursor = database.rawQuery(lwQuery, new String[]{myUserID});
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
@@ -137,7 +137,7 @@ public class DAOlocation {
     public List<LocationReport> getMyLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_NUSER_ID + " = ?", new String[]{myUserID}, null, null,
+                DBtables.LocationTB.COLUMN_USER_ID + " = ?", new String[]{myUserID}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -156,7 +156,7 @@ public class DAOlocation {
     public List<LocationReport> getMyNOTReportedLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_NUSER_ID + " = ?" + " AND " + DBtables.LocationTB.COLUMN_ISREPOETED + " =?",
+                DBtables.LocationTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.LocationTB.COLUMN_ISREPORTED + " =?",
                 new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -187,11 +187,11 @@ public class DAOlocation {
      */
     private LocationReport cursorToTextReport(Cursor cursor) {
         LocationReport lr = new LocationReport();
-        lr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_NUSER_ID)));
+        lr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_USER_ID)));
         lr.setDatetime(cursor.getLong(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_DATETIME)));
         lr.setLongitude(cursor.getDouble(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_LONGITUDE)));
         lr.setLatitude(cursor.getDouble(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_LATITUDE)));
-        lr.setIsreported(cursor.getInt(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_ISREPOETED)) > 0);
+        lr.setIsreported(cursor.getInt(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_ISREPORTED)) > 0);
         return lr;
     }
 }
