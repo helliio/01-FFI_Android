@@ -6,7 +6,7 @@ package ffiandroid.situationawareness.model;
  * Created by GuoJunjun <junjunguo.com> on March 23, 2015.
  */
 public class PhotoReport extends LocationReport {
-    private String title, description, path;
+    private String title, description, path, extension;
 
     public PhotoReport(String title, String description, String path, long datetimeLong) {
         super(true);
@@ -14,6 +14,14 @@ public class PhotoReport extends LocationReport {
         this.description = description;
         this.path = path;
         setDatetime(datetimeLong);
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public PhotoReport() {
@@ -66,6 +74,6 @@ public class PhotoReport extends LocationReport {
 
     @Override public String toString() {
         return "Title:" + title + "   " + df.format(getDatetime().getTime()) + " Reported: " + isIsreported() +
-                "\nDescription:" + description;
+                "\nDescription:" + description + "path: " + path;
     }
 }

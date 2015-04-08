@@ -26,6 +26,7 @@ public class DBsyncPhoto extends DBsync {
 
     private PhotoReport photoReportR;
     private PhotoReport photoReportD;
+//    private PerformBackgroundTask pbt = new PerformBackgroundTask(context);
 
     public DBsyncPhoto(Context context) {
         super(context);
@@ -50,11 +51,11 @@ public class DBsyncPhoto extends DBsync {
                                 photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
                                 photoReportR.getDescription());
                 Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);
+
                 Message msg = handlerUploadPhoto.obtainMessage();
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
                 handlerUploadPhoto.sendMessage(msg);
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -70,9 +71,11 @@ public class DBsyncPhoto extends DBsync {
                 DAOphoto daOphoto = new DAOphoto(context);
                 daOphoto.updateIsReported(photoReportR);
                 UserInfo.setLastSyncSucceed(true);
+                daOphoto.close();
             } else {
                 UserInfo.setLastSyncSucceed(false);
             }
+
         }
     };
 
@@ -112,11 +115,12 @@ public class DBsyncPhoto extends DBsync {
                     Log.i(this.getClass().getSimpleName(), "=====save photo list===== " + job.toString());
                     PhotoReport pr = new PhotoReport();
                     pr.setIsreported(false);
-                    pr.setPath(job.getString("filename"));
+                    pr.setPath(job.getString("id"));
                     pr.setUserid(job.getString("username"));
                     pr.setDatetime(job.getLong("timestamp"));
                     pr.setLatitude(job.getDouble("latitude"));
                     pr.setLongitude(job.getDouble("longitude"));
+                    pr.setExtension(job.getString("extension"));
                     pr.setDescription(job.getString("description"));
                     daOphoto.addPhoto(pr);
                 }
@@ -139,12 +143,14 @@ public class DBsyncPhoto extends DBsync {
     Runnable downloadOnePhotoThread = new Runnable() {
         @Override public void run() {
             try {
-                String message = requestService
-                        .getPhoto(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportD.getPath());
+                String message =
+                        requestService.getPhoto(UserInfo.getUserID(), UserInfo.getMyAndroidID(), String.valueOf(60));
                 Log.i(this.getClass().getSimpleName(),
                         "----download one photo: ---- " + photoReportD.toString() + photoReportD.getPath());
                 Log.i(this.getClass().getSimpleName(), "----download one photo---- " + message);
-
+                savePhoto(message, photoReportD);
+                // call for next downloading
+//                pbt.downloadOnePhoto();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -158,15 +164,19 @@ public class DBsyncPhoto extends DBsync {
      * @param photoReport
      */
     public void savePhoto(String photofile, PhotoReport photoReport) {
-        String filename = photoReport.getUserid() + photoReport.getDatetimeLong();
+        Log.i(this.getClass().getSimpleName(), "--- file: " + photofile);
+        String filename = photoReport.getUserid() + photoReport.getDatetimeLong() + "." + photoReport.getExtension();
         FileOutputStream outputStream;
 
         try {
             outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            String path = context.getFilesDir().getAbsolutePath();
+            //            File file = new File(path, filename);
+            //            Coder.decryptBASE64(file, photofile);
             outputStream.write(photofile.getBytes());
             outputStream.close();
-            String path = context.getFilesDir().getAbsolutePath();
             path += filename;
+            Log.i(this.getClass().getSimpleName(), "--->" + path);
             photoReport.setPath(path);
             DAOphoto daOphoto = new DAOphoto(context);
             daOphoto.updatePhotoPath(photoReport);

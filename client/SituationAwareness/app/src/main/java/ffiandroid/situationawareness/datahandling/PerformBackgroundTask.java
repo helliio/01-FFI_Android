@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import ffiandroid.situationawareness.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.PhotoReport;
@@ -34,7 +35,7 @@ public class PerformBackgroundTask extends AsyncTask {
 
             report.upload();
             location.upload();
-            reportUnsendPhotos();
+            //            reportUnsendPhotos();
             report.download();
             location.download();
             downloadPhotoHandling();
@@ -56,7 +57,10 @@ public class PerformBackgroundTask extends AsyncTask {
      */
     public void reportUnsendPhotos() {
         DAOphoto daOphoto = new DAOphoto(context);
+        Log.i(this.getClass().getSimpleName(),
+                "----un-sent photos: called---: " + daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()));
         while (isOnline() && daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+            Log.i(this.getClass().getSimpleName(), "----upload un-send photo ///");
             photo.upload();
         }
         daOphoto.close();
@@ -64,13 +68,20 @@ public class PerformBackgroundTask extends AsyncTask {
 
     /**
      * handle download photos: <li>first download latest photo list</li> <li>then if has network connection and
-     * un-downloaded photo from list, download until the condition is true</li>
+     * un-downloaded photo from list, download one photo</li>
      */
     private void downloadPhotoHandling() {
         photo.download();
+        downloadOnePhoto();
+    }
+
+    /**
+     * if has network connection and un-downloaded photo from list, call download one photo
+     */
+    public void downloadOnePhoto() {
         DAOphoto daOphoto = new DAOphoto(context);
         PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
-        while (isOnline() && photoReport != null) {
+        if (isOnline() && photoReport != null) {
             photo.downloadOnePhoto(photoReport);
         }
         daOphoto.close();

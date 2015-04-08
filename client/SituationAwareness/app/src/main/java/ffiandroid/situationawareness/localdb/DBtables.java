@@ -52,9 +52,10 @@ public class DBtables {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_PATH = "path";
+        public static final String COLUMN_EXTENSION = "extension";
         public static final String PRIMARY_KEY = "PRIMARY KEY (" + COLUMN_USER_ID + "," + COLUMN_DATETIME + ")";
         public static final String[] ALL_COLUMNS =
                 {COLUMN_USER_ID, COLUMN_ISREPORTED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE,
-                        COLUMN_DESCRIPTION, COLUMN_TITLE, COLUMN_PATH};
+                        COLUMN_DESCRIPTION, COLUMN_TITLE, COLUMN_PATH, COLUMN_EXTENSION};
     }
 }

@@ -30,7 +30,6 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.datahandling.StartSync;
@@ -55,8 +54,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private String bestProvider;
     private Marker startMarker;
     private CacheManager cacheManager;
-    Calendar c = Calendar.getInstance();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
