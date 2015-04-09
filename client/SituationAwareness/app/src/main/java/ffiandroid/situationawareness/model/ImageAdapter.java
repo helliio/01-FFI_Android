@@ -3,6 +3,7 @@ package ffiandroid.situationawareness.model;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,10 +54,14 @@ public class ImageAdapter extends ArrayAdapter<PhotoReport> {
         PhotoReport image = getItem(position);
         // set description text
         viewHolder.description.setText(image.toString());
-        // set image icon
-        viewHolder.imgIcon.setImageBitmap(
-                ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath()), THUMBSIZE, THUMBSIZE));
 
+        Log.i(this.getClass().getSimpleName(),
+                "getPath: " + image.getPath() + " bitmap return " + BitmapFactory.decodeFile(image.getPath()));
+        if (image.getPath().contains(".")) {
+            // set image icon
+            viewHolder.imgIcon.setImageBitmap(
+                    ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath()), THUMBSIZE, THUMBSIZE));
+        }
         // Return the completed view to render on screen
         return convertView;
     }

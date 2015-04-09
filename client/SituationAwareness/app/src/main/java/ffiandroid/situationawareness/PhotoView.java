@@ -32,7 +32,6 @@ public class PhotoView extends ActionBarActivity {
     private Uri mCapturedImageURI;
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
-    private DAOphoto daOphoto;
     private String photoPath;
 
     @Override
@@ -55,19 +54,24 @@ public class PhotoView extends ActionBarActivity {
      * initialize database
      */
     private void initDB() {
-        daOphoto = new DAOphoto(this);
-        refreshImageList();
+        runOnUiThread(new Runnable() {
+            @Override public void run() {
+                refreshImageList();
+            }
+        });
     }
 
     /**
      * refresh image list
      */
     private void refreshImageList() {
+        DAOphoto daOphoto = new DAOphoto(this);
         images.clear();
         //                add images from database to images ArrayList
         for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
             images.add(photoReport);
         }
+        daOphoto.close();
     }
 
     public void btnNewPhotoReportOnClick(View view) {
@@ -177,9 +181,11 @@ public class PhotoView extends ActionBarActivity {
             photoReport.setTitle("Photo Report");
             photoReport.setDescription("Photo Report Observation");
         }
+        DAOphoto daOphoto = new DAOphoto(this);
         photoReport.setDatetime(System.currentTimeMillis());
         photoReport.setPath(photoPath);
         daOphoto.addPhoto(photoReport);
+        daOphoto.close();
         refreshImageList();
         dialog.dismiss();
     }
@@ -194,9 +200,11 @@ public class PhotoView extends ActionBarActivity {
             @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 PhotoReport image = (PhotoReport) listView.getItemAtPosition(position);
-                Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                intent.putExtra("IMAGE", (new Gson()).toJson(image));
-                startActivity(intent);
+                if (image.getPath().contains(".")) {
+                    Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
+                    intent.putExtra("IMAGE", (new Gson()).toJson(image));
+                    startActivity(intent);
+                }
             }
         });
     }

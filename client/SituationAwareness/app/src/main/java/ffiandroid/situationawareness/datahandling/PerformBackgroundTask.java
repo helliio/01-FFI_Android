@@ -4,6 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import java.net.URL;
+
+import ffiandroid.situationawareness.localdb.DAOphoto;
+import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.UserInfo;
 
 /**
  * This file is part of Situation Awareness
@@ -14,7 +21,7 @@ import android.os.AsyncTask;
  */
 public class PerformBackgroundTask extends AsyncTask {
     private Context context;
-    private DBsync photo;
+    private DBsyncPhoto photo;
     private DBsync report;
     private DBsync location;
 
@@ -27,13 +34,13 @@ public class PerformBackgroundTask extends AsyncTask {
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
-            //            photo.upload();
-            report.upload();
-            //            location.upload();
 
-            //            photo.download();
-            report.download();
-            //            location.download();
+                        report.upload();
+                        location.upload();
+            reportUnsendPhotos();
+                        report.download();
+                        location.download();
+            downloadPhotoHandling();
         }
         return null;
     }
@@ -46,4 +53,65 @@ public class PerformBackgroundTask extends AsyncTask {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+    /**
+     * check if there is network connection and un-send photos, if true send one
+     */
+    public void reportUnsendPhotos() {
+        DAOphoto daOphoto = new DAOphoto(context);
+        Log.i(this.getClass().getSimpleName(),
+                "----un-sent photos: called---: " + daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()));
+        while (isOnline() && daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+            Log.i(this.getClass().getSimpleName(), "----upload un-send photo ///");
+            photo.upload();
+        }
+        daOphoto.close();
+    }
+
+    /**
+     * handle download photos: <li>first download latest photo list</li> <li>then if has network connection and
+     * un-downloaded photo from list, download one photo</li>
+     */
+    private void downloadPhotoHandling() {
+        photo.download();
+        new DownloadFilesTask().doInBackground();
+    }
+
+    /**
+     * An inner AsyncTask class used to handle download and upload photo files from and to server:
+     * <p/>
+     * <li>download one file at a time, repeat the process until there is no un-downloaded photos from list or no
+     * network connection</li>
+     * <p/>
+     * <li>upload one photo file at a time, repeat the process until there is no un-uploaded photos  or no network
+     * connection</li>
+     */
+    private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+        protected Long doInBackground(URL... urls) {
+            DAOphoto daOphoto = new DAOphoto(context);
+            PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+            if (isOnline()) {
+                if (photoReport != null) {
+                    photo.downloadOnePhoto(photoReport);
+                } else if (daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                    photo.upload();
+                }
+            }
+            daOphoto.close();
+
+            return null;
+        }
+
+        protected void onPostExecute(Long result) {
+            DAOphoto daOphoto = new DAOphoto(context);
+            PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+            if (isOnline()) {
+                if (photoReport != null || daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                    doInBackground();
+                }
+            }
+            daOphoto.close();
+        }
+    }
+
 }

@@ -24,9 +24,7 @@ public class DBsyncLocation extends DBsync {
     public DBsyncLocation(Context context) {
         super(context);
     }
-
     private List<LocationReport> locationReports;
-
 
     /**
      * upload location from local to server
@@ -48,7 +46,6 @@ public class DBsyncLocation extends DBsync {
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
                 handlerUploadLocation.sendMessage(msg);
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -69,7 +66,6 @@ public class DBsyncLocation extends DBsync {
             } else {
                 UserInfo.setLastSyncSucceed(false);
             }
-
         }
     };
 
@@ -120,7 +116,7 @@ public class DBsyncLocation extends DBsync {
 
 
     /**
-     * down load location from server to local database
+     * download location from server to local database
      */
     public void download() {
         new Thread(downloadLocationThread).start();
@@ -129,7 +125,7 @@ public class DBsyncLocation extends DBsync {
     Runnable downloadLocationThread = new Runnable() {
         @Override public void run() {
             try {
-                String message = requestService.getAllTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID());
+                String message = requestService.getLatestTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID());
                 saveLocationToLocalDB(stringToJsonArray(message));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -149,11 +145,11 @@ public class DBsyncLocation extends DBsync {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
                     LocationReport lr = new LocationReport();
-                    lr.setUserid(job.getString("username"));
-                    lr.setLatitude(job.getDouble("latitude"));
                     lr.setIsreported(true);
-                    lr.setLongitude(job.getDouble("longitude"));
+                    lr.setUserid(job.getString("username"));
                     lr.setDatetime(job.getLong("timestamp"));
+                    lr.setLatitude(job.getDouble("latitude"));
+                    lr.setLongitude(job.getDouble("longitude"));
                     daOlocation.addLocation(lr);
                 }
             } catch (JSONException e) {

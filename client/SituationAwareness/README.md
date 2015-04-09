@@ -13,4 +13,3 @@ Situation awareness and incident reporting
 ####task
 - Implement an app for situation awareness and reporting incidents others.
 - The app must function in a Disconnected, Intermittent, Limited (DIL) environment.
-
