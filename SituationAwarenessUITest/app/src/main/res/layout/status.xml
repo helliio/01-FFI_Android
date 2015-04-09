@@ -1,0 +1,201 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:stretchColumns="*"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+    <!--user id-->
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:height="40dp"
+            android:paddingRight="10dp"
+            android:text="@string/user_id"/>
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:height="40dp"
+            android:text="My user id"
+            android:id="@+id/status_userid"
+            />
+    </TableRow>
+
+    <!--current location-->
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:height="40dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/current_location"/>
+
+        <TextView
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:maxWidth="220dp"
+            android:paddingLeft="10dp"
+            android:height="40dp"
+            android:text="latitude"
+            android:id="@+id/status_current_location_latitude"
+            />
+
+        <TextView
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:maxWidth="220dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp"
+            android:height="40dp"
+            android:text="longitude"
+            android:id="@+id/status_current_location_longitude"
+            />
+    </TableRow>
+
+    <!--is last sync to server succeed-->
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="2"
+            android:gravity="center_vertical"
+            android:height="40dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/last_sync_to_server"/>
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:height="40dp"
+            android:text="succeed"
+            android:id="@+id/status_last_sync_to_server"
+            />
+    </TableRow>
+
+    <!--not reported location items-->
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="2"
+            android:gravity="center_vertical"
+            android:height="40dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/not_reported_location_items"/>
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:height="40dp"
+            android:text="0"
+            android:id="@+id/status_not_reported_location_items"
+            />
+    </TableRow>
+
+    <!--not reported photos-->
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="2"
+            android:gravity="center_vertical"
+            android:height="40dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/not_reported_photos"/>
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:height="40dp"
+            android:text="0"
+            android:id="@+id/status_not_reported_photos"
+            />
+    </TableRow>
+
+    <!--not reported text items-->
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="2"
+            android:gravity="center_vertical"
+            android:height="40dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/not_reported_text_items"/>
+
+        <TextView
+            android:textSize="16dp"
+            android:layout_span="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:height="40dp"
+            android:text="0"
+            android:id="@+id/status_not_reported_text"
+            />
+    </TableRow>
+
+</TableLayout>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by liang on 18/03/15.
@@ -37,9 +38,11 @@ public class Login extends ActionBarActivity {
                 finish();
 
                 if (user.equals(Global.user) && pass.equals(Global.password)){
-                    System.out.println("woo");
                     startActivity(new Intent(v.getContext(),MapsActivity.class));
                     finish();
+                }
+                else{
+                    Toast.makeText(v.getContext(), "Invalid Username Combination", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -50,6 +53,7 @@ public class Login extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(v.getContext(), Register.class));
+                finish();
             }
         });
     }
@@ -67,6 +71,7 @@ public class Login extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.menu_item_register:
                 startActivity(new Intent(this, Register.class));
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

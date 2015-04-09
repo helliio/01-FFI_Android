@@ -1,0 +1,142 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal">
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <TextView
+            android:text="Auto sync"
+            android:textColor="@color/activity_text"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:layout_width="200dp"
+            android:layout_height="40dp"/>
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="number"
+            android:textColor="@color/activity_text"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:id="@+id/set_auto_sync_minute"/>
+    </TableRow>
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="30dp"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="2"
+            android:text="Auto sync between server and client in every given minute"/>
+
+    </TableRow>
+
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <TextView
+            android:text="Location update (second)"
+            android:gravity="center_vertical"
+            android:textColor="@color/activity_text"
+            android:textSize="16dp"
+            android:layout_width="200dp"
+            android:layout_height="40dp"/>
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="number"
+            android:textColor="@color/activity_text"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:id="@+id/set_location_update_second"/>
+    </TableRow>
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="2"
+            android:text="minimum time interval between location updates, in milliseconds"/>
+    </TableRow>
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <TextView
+            android:text="Location update (meter)"
+            android:gravity="center_vertical"
+            android:textColor="@color/activity_text"
+            android:textSize="16dp"
+            android:layout_width="200dp"
+            android:layout_height="40dp"/>
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="number"
+            android:textColor="@color/activity_text"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:id="@+id/set_location_update_distance"/>
+    </TableRow>
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="2"
+            android:text="minimum distance between location updates, in meters"/>
+    </TableRow>
+
+    <TableRow
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="1"
+            android:layout_below="@+id/btn_login"
+            android:width="200dp"
+            android:text="Save Settings"
+            android:onClick="parameterSettingClicked"/>
+    </TableRow>
+</TableLayout>

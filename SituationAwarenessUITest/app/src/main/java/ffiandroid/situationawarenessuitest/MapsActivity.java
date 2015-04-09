@@ -19,7 +19,7 @@ public class MapsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.maps);
         setUpMapIfNeeded();
     }
 
@@ -77,7 +77,7 @@ public class MapsActivity extends ActionBarActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_map, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -86,8 +86,28 @@ public class MapsActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.menu_item_LatestReports:
+                startActivity(new Intent(this, LatestReports.class));
+                finish();
+                return true;
+            case R.id.menu_item_ARL:
+                startActivity(new Intent(this, AutomatedReportLog.class));
+                finish();
+                return true;
             case R.id.menu_item_Logout:
                 startActivity(new Intent(this, Login.class));
+                finish();
+                return true;
+            case R.id.menu_item_report:
+                startActivity(new Intent(this, Report.class));
+                finish();
+                return true;
+            case R.id.menu_item_settings:
+                startActivity(new Intent(this, Settings.class));
+                finish();
+                return true;
+            case R.id.menu_item_status:
+                startActivity(new Intent(this, Status.class));
                 finish();
                 return true;
             default:

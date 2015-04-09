@@ -33,6 +33,36 @@
             android:noHistory="true" >
         </activity>
 
+        <activity
+            android:name=".Report"
+            android:label="Report Event"
+            android:noHistory="true" >
+        </activity>
+
+        <activity
+            android:name=".LatestReports"
+            android:label="Latest Reports"
+            android:noHistory="true" >
+        </activity>
+
+        <activity
+            android:name=".AutomatedReportLog"
+            android:label="Automated Report Log"
+            android:noHistory="true" >
+        </activity>
+
+        <activity
+            android:name=".Settings"
+            android:label="Settings"
+            android:noHistory="true" >
+        </activity>
+
+        <activity
+            android:name=".Status"
+            android:label="Status"
+            android:noHistory="true" >
+        </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

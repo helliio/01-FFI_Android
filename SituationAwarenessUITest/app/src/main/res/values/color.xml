@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="actionbar_text" type="color">#000000</item>
+    <item name="actionbar_background" type="color">#424242</item>
+    <item name="activity_text" type="color">#000000</item>
+    <item name="activity_background" type="color">#757575</item>
+    <item name="report_status_btn_send" type="color">#1B5E20</item>
+    <item name="report_status_btn_not_send" type="color">#B71C1C</item>
+    <item name="black" type="color">#000000</item>
+
+    <integer-array name="androidcolors">
+        <item>@color/actionbar_text</item>
+        <item>@color/actionbar_background</item>
+        <item>@color/activity_text</item>
+        <item>@color/activity_background</item>
+        <item>@color/report_status_btn_send</item>
+        <item>@color/report_status_btn_not_send</item>
+        <item>@color/black</item>
+
+    </integer-array>
+
+</resources>
