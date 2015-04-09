@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.net.URL;
+
 import ffiandroid.situationawareness.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
@@ -33,11 +35,11 @@ public class PerformBackgroundTask extends AsyncTask {
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
 
-//            report.upload();
-//            location.upload();
-            //            reportUnsendPhotos();
-//            report.download();
-//            location.download();
+                        report.upload();
+                        location.upload();
+            reportUnsendPhotos();
+                        report.download();
+                        location.download();
             downloadPhotoHandling();
         }
         return null;
@@ -72,18 +74,44 @@ public class PerformBackgroundTask extends AsyncTask {
      */
     private void downloadPhotoHandling() {
         photo.download();
-        downloadOnePhoto();
+        new DownloadFilesTask().doInBackground();
     }
 
     /**
-     * if has network connection and un-downloaded photo from list, call download one photo
+     * An inner AsyncTask class used to handle download and upload photo files from and to server:
+     * <p/>
+     * <li>download one file at a time, repeat the process until there is no un-downloaded photos from list or no
+     * network connection</li>
+     * <p/>
+     * <li>upload one photo file at a time, repeat the process until there is no un-uploaded photos  or no network
+     * connection</li>
      */
-    public void downloadOnePhoto() {
-        DAOphoto daOphoto = new DAOphoto(context);
-        PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
-        if (isOnline() && photoReport != null) {
-            photo.downloadOnePhoto(photoReport);
+    private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+        protected Long doInBackground(URL... urls) {
+            DAOphoto daOphoto = new DAOphoto(context);
+            PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+            if (isOnline()) {
+                if (photoReport != null) {
+                    photo.downloadOnePhoto(photoReport);
+                } else if (daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                    photo.upload();
+                }
+            }
+            daOphoto.close();
+
+            return null;
         }
-        daOphoto.close();
+
+        protected void onPostExecute(Long result) {
+            DAOphoto daOphoto = new DAOphoto(context);
+            PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+            if (isOnline()) {
+                if (photoReport != null || daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                    doInBackground();
+                }
+            }
+            daOphoto.close();
+        }
     }
+
 }

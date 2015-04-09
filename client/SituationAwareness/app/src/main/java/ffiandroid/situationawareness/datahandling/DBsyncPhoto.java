@@ -27,7 +27,6 @@ public class DBsyncPhoto extends DBsync {
 
     private PhotoReport photoReportR;
     private PhotoReport photoReportD;
-    private PerformBackgroundTask pbt = new PerformBackgroundTask(context);
 
     public DBsyncPhoto(Context context) {
         super(context);
@@ -37,34 +36,35 @@ public class DBsyncPhoto extends DBsync {
      * upload photo from local to server
      */
     @Override public void upload() {
-        new Thread(uploadThread).start();
-    }
-
-    Runnable uploadThread = new Runnable() {
-        @Override public void run() {
-            DAOphoto daOphoto = new DAOphoto(context);
-            Looper.prepare();
-            try {
-                photoReportR = daOphoto.getOneNotReportedPhoto(UserInfo.getUserID());
-                File file = new File(photoReportR.getPath());
-                String message = reportService
-                        .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
-                                photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
-                                photoReportR.getDescription());
-                Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);
-
+        //        new Thread(uploadThread).start();
+        //    }
+        //
+        //    Runnable uploadThread = new Runnable() {
+        //        @Override public void run() {
+        DAOphoto daOphoto = new DAOphoto(context);
+        Looper.prepare();
+        try {
+            photoReportR = daOphoto.getOneNotReportedPhoto(UserInfo.getUserID());
+            File file = new File(photoReportR.getPath());
+            String message = reportService
+                    .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
+                            photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
+                            photoReportR.getDescription());
+            Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);
+            if (message != null) {
                 Message msg = handlerUploadPhoto.obtainMessage();
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
                 handlerUploadPhoto.sendMessage(msg);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                daOphoto.close();
             }
-            Looper.loop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            daOphoto.close();
         }
-    };
+        Looper.loop();
+    }
+    //    };
 
     private Handler handlerUploadPhoto = new Handler() {
         @Override public void handleMessage(Message msg) {
@@ -174,8 +174,6 @@ public class DBsyncPhoto extends DBsync {
                 daOphoto.updatePhotoPath(photoReport);
                 daOphoto.updateIsReported(photoReport);
                 daOphoto.close();
-                //                call for next downloading
-//                pbt.downloadOnePhoto();
             }
         } catch (Exception e) {
             e.printStackTrace();

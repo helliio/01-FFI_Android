@@ -54,7 +54,11 @@ public class PhotoView extends ActionBarActivity {
      * initialize database
      */
     private void initDB() {
-        refreshImageList();
+        runOnUiThread(new Runnable() {
+            @Override public void run() {
+                refreshImageList();
+            }
+        });
     }
 
     /**
