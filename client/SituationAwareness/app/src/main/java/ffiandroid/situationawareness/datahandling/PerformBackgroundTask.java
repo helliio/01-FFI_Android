@@ -33,11 +33,11 @@ public class PerformBackgroundTask extends AsyncTask {
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
 
-            report.upload();
-            location.upload();
+//            report.upload();
+//            location.upload();
             //            reportUnsendPhotos();
-            report.download();
-            location.download();
+//            report.download();
+//            location.download();
             downloadPhotoHandling();
         }
         return null;

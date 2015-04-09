@@ -1,6 +1,7 @@
 package ffiandroid.situationawareness.datahandling;
 
 import android.content.Context;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,11 +12,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import ffiandroid.situationawareness.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.util.Coder;
 
 /**
  * This file is part of SituationAwareness
@@ -26,7 +27,7 @@ public class DBsyncPhoto extends DBsync {
 
     private PhotoReport photoReportR;
     private PhotoReport photoReportD;
-//    private PerformBackgroundTask pbt = new PerformBackgroundTask(context);
+    private PerformBackgroundTask pbt = new PerformBackgroundTask(context);
 
     public DBsyncPhoto(Context context) {
         super(context);
@@ -112,7 +113,6 @@ public class DBsyncPhoto extends DBsync {
             try {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
-                    Log.i(this.getClass().getSimpleName(), "=====save photo list===== " + job.toString());
                     PhotoReport pr = new PhotoReport();
                     pr.setIsreported(false);
                     pr.setPath(job.getString("id"));
@@ -145,12 +145,8 @@ public class DBsyncPhoto extends DBsync {
             try {
                 String message =
                         requestService.getPhoto(UserInfo.getUserID(), UserInfo.getMyAndroidID(), String.valueOf(60));
-                Log.i(this.getClass().getSimpleName(),
-                        "----download one photo: ---- " + photoReportD.toString() + photoReportD.getPath());
-                Log.i(this.getClass().getSimpleName(), "----download one photo---- " + message);
-                savePhoto(message, photoReportD);
-                // call for next downloading
-//                pbt.downloadOnePhoto();
+                savePhoto(new JSONObject(message).getString("obj"), photoReportD);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -164,25 +160,70 @@ public class DBsyncPhoto extends DBsync {
      * @param photoReport
      */
     public void savePhoto(String photofile, PhotoReport photoReport) {
-        Log.i(this.getClass().getSimpleName(), "--- file: " + photofile);
-        String filename = photoReport.getUserid() + photoReport.getDatetimeLong() + "." + photoReport.getExtension();
-        FileOutputStream outputStream;
+        String imgname = photoReport.getUserid() + photoReport.getDatetimeLong() + "." + photoReport.getExtension();
 
         try {
-            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            String path = context.getFilesDir().getAbsolutePath();
-            //            File file = new File(path, filename);
-            //            Coder.decryptBASE64(file, photofile);
-            outputStream.write(photofile.getBytes());
-            outputStream.close();
-            path += filename;
-            Log.i(this.getClass().getSimpleName(), "--->" + path);
-            photoReport.setPath(path);
-            DAOphoto daOphoto = new DAOphoto(context);
-            daOphoto.updatePhotoPath(photoReport);
-            daOphoto.close();
+            if (isExternalStorageWritable()) {
+                File imgDir = getAlbumStorageDir(context, "sair");
+                String path = imgDir.getPath();
+                File file = new File(imgDir, imgname);
+                Coder.decryptBASE64(file, photofile);
+                path += "/" + imgname;
+                photoReport.setPath(path);
+                DAOphoto daOphoto = new DAOphoto(context);
+                daOphoto.updatePhotoPath(photoReport);
+                daOphoto.updateIsReported(photoReport);
+                daOphoto.close();
+                //                call for next downloading
+//                pbt.downloadOnePhoto();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get the directory for the app's private pictures directory : User this method to save pictures private to the
+     * application
+     */
+    public File getAlbumStorageDir(Context context, String albumName) {
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), albumName);
+        if (!file.mkdirs()) {
+            Log.e(this.getClass().getSimpleName(), "Directory not created");
+        }
+        return file;
+    }
+
+    /**
+     * Get the directory for the user's public pictures directory. User this method to save pictures publicly
+     */
+    public File getAlbumStorageDir(String albumName) {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), albumName);
+        if (!file.mkdirs()) {
+            Log.e(this.getClass().getSimpleName(), "Directory not created");
+        }
+        return file;
+    }
+
+    /**
+     * Checks if external storage is available for read and write
+     */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if external storage is available to at least read
+     */
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }
