@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.net.URL;
 
@@ -34,12 +33,11 @@ public class PerformBackgroundTask extends AsyncTask {
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
-
-                        report.upload();
-                        location.upload();
+            report.upload();
+            location.upload();
             reportUnsendPhotos();
-                        report.download();
-                        location.download();
+            report.download();
+            location.download();
             downloadPhotoHandling();
         }
         return null;
@@ -59,10 +57,7 @@ public class PerformBackgroundTask extends AsyncTask {
      */
     public void reportUnsendPhotos() {
         DAOphoto daOphoto = new DAOphoto(context);
-        Log.i(this.getClass().getSimpleName(),
-                "----un-sent photos: called---: " + daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()));
         while (isOnline() && daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
-            Log.i(this.getClass().getSimpleName(), "----upload un-send photo ///");
             photo.upload();
         }
         daOphoto.close();
@@ -98,7 +93,6 @@ public class PerformBackgroundTask extends AsyncTask {
                 }
             }
             daOphoto.close();
-
             return null;
         }
 

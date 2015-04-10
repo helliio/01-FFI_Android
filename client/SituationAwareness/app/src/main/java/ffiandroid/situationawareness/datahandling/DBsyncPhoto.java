@@ -47,7 +47,7 @@ public class DBsyncPhoto extends DBsync {
             photoReportR = daOphoto.getOneNotReportedPhoto(UserInfo.getUserID());
             File file = new File(photoReportR.getPath());
             String message = reportService
-                    .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
+                    .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportR.getDatetimeLong(),
                             photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
                             photoReportR.getDescription());
             Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);

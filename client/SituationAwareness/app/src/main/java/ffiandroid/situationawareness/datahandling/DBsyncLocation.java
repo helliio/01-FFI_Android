@@ -24,6 +24,7 @@ public class DBsyncLocation extends DBsync {
     public DBsyncLocation(Context context) {
         super(context);
     }
+
     private List<LocationReport> locationReports;
 
     /**
@@ -82,6 +83,7 @@ public class DBsyncLocation extends DBsync {
                 System.out.println("update location report status number of rows affected: " +
                         daOlocation.updateIsReported(locationReport));
             }
+            daOlocation.close();
         }
     }
 

@@ -45,7 +45,6 @@ public class DBsyncTextReport extends DBsync {
                 String message = reportService
                         .sendTextReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
                                 getWaitingList(reports));
-//                Log.i("test report", "------------" + message);
                 Message msg = handlerUploadLocation.obtainMessage();
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
@@ -120,6 +119,7 @@ public class DBsyncTextReport extends DBsync {
                 System.out.println("update text report status number of rows affected: " +
                         daOtextReport.updateIsReported(textReport));
             }
+            daOtextReport.close();
         }
     }
 

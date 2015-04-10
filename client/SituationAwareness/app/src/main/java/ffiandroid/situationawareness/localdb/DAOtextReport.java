@@ -33,6 +33,7 @@ public class DAOtextReport {
      */
     public void close() {
         dbHelper.close();
+        database.close();
     }
 
     /**
