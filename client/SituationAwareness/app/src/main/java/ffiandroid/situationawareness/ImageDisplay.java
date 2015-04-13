@@ -1,8 +1,12 @@
 package ffiandroid.situationawareness;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +32,7 @@ public class ImageDisplay extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         imageView = (ImageView) findViewById(R.id.display_image_view);
         description = (TextView) findViewById(R.id.text_view_description);
         Bundle extras = getIntent().getExtras();
@@ -118,5 +123,21 @@ public class ImageDisplay extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * receive broadcast for logout
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(getBaseContext(), Login.class));
+            finish();
+        }
+    };
+
+    @Override protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }

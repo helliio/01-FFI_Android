@@ -1,8 +1,10 @@
 package ffiandroid.situationawareness;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -59,7 +62,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         activeOpenStreetMap();
         checkGpsAvailability();
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
@@ -277,15 +280,22 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
                 startActivity(new Intent(this, PhotoView.class));
                 return true;
             case R.id.menu_item_logout:
-                startActivity(new Intent(this, Login.class));
+                rememberMeDelete();
+
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("ACTION_LOGOUT");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+
                 return true;
             case R.id.menu_item_location_view:
                 startActivity(new Intent(this, LocationView.class));
                 return true;
             case R.id.menu_item_cacheTiles:
                 cacheTiles();
+                return true;
             case R.id.menu_item_status_and_send_button:
                 statusAndSendButtonClicked();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -377,5 +387,30 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     @Override public void onProviderDisabled(String provider) {
 
+    }
+
+
+    /**
+     * delete remembered information from a user
+     */
+    private void rememberMeDelete() {
+        getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
+                .putString(Login.PREF_PASSWORD, null).commit();
+    }
+
+    /**
+     * receive broadcast for logout
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(getBaseContext(), Login.class));
+            finish();
+        }
+    };
+
+    @Override protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }

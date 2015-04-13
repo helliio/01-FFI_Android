@@ -1,7 +1,11 @@
 package ffiandroid.situationawareness;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +33,7 @@ public class ReportView extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         setContentView(R.layout.activity_report_view);
     }
 
@@ -94,7 +99,10 @@ public class ReportView extends ActionBarActivity {
                 startActivity(new Intent(this, Status.class));
                 return true;
             case R.id.menu_item_logout:
-                startActivity(new Intent(this, Login.class));
+                rememberMeDelete();
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("ACTION_LOGOUT");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
                 return true;
             case R.id.menu_item_location_view:
                 startActivity(new Intent(this, LocationView.class));
@@ -102,5 +110,29 @@ public class ReportView extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * delete remembered information from a user
+     */
+    private void rememberMeDelete() {
+        getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
+                .putString(Login.PREF_PASSWORD, null).commit();
+    }
+
+    /**
+     * receive broadcast for logout
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(getBaseContext(), Login.class));
+            finish();
+        }
+    };
+
+    @Override protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }

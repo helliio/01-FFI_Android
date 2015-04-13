@@ -2,14 +2,17 @@
 
 package ffiandroid.situationawareness;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -37,13 +40,14 @@ public class Login extends ActionBarActivity {
     private UserService userService = new SoapUserService();
 
     public static final String PREFS_NAME = "MyPrefsFile";
-    private static final String PREF_USERNAME = "username";
-    private static final String PREF_PASSWORD = "password";
+    protected static final String PREF_USERNAME = "username";
+    protected static final String PREF_PASSWORD = "password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         UserInfo.setMyAndroidID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         autoLogin();
         softkeyboardDone();
@@ -133,7 +137,7 @@ public class Login extends ActionBarActivity {
     };
 
     /**
-     * remember user the user
+     * remember user and user pass
      *
      * @param userName
      * @param userPass
@@ -187,5 +191,21 @@ public class Login extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * receive broadcast for logout
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(getBaseContext(), Login.class));
+            finish();
+        }
+    };
+
+    @Override protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 }
