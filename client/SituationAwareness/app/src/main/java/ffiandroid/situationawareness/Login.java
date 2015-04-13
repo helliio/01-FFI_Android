@@ -2,7 +2,11 @@
 
 package ffiandroid.situationawareness;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
@@ -32,13 +36,19 @@ import ffiandroid.situationawareness.service.impl.SoapUserService;
 public class Login extends ActionBarActivity {
     private UserService userService = new SoapUserService();
 
+    public static final String PREFS_NAME = "MyPrefsFile";
+    private static final String PREF_USERNAME = "username";
+    private static final String PREF_PASSWORD = "password";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        softkeyboardDone();
         UserInfo.setMyAndroidID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        autoLogin();
+        softkeyboardDone();
     }
+
 
     /**
      * action on soft keyboard done clicked
@@ -66,7 +76,7 @@ public class Login extends ActionBarActivity {
         if (hasinput()) {
             login();
         } else {
-            Toast.makeText(getApplicationContext(), "Check you input !", Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), "Check your input !", Toast.LENGTH_SHORT);
         }
     }
 
@@ -99,23 +109,63 @@ public class Login extends ActionBarActivity {
         @Override
         public void run() {
             Looper.prepare();
-            try {
-                String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
-                String message = userService.login(userName, UserInfo.getMyAndroidID(),
-                        ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString());
-                JSONObject jsonMessage = new JSONObject(message);
-                if (message != null && jsonMessage.get("desc").equals("success")) {
-                    Toast.makeText(getBaseContext(), "Welcome back!", Toast.LENGTH_SHORT);
-                    UserInfo.setUserID(userName);
-                    toMapWindow();
-                } else {
-                    Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT);
+            String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
+            String userPass = ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString();
+            if (isOnline()) {
+                try {
+                    String message = userService.login(userName, UserInfo.getMyAndroidID(), userPass);
+                    JSONObject jsonMessage = new JSONObject(message);
+
+                    if (message != null && jsonMessage.get("desc").equals("success")) {
+                        UserInfo.setUserID(userName);
+                        rememberMe(userName, userPass);
+                        toMapWindow();
+                    } else {
+                        Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT);
+                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
+                Looper.loop();
+            } else {
+                Toast.makeText(getBaseContext(), "Need network connection for first time login!", Toast.LENGTH_SHORT);
             }
-            Looper.loop();
         }
     };
+
+    /**
+     * remember user the user
+     *
+     * @param userName
+     * @param userPass
+     */
+    private void rememberMe(String userName, String userPass) {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(PREF_USERNAME, userName)
+                .putString(PREF_PASSWORD, userPass).commit();
+    }
+
+    /**
+     * auto login from remember me
+     */
+    private void autoLogin() {
+        SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String username = pref.getString(PREF_USERNAME, null);
+        String password = pref.getString(PREF_PASSWORD, null);
+        Toast.makeText(this, username + " " + password, Toast.LENGTH_SHORT);
+        if (username != null && password != null) {
+            UserInfo.setUserID(username);
+            toMapWindow();
+        }
+    }
+
+
+    /**
+     * @return true is there is a network connection
+     */
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

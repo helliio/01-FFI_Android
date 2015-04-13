@@ -55,6 +55,7 @@ public class DBsyncLocation extends DBsync {
             Looper.loop();
         }
     };
+
     /**
      * handler the message from server
      */
