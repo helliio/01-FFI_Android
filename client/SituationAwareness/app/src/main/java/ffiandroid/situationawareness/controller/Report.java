@@ -129,7 +129,7 @@ public class Report extends ActionBarActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            startActivity(new Intent(getBaseContext(), Login.class));
+//            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };

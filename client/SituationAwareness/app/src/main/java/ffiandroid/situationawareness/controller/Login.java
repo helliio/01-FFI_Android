@@ -154,9 +154,8 @@ public class Login extends ActionBarActivity {
     private void autoLogin() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String username = pref.getString(PREF_USERNAME, null);
-        String password = pref.getString(PREF_PASSWORD, null);
-        Toast.makeText(this, username + " " + password, Toast.LENGTH_SHORT);
-        if (username != null && password != null) {
+        //        String password = pref.getString(PREF_PASSWORD, null);
+        if (username != null) {
             UserInfo.setUserID(username);
             toMapWindow();
         }
@@ -200,7 +199,13 @@ public class Login extends ActionBarActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            startActivity(new Intent(getBaseContext(), Login.class));
+            //            if (!getIntent().getExtras().getBoolean("LOGIN_ON")) {
+            //                Intent i = new Intent(getBaseContext(), Login.class);
+            //                i.putExtra("LOGIN_ON", true);
+            //                startActivity(i);
+            //            }
+//            startActivity(new Intent(getBaseContext(), Login.class));
+
             finish();
         }
     };

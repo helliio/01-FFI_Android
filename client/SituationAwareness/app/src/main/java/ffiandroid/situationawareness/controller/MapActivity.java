@@ -405,7 +405,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            startActivity(new Intent(getBaseContext(), Login.class));
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
+            startActivity(new Intent(context, Login.class));
             finish();
         }
     };
@@ -414,4 +415,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
+
+
 }
