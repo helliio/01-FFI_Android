@@ -13,6 +13,11 @@
         android:orderInCategory="100"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/menu_item_photo_view"
+        android:title="@string/title_photo_report_view"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/menu_item_location_view"
         android:title="@string/location_view"
         android:orderInCategory="100"

@@ -33,6 +33,7 @@ public class DAOtextReport {
      */
     public void close() {
         dbHelper.close();
+        database.close();
     }
 
     /**
@@ -43,9 +44,9 @@ public class DAOtextReport {
      */
     public long addReport(TextReport textReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.TextReportTB.COLUMN_NUSER_ID, textReport.getUserid());
+        cv.put(DBtables.TextReportTB.COLUMN_USER_ID, textReport.getUserid());
         cv.put(DBtables.TextReportTB.COLUMN_REPORT, textReport.getReport());
-        cv.put(DBtables.TextReportTB.COLUMN_ISREPOETED, textReport.isIsreported());
+        cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
         cv.put(DBtables.TextReportTB.COLUMN_LATITUDE, textReport.getLatitude());
         cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
@@ -53,19 +54,19 @@ public class DAOtextReport {
     }
 
     /**
-     * update given text reports isReported value
+     * update given text reports isReported value to isReported
      *
      * @param textReport
      * @return the number of rows affected
      */
     public long updateIsReported(TextReport textReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.TextReportTB.COLUMN_ISREPOETED, textReport.isIsreported());
-        String where = DBtables.TextReportTB.COLUMN_NUSER_ID + "=" + textReport.getUserid() + "AND" +
-                DBtables.TextReportTB.COLUMN_REPORT + "=" + textReport.getReport() + "AND" +
-                DBtables.TextReportTB.COLUMN_DATETIME + "=" +
-                textReport.getDatetime().getTimeInMillis();
-        return database.update(DBtables.TextReportTB.TABLE_NAME, cv, where, null);
+        cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, true);
+        String where = DBtables.TextReportTB.COLUMN_USER_ID + "=?" + " AND " +
+                DBtables.TextReportTB.COLUMN_DATETIME + "=?";
+
+        return database.update(DBtables.TextReportTB.TABLE_NAME, cv, where,
+                new String[]{textReport.getUserid(), String.valueOf(textReport.getDatetime().getTimeInMillis())});
     }
 
     /**
@@ -90,6 +91,27 @@ public class DAOtextReport {
         return textReports;
     }
 
+    /**
+     * @param myUserID
+     * @return all my unsent report
+     */
+    public List<TextReport> getMyUnsentReports(String myUserID) {
+        List<TextReport> textReports = new ArrayList<>();
+
+        Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                TextReport textReport = cursorToTextReport(cursor);
+                textReports.add(textReport);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return textReports;
+    }
 
     /**
      * @return total row count of the table
@@ -110,12 +132,12 @@ public class DAOtextReport {
      */
     private TextReport cursorToTextReport(Cursor cursor) {
         TextReport tr = new TextReport();
-        tr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_NUSER_ID)));
+        tr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_USER_ID)));
         tr.setReport(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_REPORT)));
         tr.setDatetime(cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME)));
         tr.setLongitude(cursor.getDouble(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_LONGITUDE)));
         tr.setLatitude(cursor.getDouble(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_LATITUDE)));
-        tr.setIsreported(cursor.getInt(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_ISREPOETED)) > 0);
+        tr.setIsreported(cursor.getInt(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_ISREPORTED)) > 0);
         return tr;
     }
 }
