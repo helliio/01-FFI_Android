@@ -281,11 +281,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
                 startActivity(new Intent(this, PhotoView.class));
                 return true;
             case R.id.menu_item_logout:
-                rememberMeDelete();
-
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction("ACTION_LOGOUT");
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+                logout();
 
                 return true;
             case R.id.menu_item_location_view:
@@ -390,6 +386,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     }
 
+    /**
+     * logout function for logout
+     */
+    public void logout() {
+        rememberMeDelete();
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("ACTION_LOGOUT");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
 
     /**
      * delete remembered information from a user
