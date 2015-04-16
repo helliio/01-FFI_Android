@@ -36,6 +36,12 @@ public class Report extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         textReport = (EditText) findViewById(R.id.report_edit_text_report);
     }
+    /**
+     * user click add photo button
+     */
+    public void addPhotoButtonOnClicked(View view){
+        startActivity(new Intent(this, PhotoView.class));
+    }
 
     /**
      * user click send report button
