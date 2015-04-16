@@ -29,7 +29,9 @@ public class OSMmap {
         for (LocationReport lr : locationReports) {
             markersOverlayItemArray.add(new OverlayItem(lr.getUserid(), lr.getUserid(),
                     new GeoPoint(lr.getLatitude(), lr.getLongitude())));
+            System.out.println("id: " + lr.getUserid() + ".  Lat:  " + lr.getLatitude() + "  Long:  " + lr.getLongitude());
         }
+        System.out.println( "size " + locationReports.size());
         daOlocation.close();
         return markersOverlayItemArray;
     }

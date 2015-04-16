@@ -1,14 +1,14 @@
-
-
 package ffiandroid.situationawareness;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.localdb.DAOtextReport;
@@ -23,15 +23,21 @@ import ffiandroid.situationawareness.model.TextReport;
  */
 public class Report extends ActionBarActivity {
     private EditText textReport;
+    private TextView textLocation;
+    private Location location;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
         textReport = (EditText) findViewById(R.id.report_edit_text_report);
+
+        location = MapActivity.newReportLocation;
+        textLocation = (TextView) findViewById(R.id.coordinates);
+        textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
     }
 
-    /**
+     /**
      * user click send report button
      *
      * @param view

@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
+import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -60,11 +61,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private MapController mMapController;
     private LocationManager locationManager;
     private Location myCurrentLocation;
+    public static Location newReportLocation;
     private String bestProvider;
     private Marker startMarker;
     private CacheManager cacheManager;
     private MapEventsOverlay mapEventsOverlay;
-
 
 
     @Override
@@ -90,6 +91,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     @Override
     protected void onResume() {
+
         super.onResume();
     }
 
@@ -221,6 +223,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             //                addAllMarkers(jsonArray);
             //
             //            }
+
             Looper.loop();
         }
     };
@@ -270,6 +273,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         System.out.println("Refreshed");
         Toast.makeText(getApplicationContext(), "Refreshing", Toast.LENGTH_LONG).show();
 
+        //TODO Add timer to not flood app if pressed many times in a row
     }
 
 
@@ -326,6 +330,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         switch (item.getItemId()) {
             case R.id.contextmenu_item_add_marker:
                 Toast.makeText(this, "Marker added", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.contextmenu_item_report_observation:
+                startActivity(new Intent(this, Report.class));
+                return true;
+            case R.id.contextmenu_item_cancel:
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -406,11 +415,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private void updateMyPositionMarker(Location location) {
         startMarker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-        mMapView.getOverlays().add(startMarker);
-        mMapView.invalidate();
         startMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
         startMarker.setTitle("My point");
+
+        mMapView.getOverlays().add(startMarker);
+        mMapView.invalidate();
+
     }
+
 
 
 
@@ -428,15 +440,22 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
+
         Toast.makeText(this, "Tapped on ("+p.getLatitude()+","+p.getLongitude()+")", Toast.LENGTH_SHORT).show();
         return true;
     }
+
 
     @Override
     public boolean longPressHelper(GeoPoint p) {
 
         registerForContextMenu(mMapView);
+        newReportLocation = new Location("");
+        newReportLocation.setLatitude(p.getLatitude());
+        newReportLocation.setLongitude(p.getLongitude());
+
         openContextMenu(mMapView);
+
 
 
         Toast.makeText(this, "Long press on ("+p.getLatitude()+","+p.getLongitude()+")", Toast.LENGTH_SHORT).show();
