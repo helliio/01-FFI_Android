@@ -11,9 +11,10 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import ffiandroid.situationawareness.model.localdb.DAOtextReport;
+import ffiandroid.situationawareness.controller.MapActivity;
 import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
  * This file is part of SituationAwareness
@@ -102,6 +103,11 @@ public class DBsyncTextReport extends DBsync {
                 UserInfo.setLastSyncSucceed(true);
             } else {
                 UserInfo.setLastSyncSucceed(false);
+                if (msg.obj.toString().equalsIgnoreCase("Invalid request: login timeout")) {
+                    System.out.println("----> timeout: " + msg.obj.toString());
+                    MapActivity activity = (MapActivity) context;
+                    activity.logout();
+                }
             }
         }
     };

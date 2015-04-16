@@ -35,13 +35,14 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.datahandling.PerformBackgroundTask;
-import ffiandroid.situationawareness.model.datahandling.StartSync;
-import ffiandroid.situationawareness.model.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
 import ffiandroid.situationawareness.model.ParameterSetting;
+import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.datahandling.PerformBackgroundTask;
+import ffiandroid.situationawareness.model.datahandling.StartSync;
+import ffiandroid.situationawareness.model.localdb.DAOlocation;
 
 /**
  * This file is part of project: Situation Awareness
@@ -50,7 +51,7 @@ import ffiandroid.situationawareness.model.UserInfo;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-public class MapActivity extends ActionBarActivity implements LocationListener {
+public class MapActivity extends ActionBarActivity implements LocationListener, StatusListener {
     private MapView mMapView;
     private MapController mMapController;
     private LocationManager locationManager;
@@ -58,6 +59,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private String bestProvider;
     private Marker startMarker;
     private CacheManager cacheManager;
+    private String menuStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +70,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         checkGpsAvailability();
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
                 ParameterSetting.getLocationUpdateDistance(), this);
-
+        UserInfo.addListener(this);
+        formatMenuStatus();
         StartSync.getInstance(getApplicationContext()).start();
 
     }
@@ -281,11 +284,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
                 startActivity(new Intent(this, PhotoView.class));
                 return true;
             case R.id.menu_item_logout:
-                rememberMeDelete();
-
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction("ACTION_LOGOUT");
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+                logout();
 
                 return true;
             case R.id.menu_item_location_view:
@@ -390,6 +389,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     }
 
+    /**
+     * logout function for logout
+     */
+    public void logout() {
+        rememberMeDelete();
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("ACTION_LOGOUT");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
 
     /**
      * delete remembered information from a user
@@ -416,5 +424,38 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         super.onDestroy();
     }
 
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
 
+    private void formatMenuStatus() {
+        int count = UserInfo.getTotalUnReportedItemsCout();
+        if (count == 0) {
+            menuStatus = "NO un-reported items !";
+        } else {
+            menuStatus = count + " items not reported! send now?";
+        }
+    }
+
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    @Override public void locationStatusChanged() {
+
+    }
+
+    @Override public void textStatusChanged() {
+
+    }
+
+    @Override public void photoStatusChanged() {
+
+    }
+
+    @Override public void lastReportStatusChanged() {
+
+    }
 }

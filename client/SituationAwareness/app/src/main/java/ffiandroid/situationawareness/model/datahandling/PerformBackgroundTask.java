@@ -7,9 +7,11 @@ import android.os.AsyncTask;
 
 import java.net.URL;
 
+import ffiandroid.situationawareness.model.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
  * This file is part of Situation Awareness
@@ -33,14 +35,40 @@ public class PerformBackgroundTask extends AsyncTask {
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
-            report.upload();
+            report.upload(); // always do this first
             location.upload();
             reportUnsendPhotos();
             report.download();
             location.download();
             downloadPhotoHandling();
         }
+        updateReportStatus();
         return null;
+    }
+
+    /**
+     * update report status
+     */
+    private void updateReportStatus() {
+        DAOlocation daOlocation = new DAOlocation(context);
+        DAOphoto daOphoto = new DAOphoto(context);
+        DAOtextReport daOtextReport = new DAOtextReport(context);
+
+        int locationCount = daOlocation.getMyNOTReportedItemCount(UserInfo.getUserID());
+        if (locationCount != UserInfo.getUnReportedLocations()) {
+            UserInfo.setUnReportedLocations(locationCount);
+        }
+        int textCount = daOtextReport.getMyNOTReportedItemCount(UserInfo.getUserID());
+        if (textCount != UserInfo.getUnReportedText()) {
+            UserInfo.setUnReportedText(textCount);
+        }
+        int photoCount = daOphoto.getMyNOTReportedItemCount(UserInfo.getUserID());
+        if (photoCount != UserInfo.getUnReportedPhotos()) {
+            UserInfo.setUnReportedPhotos(photoCount);
+        }
+        daOlocation.close();
+        daOphoto.close();
+        daOtextReport.close();
     }
 
     /**

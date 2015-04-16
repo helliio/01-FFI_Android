@@ -123,7 +123,17 @@ public class DAOtextReport {
         cursor.close();
         return count;
     }
-
+    /**
+     * @return total row count of the not reported items in the table
+     */
+    public int getMyNOTReportedItemCount(String myUserID) {
+        Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
     /**
      * *
      *
