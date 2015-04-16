@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.UserInfo;
 
 /**
@@ -21,7 +22,7 @@ import ffiandroid.situationawareness.model.UserInfo;
  * <p/>
  * responsible for this file: GuoJunjun
  */
-public class Status extends ActionBarActivity {
+public class Status extends ActionBarActivity implements StatusListener {
     private TextView userId, lastSync, unReportedPhotos, unReportedText, unReportedLocations, currentLocationLatitude,
             currentLocationLongitude;
 
@@ -37,6 +38,7 @@ public class Status extends ActionBarActivity {
         unReportedLocations = (TextView) findViewById(R.id.status_not_reported_location_items);
         currentLocationLatitude = (TextView) findViewById(R.id.status_current_location_latitude);
         currentLocationLongitude = (TextView) findViewById(R.id.status_current_location_longitude);
+        UserInfo.addListener(this);
     }
 
     @Override protected void onResume() {
@@ -119,5 +121,42 @@ public class Status extends ActionBarActivity {
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+        unReportedLocations.setText(String.valueOf(UserInfo.getUnReportedLocations()));
+        currentLocationLatitude.setText("La: " + String.valueOf(UserInfo.getCurrentLatitude()));
+        currentLocationLongitude.setText("Lo: " + String.valueOf(UserInfo.getCurrentLongitude()));
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+        unReportedText.setText(String.valueOf(UserInfo.getUnReportedText()));
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+        unReportedPhotos.setText(String.valueOf(UserInfo.getUnReportedPhotos()));
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+        lastSync.setText((UserInfo.isLastSyncSucceed() ? "SUCCEED" : "NOT SUCCEED"));
     }
 }

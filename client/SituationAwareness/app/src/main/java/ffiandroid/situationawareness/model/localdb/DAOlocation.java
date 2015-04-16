@@ -180,6 +180,18 @@ public class DAOlocation {
     }
 
     /**
+     * @return total row count of the not reported items in the table
+     */
+    public int getMyNOTReportedItemCount(String myUserID) {
+        Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
+                DBtables.LocationTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.LocationTB.COLUMN_ISREPORTED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    /**
      * *
      *
      * @param cursor the cursor row

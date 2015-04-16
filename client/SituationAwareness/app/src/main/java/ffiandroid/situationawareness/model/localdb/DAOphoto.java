@@ -147,16 +147,8 @@ public class DAOphoto {
      */
     public PhotoReport getOneNotReportedPhoto(String myUserID) {
         PhotoReport photoReport;
-        //        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null,
-        //                DBtables.PhotoTB.COLUMN_USER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-        //                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-
-
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, null, null, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-
-//        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-//                new String[]{"0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
             photoReport = cursorToPhotoReport(cursor);
@@ -244,6 +236,18 @@ public class DAOphoto {
     public int getRowCount() {
         String countQuery = "SELECT  * FROM " + DBtables.PhotoTB.TABLE_NAME;
         Cursor cursor = database.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    /**
+     * @return total row count of the not reported items in the table
+     */
+    public int getMyNOTReportedItemCount(String myUserID) {
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
+                DBtables.PhotoTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
+                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME);
         int count = cursor.getCount();
         cursor.close();
         return count;

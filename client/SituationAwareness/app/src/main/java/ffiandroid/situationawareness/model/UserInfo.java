@@ -1,5 +1,7 @@
 package ffiandroid.situationawareness.model;
 
+import java.util.ArrayList;
+
 /**
  * Constant information of android id & user name + current location
  * <p/>
@@ -17,6 +19,16 @@ public class UserInfo {
     private static int unReportedLocations = 0;
     private static int unReportedPhotos = 0;
     private static int unReportedText = 0;
+    private static ArrayList<StatusListener> listeners = new ArrayList<StatusListener>();
+
+    /**
+     * add interest listener to list
+     *
+     * @param statusListener
+     */
+    public static void addListener(StatusListener statusListener) {
+        listeners.add(statusListener);
+    }
 
     /**
      * Gets unReportedPhotos.
@@ -37,7 +49,13 @@ public class UserInfo {
      *
      * @param unReportedPhotos New value of unReportedPhotos.
      */
-    public static void setUnReportedPhotos(int unReportedPhotos) { UserInfo.unReportedPhotos = unReportedPhotos; }
+    public static void setUnReportedPhotos(int unReportedPhotos) {
+        UserInfo.unReportedPhotos = unReportedPhotos;
+        for (StatusListener listener : listeners) {
+            listener.photoStatusChanged();
+            listener.menuStatusChanged();
+        }
+    }
 
     /**
      * Gets myAndroidID.
@@ -58,14 +76,25 @@ public class UserInfo {
      *
      * @param lastSyncSucceed New value of lastSyncSucceed.
      */
-    public static void setLastSyncSucceed(boolean lastSyncSucceed) { UserInfo.lastSyncSucceed = lastSyncSucceed; }
+    public static void setLastSyncSucceed(boolean lastSyncSucceed) {
+        UserInfo.lastSyncSucceed = lastSyncSucceed;
+        for (StatusListener listener : listeners) {
+            listener.lastReportStatusChanged();
+        }
+    }
 
     /**
      * Sets new unReportedText.
      *
      * @param unReportedText New value of unReportedText.
      */
-    public static void setUnReportedText(int unReportedText) { UserInfo.unReportedText = unReportedText; }
+    public static void setUnReportedText(int unReportedText) {
+        UserInfo.unReportedText = unReportedText;
+        for (StatusListener listener : listeners) {
+            listener.textStatusChanged();
+            listener.menuStatusChanged();
+        }
+    }
 
     /**
      * Gets currentLongitude.
@@ -102,6 +131,10 @@ public class UserInfo {
      */
     public static void setUnReportedLocations(int unReportedLocations) {
         UserInfo.unReportedLocations = unReportedLocations;
+        for (StatusListener listener : listeners) {
+            listener.locationStatusChanged();
+            listener.menuStatusChanged();
+        }
     }
 
     /**
@@ -131,4 +164,8 @@ public class UserInfo {
      * @return Value of userID.
      */
     public static String getUserID() { return userID; }
+
+    public static int getTotalUnReportedItemsCout() {
+        return getUnReportedLocations() + getUnReportedPhotos() + getUnReportedText();
+    }
 }
