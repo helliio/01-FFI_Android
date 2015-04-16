@@ -47,5 +47,6 @@
     <string name="description">Description</string>
     <string name="save">Save</string>
     <string name="back">Back</string>
+    <string name="add_marker">Add Position</string>
 
 </resources>

@@ -12,23 +12,32 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
+import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
+import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
@@ -46,7 +55,7 @@ import ffiandroid.situationawareness.model.UserInfo;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-public class MapActivity extends ActionBarActivity implements LocationListener {
+public class MapActivity extends ActionBarActivity implements LocationListener, MapEventsReceiver {
     private MapView mMapView;
     private MapController mMapController;
     private LocationManager locationManager;
@@ -54,6 +63,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private String bestProvider;
     private Marker startMarker;
     private CacheManager cacheManager;
+    private MapEventsOverlay mapEventsOverlay;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +78,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
                 ParameterSetting.getLocationUpdateDistance(), this);
 
         StartSync.getInstance(getApplicationContext()).start();
+
+
+        mapEventsOverlay = new MapEventsOverlay(this, this);
+
+        mMapView.getOverlays().add(0, mapEventsOverlay);
+
 
     }
 
@@ -100,7 +118,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
         mMapView.setBuiltInZoomControls(true);
         mMapView.setMultiTouchControls(true);
-        mMapView.setUseDataConnection(false);
+
+        mMapView.setUseDataConnection(true);
+        //If true: will automatically download maps online.
+        //If false: will only download map tiles through the cache map tiles command
 
         mMapController = (MapController) mMapView.getController();
         mMapController.setZoom(15);
@@ -110,6 +131,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         updateLocation();
 
     }
+
 
     private void updateLocation() {
         // Create a criteria object to retrieve provider
@@ -290,6 +312,26 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
                 return super.onOptionsItemSelected(item);
         }
     }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.contextmenu_map_view, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.contextmenu_item_add_marker:
+                Toast.makeText(this, "Marker added", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
 
     /**
      * status and send button at the top of each menu bar
@@ -345,6 +387,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         mMapView.getOverlays().add(myScaleBarOverlay);
     }
 
+
+
+
     private void cacheTiles() {
 
         cacheManager = new CacheManager(mMapView);
@@ -367,6 +412,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         startMarker.setTitle("My point");
     }
 
+
+
     @Override public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
@@ -378,4 +425,23 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     @Override public void onProviderDisabled(String provider) {
 
     }
+
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint p) {
+        Toast.makeText(this, "Tapped on ("+p.getLatitude()+","+p.getLongitude()+")", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint p) {
+
+        registerForContextMenu(mMapView);
+        openContextMenu(mMapView);
+
+
+        Toast.makeText(this, "Long press on ("+p.getLatitude()+","+p.getLongitude()+")", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+
 }
