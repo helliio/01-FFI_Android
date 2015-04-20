@@ -17,6 +17,7 @@ public class TextReport extends LocationReport {
      */
     public TextReport(String report) {
         super(true);
+
         this.report = report;
     }
 
@@ -25,7 +26,7 @@ public class TextReport extends LocationReport {
 
 
     /**
-     * Sets new report.
+     * Sets new report.gi
      *
      * @param report New value of report.
      */

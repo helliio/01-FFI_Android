@@ -8,7 +8,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import ffiandroid.situationawareness.localdb.DAOlocation;
+import ffiandroid.situationawareness.model.localdb.DAOlocation;
 
 /**
  * This OSMmap File is part of project: Situation Awareness
