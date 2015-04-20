@@ -412,6 +412,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     private void cacheTiles() {
 
+
         cacheManager = new CacheManager(mMapView);
         int zoomMin = 11;
         int zoomMax = 17;
