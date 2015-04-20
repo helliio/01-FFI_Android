@@ -74,6 +74,7 @@ public class DAOtextReport {
      */
     public List<TextReport> getAllTextReports() {
         List<TextReport> textReports = new ArrayList<>();
+        // NOTE(Torgrim): testing ...
         Cursor cursor =
                 database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS, null, null, null,
                         null, DBtables.TextReportTB.COLUMN_DATETIME + " DESC");

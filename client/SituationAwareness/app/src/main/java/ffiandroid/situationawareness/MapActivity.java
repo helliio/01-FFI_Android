@@ -40,6 +40,7 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.datahandling.StartSync;
@@ -47,6 +48,7 @@ import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
 import ffiandroid.situationawareness.model.ParameterSetting;
+import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 
 /**
@@ -67,7 +69,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
 
     // NOTE(Torgrim): Added for testing purpose
-    private ArrayList<Marker> coWorkersMarkers = new ArrayList();
+    private ArrayList<Marker> coworkersLocationMarkers = new ArrayList();
+    private ArrayList<Marker> coworkersTextReportMarkers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -353,9 +356,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
             // add markers to them and add them to the map...
             // Will probably do this in the OSMmap class later
-            ArrayList<OverlayItem> markersOverlayItemList =
+            ArrayList<OverlayItem> coworkerLocationReportsList =
                     new OSMmap().getAllCoworkersLocationReports(getApplicationContext());
-            for(OverlayItem item : markersOverlayItemList)
+            for(OverlayItem item : coworkerLocationReportsList)
             {
                 item.setMarker(getResources().getDrawable(R.drawable.mypositionicon));
                 Marker coworkerMarker = new Marker(mMapView);
@@ -394,14 +397,72 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
                         return true;
                     }
                 });
-                coWorkersMarkers.add(coworkerMarker);
+                coworkersLocationMarkers.add(coworkerMarker);
 
 
 
 
             }
-            if (markersOverlayItemList.size() > 0) {
-                addCoWorkerMarkers(markersOverlayItemList);
+
+            //TODO(Torgrim): Check to see the difference between localdb doa and server doa...
+            // LocationDoa in local db seems to only take locations from locationReport table, while
+            // locationDoa in server db seems to use both textreport location and locationreport location????
+
+            // NOTE(Torgrim): Get all team members text reports
+            List<TextReport> coworkersTextReportsList = new OSMmap().getAllCoworkersTextReports(getApplicationContext());
+            for(TextReport report : coworkersTextReportsList)
+            {
+                Marker marker = new Marker(mMapView);
+                marker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
+                marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
+                marker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
+                    @Override
+                    public void onOpen(Object o)
+                    {
+                        System.out.println("========================TextReport Info window should now be open ======================");
+                    }
+
+                    @Override
+                    public void onClose()
+                    {
+                        System.out.println("======================== TextReport Info Window should now be closed =====================");
+                    }
+                });
+
+
+                String info = "User: " + report.getUserid() + "\n";
+                info += "Latitude: " + report.getLatitude() + "\n";
+                info += "Longitude:" + report.getLongitude() + "\n";
+                info += "-----------------------------------------\n";
+                info += "Acutal report: " + report.getReport();
+                setTextForPopup(marker.getInfoWindow().getView(), info );
+
+                marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                        if(!marker.getInfoWindow().isOpen())
+                        {
+
+                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                        }
+                        else
+                        {
+                            marker.getInfoWindow().close();
+                        }
+                        return true;
+                    }
+                });
+                coworkersTextReportMarkers.add(marker);
+
+
+            }
+
+            if (coworkerLocationReportsList.size() > 0) {
+                addCoWorkerMarkers(coworkerLocationReportsList);
+            }
+            if(coworkersTextReportsList.size() > 0)
+            {
+                addCoworkersTextReportMarkers(coworkersTextReportMarkers);
             }
         }
     };
@@ -414,7 +475,18 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
                 new ItemizedIconOverlay(this, markersOverlayItemArray, null);
         mMapView.getOverlays().add(markerItemizedIconOverlay);
         */
-        for(Marker marker : coWorkersMarkers)
+        for(Marker marker : coworkersLocationMarkers)
+        {
+
+            mMapView.getOverlays().add(marker);
+        }
+        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
+        mMapView.getOverlays().add(myScaleBarOverlay);
+    }
+
+    private void addCoworkersTextReportMarkers(ArrayList<Marker> markerList)
+    {
+        for(Marker marker : markerList)
         {
 
             mMapView.getOverlays().add(marker);

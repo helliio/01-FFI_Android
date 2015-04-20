@@ -65,14 +65,14 @@ public class DatabasePopulator {
     public void populateTextReports(ReportService reportService)
     {
         String result = "";
-        result += " >>>>>   " + reportService.sendTextReport("to", "1", "1429118974892", "63.448253", "10.444384", "This is a message from user TO") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("pe", "2", "1429118974563", "63.448221", "10.444342", "This is a message from user PE") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("bå", "3", "1429118974123", "63.448243", "10.444353", "This is a message from user BÅ") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("ch", "4", "1429118974313", "63.448240", "10.444312", "This is a message from user CH") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("ju", "5", "1429118974903", "63.448210", "10.444301", "This is a message from user JU") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("si", "6", "1429118974125", "63.448213", "10.444391", "This is a message from user SI") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("mo", "7", "1429118974321", "63.448280", "10.444321", "This is a message from user MO") + "\n";
-        result += " >>>>>   " + reportService.sendTextReport("tbs", "8", "1429118974124", "63.448295", "10.44455", "This is a message from user TBS") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("to", "1", "1429118974892", "63.428253", "10.444384", "This is a message from user TO") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("pe", "2", "1429118974563", "63.458221", "10.444342", "This is a message from user PE") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("bå", "3", "1429118974123", "63.418243", "10.444353", "This is a message from user BÅ") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("ch", "4", "1429118974313", "63.458240", "10.444312", "This is a message from user CH") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("ju", "5", "1429118974903", "63.418210", "10.444301", "This is a message from user JU") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("si", "6", "1429118974125", "63.428213", "10.444391", "This is a message from user SI") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("mo", "7", "1429118974321", "63.408280", "10.444321", "This is a message from user MO") + "\n";
+        result += " >>>>>   " + reportService.sendTextReport("tbs", "8", "1429118974124", "63.418295", "10.44455", "This is a message from user TBS") + "\n";
 
         System.out.println("=================== Result of populating the text reports =================\n");
         System.out.println(result);

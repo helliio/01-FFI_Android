@@ -5,11 +5,13 @@ import android.content.Context;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.localdb.DAOlocation;
+import ffiandroid.situationawareness.localdb.DAOtextReport;
 
 /**
  * This OSMmap File is part of project: Situation Awareness
@@ -38,7 +40,7 @@ public class OSMmap {
 
     /*
     // Created by Torgrim for testing purpose
-    // return all the locations in the server database.
+    // return all coworkers location reports in the server database.
      */
 
     public ArrayList<OverlayItem> getAllCoworkersLocationReports(Context context)
@@ -54,5 +56,16 @@ public class OSMmap {
 
         daoLocation.close();
         return markerOverlayItemArray;
+    }
+
+    // Created by Torgrim
+    // gets all coworkersTextReports
+    public List<TextReport> getAllCoworkersTextReports(Context context)
+    {
+        ArrayList<OverlayItem> markerOverlayItemArray = new ArrayList<>();
+        DAOtextReport doaTextReport = new DAOtextReport(context);
+        List<TextReport> textReports =  doaTextReport.getAllTextReports();
+        return textReports;
+
     }
 }

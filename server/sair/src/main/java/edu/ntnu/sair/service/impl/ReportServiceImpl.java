@@ -212,7 +212,7 @@ public class ReportServiceImpl implements ReportService {
         List<TextReport> textReports = textReportDao.getAll();
         for (TextReport textReport : textReports)
         {
-            result += "User         >>>>    " +textReport.getLocation().getMember() + "<br>";
+            result += "User         >>>>    " +textReport.getLocation().getMember().getName() + "<br>";
             result += "ID           >>>>    " + textReport.getId() + "<br>";
             result += "Content      >>>>    " + textReport.getContent() + "<br>";
             result += "Latitude     >>>>    " +textReport.getLocation().getLatitude() + "<br>";
