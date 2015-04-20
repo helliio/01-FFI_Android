@@ -57,7 +57,7 @@ MERGED from com.android.support:support-v4:21.0.3:16:5
 		ADDED from AndroidManifest.xml:18:9
 	android:theme
 		ADDED from AndroidManifest.xml:20:9
-activity#ffiandroid.situationawareness.Login
+activity#ffiandroid.situationawareness.controller.Login
 ADDED from AndroidManifest.xml:21:9
 	android:label
 		ADDED from AndroidManifest.xml:23:13
@@ -75,31 +75,31 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:28:17
 	android:name
 		ADDED from AndroidManifest.xml:28:27
-activity#ffiandroid.situationawareness.MapActivity
+activity#ffiandroid.situationawareness.controller.MapActivity
 ADDED from AndroidManifest.xml:31:9
 	android:label
 		ADDED from AndroidManifest.xml:33:13
 	android:name
 		ADDED from AndroidManifest.xml:32:13
-activity#ffiandroid.situationawareness.AppSettings
+activity#ffiandroid.situationawareness.controller.AppSettings
 ADDED from AndroidManifest.xml:43:9
 	android:label
 		ADDED from AndroidManifest.xml:45:13
 	android:name
 		ADDED from AndroidManifest.xml:44:13
-activity#ffiandroid.situationawareness.Status
+activity#ffiandroid.situationawareness.controller.Status
 ADDED from AndroidManifest.xml:47:9
 	android:label
 		ADDED from AndroidManifest.xml:49:13
 	android:name
 		ADDED from AndroidManifest.xml:48:13
-activity#ffiandroid.situationawareness.Report
+activity#ffiandroid.situationawareness.controller.Report
 ADDED from AndroidManifest.xml:51:9
 	android:label
 		ADDED from AndroidManifest.xml:53:13
 	android:name
 		ADDED from AndroidManifest.xml:52:13
-activity#ffiandroid.situationawareness.Register
+activity#ffiandroid.situationawareness.controller.Register
 ADDED from AndroidManifest.xml:55:9
 	android:label
 		ADDED from AndroidManifest.xml:57:13
