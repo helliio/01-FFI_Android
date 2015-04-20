@@ -20,8 +20,8 @@
     <string name="register_user">Register</string>
     <string name="repeat_password">Repeat password</string>
     <string name="user_name">User Name</string>
-    <string name="report_issues_about_this_area">Report issues about this area:</string>
-    <string name="save_report">Save text Report</string>
+    <string name="observation_description_default">Describe your observations:</string>
+    <string name="save_report">Report Observation</string>
     <string name="title_activity_report_view">ReportView</string>
     <string name="title_report_view">Report View</string>
     <string name="title_logout">Logout</string>
@@ -39,7 +39,7 @@
     <string name="not_reported_text_items">Not reported text items</string>
     <string name="title_activity_image_display">ImageDisplay</string>
     <string name="title_activity_photo_view">PhotoView</string>
-    <string name="new_photo_report">New photo report</string>
+    <string name="attach_photo">Attach Photo</string>
     <string name="take_a_photo">Take a Photo</string>
     <string name="from_gallery">From Gallery</string>
     <string name="title_photo_report_view">Photo report</string>

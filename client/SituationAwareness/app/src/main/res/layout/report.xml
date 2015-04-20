@@ -12,40 +12,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/report_edit_text_report"
-        android:hint="@string/report_issues_about_this_area"
+        android:hint="@string/observation_description_default"
         android:layout_marginTop="39dp"
         android:inputType="textMultiLine"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <Button
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/save_report"
-        android:onClick="textReportOnClicked"
-        android:width="200dp"
-        android:text="@string/save_report"
-        android:layout_below="@+id/coordinates"/>
 
     <TextView
         android:id="@+id/coordinates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:width="330dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/report_edit_text_report" />
+        android:text="Lat-Long"
+        android:layout_below="@+id/report_edit_text_report"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="39dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/save_report"
+        android:onClick="textReportOnClicked"
+        android:width="200dp"
+        android:text="@string/save_report"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="addPhotoButtonOnClicked"
-        android:text="@string/new_photo_report"
+        android:text="@string/attach_photo"
         android:id="@+id/btn_photo"
-        android:layout_below="@+id/report_edit_text_report"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp" />
+        android:layout_marginTop="58dp"
+        android:layout_below="@+id/coordinates"
+        android:layout_alignLeft="@+id/coordinates"
+        android:layout_alignStart="@+id/coordinates" />
 
 
 </RelativeLayout>
