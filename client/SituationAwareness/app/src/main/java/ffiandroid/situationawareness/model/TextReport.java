@@ -28,7 +28,7 @@ public class TextReport extends LocationReport {
      *
      * @param report
      */
-    public TextReport(String report, long latitude, long longitude) {
+    public TextReport(String report, double latitude, double longitude) {
         super(latitude, longitude);
         this.report = report;
     }

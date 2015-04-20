@@ -72,7 +72,7 @@ public class Report extends ActionBarActivity {
      * @param report
      */
     private void sendTextReportToDB(String report) {
-        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report, 0, 0));
+        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report, location.getLatitude(), location.getLongitude()));
         Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
         textReport.getText().clear();
     }

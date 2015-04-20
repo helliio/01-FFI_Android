@@ -127,8 +127,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         mMapView.setBuiltInZoomControls(true);
         mMapView.setMultiTouchControls(true);
-
         mMapView.setUseDataConnection(true);
+
         //If true: will automatically download maps online.
         //If false: will only download map tiles through the cache map tiles command
 
@@ -298,6 +298,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_report:
+                newReportLocation = new Location(myCurrentLocation);
                 startActivity(new Intent(this, Report.class));
                 return true;
             case R.id.menu_item_status:
@@ -451,21 +452,24 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
    @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
 
-        Toast.makeText(this, "Tapped on ("+p.getLatitude()+","+p.getLongitude()+")", Toast.LENGTH_SHORT).show();
-        return true;
+       System.out.println("Tapped on (" + p.getLatitude() + ","+p.getLongitude()+")" );
+       return true;
     }
 
 
     @Override
+    /*
+    If user presses long on the map it opens a menu where
+    it can go to submit an observation about the particular point
+    on the map through the report page
+     */
     public boolean longPressHelper(GeoPoint p) {
 
         registerForContextMenu(mMapView);
         newReportLocation = new Location("");
         newReportLocation.setLatitude(p.getLatitude());
         newReportLocation.setLongitude(p.getLongitude());
-
         openContextMenu(mMapView);
-
 
 
         Toast.makeText(this, "Long press on ("+p.getLatitude()+","+p.getLongitude()+")", Toast.LENGTH_SHORT).show();

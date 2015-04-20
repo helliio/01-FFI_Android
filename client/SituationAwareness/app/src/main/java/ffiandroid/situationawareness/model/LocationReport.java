@@ -40,7 +40,7 @@ public class LocationReport {
      * @param latitude
      * @param longitude
      */
-    public LocationReport(long latitude, long longitude) {
+    public LocationReport(double latitude, double longitude) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.userid = UserInfo.getUserID();
