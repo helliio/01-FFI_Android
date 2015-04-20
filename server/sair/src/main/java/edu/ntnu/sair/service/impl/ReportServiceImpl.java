@@ -188,6 +188,42 @@ public class ReportServiceImpl implements ReportService {
         return new Result("sendPhotoReport", "success").toString();
     }
 
+
+
+    @Transactional
+    @Override
+    public String getAllReports()
+    {
+        List<Location> locationReports = locationDao.getAll();
+        String result = "";
+        for(Location location : locationReports)
+        {
+            result += "User             >>>>    " + location.getMember().getName() + "<br>";
+            result += "ID               >>>>    " + location.getId() + "<br>";
+            result += "Latitude         >>>>    " + location.getLatitude() + "<br>";
+            result += "Longitude        >>>>    " + location.getLongitude() + "<br>";
+            result += "Client timestamp >>>>    " + location.getClientTimestamp().toString() + "<br>";
+            result += "Server timestamp >>>>    " + location.getServerTimestamp().toString() + "<br><br>";
+
+        }
+
+        result += "============================== End of location Reports ============================================";
+        result += "<br><br><br>";
+        List<TextReport> textReports = textReportDao.getAll();
+        for (TextReport textReport : textReports)
+        {
+            result += "User         >>>>    " +textReport.getLocation().getMember() + "<br>";
+            result += "ID           >>>>    " + textReport.getId() + "<br>";
+            result += "Content      >>>>    " + textReport.getContent() + "<br>";
+            result += "Latitude     >>>>    " +textReport.getLocation().getLatitude() + "<br>";
+            result += "Longitude    >>>>    " + textReport.getLocation().getLongitude() + "<br><br>";
+        }
+
+        result += "============================== End of text Reports ============================================";
+        result += "<br><br><br>";
+        return result;
+    }
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;

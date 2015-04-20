@@ -1,8 +1,10 @@
 package ffiandroid.situationawareness;
 
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,21 +16,29 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
+import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.datahandling.PerformBackgroundTask;
@@ -46,7 +56,7 @@ import ffiandroid.situationawareness.model.UserInfo;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-public class MapActivity extends ActionBarActivity implements LocationListener {
+public class MapActivity extends ActionBarActivity implements LocationListener  {
     private MapView mMapView;
     private MapController mMapController;
     private LocationManager locationManager;
@@ -54,6 +64,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
     private String bestProvider;
     private Marker startMarker;
     private CacheManager cacheManager;
+
+
+    // NOTE(Torgrim): Added for testing purpose
+    private ArrayList<Marker> coWorkersMarkers = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +114,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
         mMapView.setBuiltInZoomControls(true);
         mMapView.setMultiTouchControls(true);
-        mMapView.setUseDataConnection(false);
+        mMapView.setUseDataConnection(true);
 
         mMapController = (MapController) mMapView.getController();
-        mMapController.setZoom(15);
+        mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
@@ -334,13 +348,77 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
             if (markersOverlayItemArray.size() > 0) {
                 addCoWorkerMarkers(markersOverlayItemArray);
             }
+
+
+            // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
+            // add markers to them and add them to the map...
+            // Will probably do this in the OSMmap class later
+            ArrayList<OverlayItem> markersOverlayItemList =
+                    new OSMmap().getAllCoworkersLocationReports(getApplicationContext());
+            for(OverlayItem item : markersOverlayItemList)
+            {
+                item.setMarker(getResources().getDrawable(R.drawable.mypositionicon));
+                Marker coworkerMarker = new Marker(mMapView);
+                coworkerMarker.setPosition(item.getPoint());
+                coworkerMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
+                coworkerMarker.setTitle(item.getTitle());
+                coworkerMarker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
+                    @Override
+                    public void onOpen(Object o) {
+                        System.out.println("==================== Info window should be open now!! ========================");
+                    }
+
+                    @Override
+                    public void onClose() {
+                        System.out.println("==================== Info window should be closed now!! ========================");
+                    }
+                });
+                String info = "User: " + coworkerMarker.getTitle() + "\n";
+                info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
+                info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
+                setTextForPopup(coworkerMarker.getInfoWindow().getView(), info );
+                coworkerMarker.setInfoWindowAnchor((float)coworkerMarker.getPosition().getLatitude(),(float) coworkerMarker.getPosition().getLongitude());
+                coworkerMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> You just touched a coworker >>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                        if(!marker.getInfoWindow().isOpen())
+                        {
+
+                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                        }
+                        else
+                        {
+                            marker.getInfoWindow().close();
+                        }
+                        return true;
+                    }
+                });
+                coWorkersMarkers.add(coworkerMarker);
+
+
+
+
+            }
+            if (markersOverlayItemList.size() > 0) {
+                addCoWorkerMarkers(markersOverlayItemList);
+            }
         }
     };
 
     private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
+        /*
+
+
         ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
                 new ItemizedIconOverlay(this, markersOverlayItemArray, null);
         mMapView.getOverlays().add(markerItemizedIconOverlay);
+        */
+        for(Marker marker : coWorkersMarkers)
+        {
+
+            mMapView.getOverlays().add(marker);
+        }
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         mMapView.getOverlays().add(myScaleBarOverlay);
     }
@@ -365,6 +443,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
         mMapView.invalidate();
         startMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
         startMarker.setTitle("My point");
+        startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>I guess you just touched yourself!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                return true;
+            }
+        });
     }
 
     @Override public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -377,5 +462,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener {
 
     @Override public void onProviderDisabled(String provider) {
 
+    }
+
+    // NOTE(Torgrim): Added to be used for testing the popup window on map...
+    public void setTextForPopup(View view, String text)
+    {
+        ((TextView)((LinearLayout)view).getChildAt(0)).setText(text);
     }
 }
