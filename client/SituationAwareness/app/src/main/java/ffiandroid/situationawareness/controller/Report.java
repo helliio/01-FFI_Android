@@ -1,5 +1,6 @@
 package ffiandroid.situationawareness.controller;
 
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
  * This Report Class is part of project: Situation Awareness
@@ -38,7 +39,7 @@ public class Report extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         textReport = (EditText) findViewById(R.id.report_edit_text_report);
 
-        location = MapActivity.newReportLocation;
+       location = MapActivity.newReportLocation;
         textLocation = (TextView) findViewById(R.id.coordinates);
         textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
     }
@@ -49,8 +50,8 @@ public class Report extends ActionBarActivity {
         startActivity(new Intent(this, PhotoView.class));
     }
 
-     /**
-     * user click send report button
+
+    /* user click send report button
      *
      * @param view
      */
@@ -71,7 +72,7 @@ public class Report extends ActionBarActivity {
      * @param report
      */
     private void sendTextReportToDB(String report) {
-        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report));
+        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report, 0, 0));
         Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
         textReport.getText().clear();
     }
@@ -142,7 +143,7 @@ public class Report extends ActionBarActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };

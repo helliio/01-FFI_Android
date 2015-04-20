@@ -34,7 +34,21 @@ public class LocationReport {
         }
     }
 
+    /**
+     * auto set userid, isreported: false, current time stamp;
+     *
+     * @param latitude
+     * @param longitude
+     */
+    public LocationReport(long latitude, long longitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.userid = UserInfo.getUserID();
+        this.isreported = false;
+    }
+
     public LocationReport() {
+
     }
 
     /**

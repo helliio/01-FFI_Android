@@ -472,7 +472,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         return false;
     }
 
-    /**
+   /**
      * logout function for logout
      */
     public void logout() {
