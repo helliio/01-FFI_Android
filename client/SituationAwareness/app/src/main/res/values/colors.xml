@@ -16,6 +16,9 @@
     <item name="report_status_btn_not_send" type="color">#B71C1C</item>
     <item name="black" type="color">#000000</item>
 
+    <!-- Added by torgirm -->
+    <item name="mapInfoWindow" type="color">#EEEEEE</item>
+
     <integer-array name="androidcolors">
         <item>@color/actionbar_text</item>
         <item>@color/actionbar_background</item>
@@ -24,6 +27,9 @@
         <item>@color/report_status_btn_send</item>
         <item>@color/report_status_btn_not_send</item>
         <item>@color/black</item>
+
+        <!-- Added by torgrim -->
+        <item>@color/mapInfoWindow</item>
 
     </integer-array>
 

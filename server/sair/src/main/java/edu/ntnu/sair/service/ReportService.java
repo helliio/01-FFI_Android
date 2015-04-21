@@ -47,4 +47,7 @@ public interface ReportService {
             @WebParam(name = "file") String file,
             @WebParam(name = "extension") String extension,
             @WebParam(name = "description") String description);
+
+    // Added by Torgrim for testing
+    public String getAllReports();
 }

@@ -31,14 +31,14 @@
         <url-pattern>/REST/*</url-pattern>
     </filter-mapping>
 
-    <!--<filter>-->
-        <!--<filter-name>gzipFilter</filter-name>-->
-        <!--<filter-class>edu.ntnu.sair.filter.GZIPFilter</filter-class>-->
-    <!--</filter>-->
-    <!--<filter-mapping>-->
-        <!--<filter-name>gzipFilter</filter-name>-->
-        <!--<url-pattern>/REST/*</url-pattern>-->
-    <!--</filter-mapping>-->
+    <filter>
+        <filter-name>gzipFilter</filter-name>
+        <filter-class>edu.ntnu.sair.filter.GZIPFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>/REST/*</url-pattern>
+    </filter-mapping>
 
     <servlet>
         <servlet-name>SpringMVC</servlet-name>

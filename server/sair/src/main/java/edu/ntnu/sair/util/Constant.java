@@ -20,5 +20,6 @@ public class Constant {
     public static final int LOGIN_PERIOD = 48;
 
     // Path of photos
-    public static final String PHOTO_PATH = "/Users/chun/database/sair/photos/";
+    // Real photo path(Torgrim): "/Users/chun/database/sair/photos/"
+    public static final String PHOTO_PATH = "p:/ProjectFFI/database/sair/photos";
 }

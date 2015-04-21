@@ -1,10 +1,13 @@
 package ffiandroid.situationawareness.controller;
 
 
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.app.ActionBar;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,6 +25,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,18 +38,19 @@ import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.bonuspack.overlays.Marker;
+import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
-
 import java.sql.SQLOutput;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
@@ -61,7 +68,6 @@ import ffiandroid.situationawareness.model.localdb.DAOlocation;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-
 public class MapActivity extends ActionBarActivity implements LocationListener, MapEventsReceiver, StatusListener {
     private MapView mMapView;
     private MapController mMapController;
@@ -73,6 +79,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private CacheManager cacheManager;
     private MapEventsOverlay mapEventsOverlay;
     private String menuStatus;
+
+
+    // NOTE(Torgrim): Added for testing purpose
+    private ArrayList<Marker> coWorkersMarkers = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,13 +137,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         mMapView.setBuiltInZoomControls(true);
         mMapView.setMultiTouchControls(true);
+
+        /*
+        If true: will automatically download maps online.
+        If false: will only download map tiles through the cache map tiles command
+         */
         mMapView.setUseDataConnection(true);
 
-        //If true: will automatically download maps online.
-        //If false: will only download map tiles through the cache map tiles command
-
         mMapController = (MapController) mMapView.getController();
-        mMapController.setZoom(15);
+        mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
@@ -190,7 +202,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
              */
         } else {
             Toast.makeText(getApplicationContext(), "Could not find location, Using default", Toast.LENGTH_LONG).show();
-            myCurrentLocation = new Location("none");
+            myCurrentLocation = new Location("default");
             myCurrentLocation.setLatitude(63.4305939);
             myCurrentLocation.setLongitude(10.3921571);
 
@@ -396,13 +408,77 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             if (markersOverlayItemArray.size() > 0) {
                 addCoWorkerMarkers(markersOverlayItemArray);
             }
+
+
+            // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
+            // add markers to them and add them to the map...
+            // Will probably do this in the OSMmap class later
+            ArrayList<OverlayItem> markersOverlayItemList =
+                    new OSMmap().getAllCoworkersLocationReports(getApplicationContext());
+            for(OverlayItem item : markersOverlayItemList)
+            {
+                item.setMarker(getResources().getDrawable(R.drawable.mypositionicon));
+                Marker coworkerMarker = new Marker(mMapView);
+                coworkerMarker.setPosition(item.getPoint());
+                coworkerMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
+                coworkerMarker.setTitle(item.getTitle());
+                coworkerMarker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
+                    @Override
+                    public void onOpen(Object o) {
+                        System.out.println("==================== Info window should be open now!! ========================");
+                    }
+
+                    @Override
+                    public void onClose() {
+                        System.out.println("==================== Info window should be closed now!! ========================");
+                    }
+                });
+                String info = "User: " + coworkerMarker.getTitle() + "\n";
+                info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
+                info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
+                setTextForPopup(coworkerMarker.getInfoWindow().getView(), info );
+                coworkerMarker.setInfoWindowAnchor((float)coworkerMarker.getPosition().getLatitude(),(float) coworkerMarker.getPosition().getLongitude());
+                coworkerMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> You just touched a coworker >>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                        if(!marker.getInfoWindow().isOpen())
+                        {
+
+                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                        }
+                        else
+                        {
+                            marker.getInfoWindow().close();
+                        }
+                        return true;
+                    }
+                });
+                coWorkersMarkers.add(coworkerMarker);
+
+
+
+
+            }
+            if (markersOverlayItemList.size() > 0) {
+                addCoWorkerMarkers(markersOverlayItemList);
+            }
         }
     };
 
     private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
+        /*
+
+
         ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
                 new ItemizedIconOverlay(this, markersOverlayItemArray, null);
         mMapView.getOverlays().add(markerItemizedIconOverlay);
+        */
+        for(Marker marker : coWorkersMarkers)
+        {
+
+            mMapView.getOverlays().add(marker);
+        }
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         mMapView.getOverlays().add(myScaleBarOverlay);
     }
@@ -427,14 +503,21 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private void updateMyPositionMarker(Location location) {
         startMarker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+        mMapView.getOverlays().add(startMarker);
+        mMapView.invalidate();
         startMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
         startMarker.setTitle("My point");
 
-        mMapView.getOverlays().add(startMarker);
-        mMapView.invalidate();
+
+        startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
+                System.out.println(">>>>>>>I guess you just touched yourself!!>>>>>>>>>>>>");
+                return true;
+            }
+        });
 
     }
-
 
 
 
@@ -449,6 +532,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     @Override public void onProviderDisabled(String provider) {
 
     }
+
 
    @Override
     public boolean singleTapConfirmedHelper(GeoPoint p) {
@@ -544,6 +628,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     @Override public void lastReportStatusChanged() {
+    }
 
+    // NOTE(Torgrim): Added to be used for testing the popup window on map...
+    public void setTextForPopup(View view, String text)
+    {
+        ((TextView)((LinearLayout)view).getChildAt(0)).setText(text);
     }
 }
