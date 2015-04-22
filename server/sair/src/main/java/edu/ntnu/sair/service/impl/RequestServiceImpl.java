@@ -407,6 +407,9 @@ public class RequestServiceImpl implements RequestService {
         String photoPath = Constant.PHOTO_PATH + photoReport.getName() + "." + photoReport.getExtension();
         File photo = new File(photoPath);
 
+        // NOTE(Torgrim): added for testing purposes
+        String photoInBase64 = Coder.encryptBASE64(photo);
+
         return new Result("getPhoto", "success", "file", Coder.encryptBASE64(photo)).toString();
     }
 

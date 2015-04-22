@@ -37,7 +37,9 @@ public class Sender {
             ht.call(null, envelope, headers);
 
             // NOTE(Torgrim): changed for testing purposes..
+
             String response = envelope.getResponse().toString();
+
             System.out.println(">>>>>>>>>>>>>>>>>>> response: " + response);
             return response;
         } catch (Exception e) {

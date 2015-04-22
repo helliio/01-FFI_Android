@@ -15,6 +15,7 @@ import java.io.File;
 public class DatabasePopulator {
 
     ReportService reportService;
+    private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
 
     private static final String TIME_IN_MILLI = "1429628672966";
 
@@ -88,35 +89,35 @@ public class DatabasePopulator {
     {
         String result = "";
         result += ">>>>>    " + reportService.sendPhotoReport("to", "1", TIME_IN_MILLI, "63.382438", "9.955673", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test1.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test1.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from to, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("pe", "2", TIME_IN_MILLI, "63.439602", "10.201492", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test2.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test2.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from pe, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("bå", "3", TIME_IN_MILLI, "63.38859", "10.401993", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test3.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test3.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from bå, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("ch", "4", TIME_IN_MILLI, "63.310977", "10.204239", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test4.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test4.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from ch, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("ju", "5", TIME_IN_MILLI, "63.396586", "10.097122", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test5.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test5.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from ju, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("si", "6", TIME_IN_MILLI, "63.391051", "10.160294", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test6.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test6.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from si, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("mo", "7", TIME_IN_MILLI, "63.411956", "10.244064", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test7.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test7.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from mo, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport("tbs", "8", TIME_IN_MILLI, "63.383053", "10.226212", "0",
-                                                            Coder.encryptBASE64(new File("p:/ProjectFFI/testPhotos/test8.jpg")), "jpg",
+                                                            Coder.encryptBASE64(new File(PHOTO_PATH + "test8.jpg")), "jpg",
                                                             "This is the title for to's picture", "This is a test from tbs, sending photo");
 
         System.out.println("=================== Result of populating the photo reports =================\n");
