@@ -420,7 +420,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 item.setMarker(getResources().getDrawable(R.drawable.mypositionicon));
                 Marker coworkerMarker = new Marker(mMapView);
                 coworkerMarker.setPosition(item.getPoint());
-                coworkerMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
+                coworkerMarker.setIcon(getResources().getDrawable(R.drawable.teammembericon));
                 coworkerMarker.setTitle(item.getTitle());
                 coworkerMarker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
                     @Override
@@ -445,7 +445,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                         if(!marker.getInfoWindow().isOpen())
                         {
 
-                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -50);
                         }
                         else
                         {
