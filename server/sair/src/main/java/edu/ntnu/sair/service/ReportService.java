@@ -46,6 +46,7 @@ public interface ReportService {
             @WebParam(name = "direction") String direction,
             @WebParam(name = "file") String file,
             @WebParam(name = "extension") String extension,
+            @WebParam(name = "title") String title,
             @WebParam(name = "description") String description);
 
     // Added by Torgrim for testing

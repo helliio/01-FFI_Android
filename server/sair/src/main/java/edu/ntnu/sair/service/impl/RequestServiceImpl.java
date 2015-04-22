@@ -332,6 +332,11 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
                 obj.put("id", photoReport.getId());
+
+                // NOTE(Torgrim): Added title..
+                obj.put("title", photoReport.getTitle());
+
+
                 obj.put("description", photoReport.getDescription());
                 obj.put("direction", photoReport.getDirection());
                 obj.put("filename", photoReport.getName());

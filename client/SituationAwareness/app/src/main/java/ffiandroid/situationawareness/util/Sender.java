@@ -36,7 +36,10 @@ public class Sender {
             HttpTransport ht = new HttpTransport(Constant.SERVICE_URL + "/SOAP/" + wsdl, Constant.TIMEOUT);
             ht.call(null, envelope, headers);
 
-            return envelope.getResponse().toString();
+            // NOTE(Torgrim): changed for testing purposes..
+            String response = envelope.getResponse().toString();
+            System.out.println(">>>>>>>>>>>>>>>>>>> response: " + response);
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

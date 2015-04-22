@@ -48,6 +48,7 @@ import ffiandroid.situationawareness.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.OSMmap;
 import ffiandroid.situationawareness.model.ParameterSetting;
+import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 
@@ -314,7 +315,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
     private void statusAndSendButtonClicked() {
         Toast.makeText(this, "status send button clicked", Toast.LENGTH_SHORT).show();
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 new PerformBackgroundTask(getApplicationContext()).execute();
             }
         });
@@ -356,6 +358,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
             // add markers to them and add them to the map...
             // Will probably do this in the OSMmap class later
+
+
+            // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
+
             ArrayList<OverlayItem> coworkerLocationReportsList =
                     new OSMmap().getAllCoworkersLocationReports(getApplicationContext());
             for(OverlayItem item : coworkerLocationReportsList)
@@ -397,8 +403,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
                         return true;
                     }
                 });
-                coworkersLocationMarkers.add(coworkerMarker);
-
+                if(!coworkersLocationMarkers.contains(coworkerMarker))
+                {
+                    coworkersLocationMarkers.add(coworkerMarker);
+                    //System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>Added location report marker to the map....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                }
+                else
+                {
+                    System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>This coworker's location report has already been added....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                }
 
 
 
@@ -452,9 +465,33 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
                         return true;
                     }
                 });
-                coworkersTextReportMarkers.add(marker);
+
+                if(!coworkersTextReportMarkers.contains(marker))
+                {
+                    coworkersTextReportMarkers.add(marker);
+                    //System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>Added text report Marker to the map....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                }
+                else
+                {
+                    System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>This coworker's Text report has already been added....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                }
 
 
+            }
+
+
+            List<PhotoReport> photoReports = new OSMmap().getAllCoworkersPhotoReports(getApplicationContext());
+            for(PhotoReport report : photoReports)
+            {
+                System.out.println("PhotoReports ================ UserId: " + report.getUserid() + "\n");
+                System.out.println("PhotoReports ================ Title: " + report.getTitle() + "\n");
+                System.out.println("PhotoReports ================ Picture id: " + report.getPicId() + "\n");
+                System.out.println("PhotoReports ================ Is reported: " + report.isIsreported() + "\n");
+                System.out.println("PhotoReports ================ Description: " + report.getDescription() + "\n");
+                System.out.println("PhotoReports ================ Path: " + report.getPath() + "\n");
+                System.out.println("PhotoReports ================ Extension: " + report.getExtension() + "\n");
+                System.out.println("PhotoReports ================ Latitude: " + report.getLatitude() + "\n");
+                System.out.println("PhotoReports ================ Longitude: " + report.getLongitude() + "\n");
             }
 
             if (coworkerLocationReportsList.size() > 0) {

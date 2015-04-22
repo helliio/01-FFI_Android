@@ -33,6 +33,8 @@ public class PerformBackgroundTask extends AsyncTask {
 
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
+            // NOTE(Torgrim): added for debugging
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>Inside doInBackground method.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             report.upload();
             location.upload();
             reportUnsendPhotos();
@@ -65,9 +67,11 @@ public class PerformBackgroundTask extends AsyncTask {
 
     /**
      * handle download photos: <li>first download latest photo list</li> <li>then if has network connection and
-     * un-downloaded photo from list, download one photo</li>
+     * not-downloaded photos from list, download one photo</li>
      */
     private void downloadPhotoHandling() {
+        // NOTE(Torgrim): Added for debugging
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>Inside downloadPhotoHandling method.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         photo.download();
         new DownloadFilesTask().doInBackground();
     }

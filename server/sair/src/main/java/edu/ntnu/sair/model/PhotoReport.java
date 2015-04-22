@@ -14,6 +14,8 @@ public class PhotoReport {
     private String name;
     private String extension;
     private String path;
+    // NOTE(Torgrim): Title to match local database on mobile
+    private String title;
     private String description;
     private int direction;
 
@@ -60,6 +62,10 @@ public class PhotoReport {
     public void setPath(String path) {
         this.path = path;
     }
+
+    // NOTE(Torgrim): Set title to match localdb on android phone...
+    public String getTitle(){ return title;}
+    public void setTitle(String title){this.title = title;}
 
     public String getDescription() {
         return description;

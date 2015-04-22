@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.localdb.DAOlocation;
+import ffiandroid.situationawareness.localdb.DAOphoto;
 import ffiandroid.situationawareness.localdb.DAOtextReport;
 
 /**
@@ -62,10 +63,17 @@ public class OSMmap {
     // gets all coworkersTextReports
     public List<TextReport> getAllCoworkersTextReports(Context context)
     {
-        ArrayList<OverlayItem> markerOverlayItemArray = new ArrayList<>();
         DAOtextReport doaTextReport = new DAOtextReport(context);
         List<TextReport> textReports =  doaTextReport.getAllTextReports();
         return textReports;
 
+    }
+
+
+    public List<PhotoReport> getAllCoworkersPhotoReports(Context context)
+    {
+        DAOphoto doaPhoto = new DAOphoto(context);
+        List<PhotoReport> photoReports = doaPhoto.getCoWorkerPhotos(UserInfo.getUserID());
+        return photoReports;
     }
 }

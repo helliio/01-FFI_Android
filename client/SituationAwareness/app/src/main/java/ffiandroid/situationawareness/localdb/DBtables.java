@@ -18,6 +18,7 @@ public class DBtables {
         public static final String TABLE_NAME = "textreport";
 
         public static final String COLUMN_USER_ID = "userid";
+
         public static final String COLUMN_REPORT = "report";
         public static final String COLUMN_ISREPORTED = "isreported";
         public static final String COLUMN_DATETIME = "datetime";
@@ -27,11 +28,11 @@ public class DBtables {
         public static final String[] ALL_COLUMNS =
                 {COLUMN_USER_ID, COLUMN_REPORT, COLUMN_ISREPORTED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
     }
-
     public static abstract class LocationTB implements BaseColumns {
-        public static final String TABLE_NAME = "locationreport";
 
+        public static final String TABLE_NAME = "locationreport";
         public static final String COLUMN_USER_ID = "userid";
+
         public static final String COLUMN_ISREPORTED = "isreported";
         public static final String COLUMN_DATETIME = "datetime";
         public static final String COLUMN_LATITUDE = "latitude";
@@ -40,11 +41,15 @@ public class DBtables {
         public static final String[] ALL_COLUMNS =
                 {COLUMN_USER_ID, COLUMN_ISREPORTED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
     }
-
     public static abstract class PhotoTB implements BaseColumns {
-        public static final String TABLE_NAME = "photoreport";
 
+        public static final String TABLE_NAME = "photoreport";
         public static final String COLUMN_USER_ID = "userid";
+
+        // NOTE(Torgrim): Added picture id string by for debugging and testing purposes..
+        public static final String COLUMN_PIC_ID = "picId";
+
+
         public static final String COLUMN_ISREPORTED = "isreported";
         public static final String COLUMN_DATETIME = "datetime";
         public static final String COLUMN_LATITUDE = "latitude";
@@ -56,6 +61,6 @@ public class DBtables {
         public static final String PRIMARY_KEY = "PRIMARY KEY (" + COLUMN_USER_ID + "," + COLUMN_DATETIME + ")";
         public static final String[] ALL_COLUMNS =
                 {COLUMN_USER_ID, COLUMN_ISREPORTED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE,
-                        COLUMN_DESCRIPTION, COLUMN_TITLE, COLUMN_PATH, COLUMN_EXTENSION};
+                        COLUMN_DESCRIPTION, COLUMN_PIC_ID, COLUMN_TITLE, COLUMN_PATH, COLUMN_EXTENSION};
     }
 }
