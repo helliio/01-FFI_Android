@@ -44,19 +44,13 @@ public class OSMmap {
     // return all coworkers location reports in the server database.
      */
 
-    public ArrayList<OverlayItem> getAllCoworkersLocationReports(Context context)
+    public ArrayList<LocationReport> getAllCoworkersLocationReports(Context context)
     {
-        ArrayList<OverlayItem> markerOverlayItemArray = new ArrayList();
         DAOlocation daoLocation = new DAOlocation(context);
-        List<LocationReport> locationReports = daoLocation.getCoWorkerLocations(UserInfo.getUserID());
-        for(LocationReport locationReport : locationReports)
-        {
-            markerOverlayItemArray.add( new OverlayItem(locationReport.getUserid(), locationReport.getUserid(),
-                                        new GeoPoint(locationReport.getLatitude(), locationReport.getLongitude())));
-        }
-
+        ArrayList<LocationReport> locationReports = (ArrayList)daoLocation.getCoWorkerLocations(UserInfo.getUserID());
         daoLocation.close();
-        return markerOverlayItemArray;
+        return locationReports;
+
     }
 
     // Created by Torgrim
@@ -65,6 +59,7 @@ public class OSMmap {
     {
         DAOtextReport doaTextReport = new DAOtextReport(context);
         List<TextReport> textReports =  doaTextReport.getAllTextReports();
+        doaTextReport.close();
         return textReports;
 
     }
@@ -72,8 +67,9 @@ public class OSMmap {
 
     public List<PhotoReport> getAllCoworkersPhotoReports(Context context)
     {
-        DAOphoto doaPhoto = new DAOphoto(context);
-        List<PhotoReport> photoReports = doaPhoto.getCoWorkerPhotos(UserInfo.getUserID());
+        DAOphoto daoPhoto = new DAOphoto(context);
+        List<PhotoReport> photoReports = daoPhoto.getCoWorkerPhotos(UserInfo.getUserID());
+        daoPhoto.close();
         return photoReports;
     }
 }

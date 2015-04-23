@@ -71,7 +71,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
     // NOTE(Torgrim): Added for testing purpose
     private ArrayList<Marker> coworkersLocationMarkers = new ArrayList();
+    private ArrayList<String> locationReportsPresent = new ArrayList<>();
+
     private ArrayList<Marker> coworkersTextReportMarkers = new ArrayList<>();
+    private ArrayList<String> textReportsPresent = new ArrayList<>();
+
+    private ArrayList<Marker> coworkerPhotoReportMarkers = new ArrayList<>();
+    private ArrayList<String> photoReportsPresent = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,11 +355,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
     private Runnable getCoWorkerMarkerThread = new Runnable() {
         @Override public void run() {
-            ArrayList<OverlayItem> markersOverlayItemArray =
-                    new OSMmap().getCoworkerMarkersOverlay(getApplicationContext());
-            if (markersOverlayItemArray.size() > 0) {
-                addCoWorkerMarkers(markersOverlayItemArray);
-            }
 
 
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
@@ -361,60 +363,60 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
 
             // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
-
-            ArrayList<OverlayItem> coworkerLocationReportsList =
-                    new OSMmap().getAllCoworkersLocationReports(getApplicationContext());
-            for(OverlayItem item : coworkerLocationReportsList)
+            OSMmap osmMap = new OSMmap();
+            ArrayList<LocationReport> coworkerLocationReportsList = osmMap.getAllCoworkersLocationReports(getApplicationContext());
+            for(LocationReport report : coworkerLocationReportsList)
             {
-                item.setMarker(getResources().getDrawable(R.drawable.mypositionicon));
-                Marker coworkerMarker = new Marker(mMapView);
-                coworkerMarker.setPosition(item.getPoint());
-                coworkerMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
-                coworkerMarker.setTitle(item.getTitle());
-                coworkerMarker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
-                    @Override
-                    public void onOpen(Object o) {
-                        System.out.println("==================== Info window should be open now!! ========================");
-                    }
-
-                    @Override
-                    public void onClose() {
-                        System.out.println("==================== Info window should be closed now!! ========================");
-                    }
-                });
-                String info = "User: " + coworkerMarker.getTitle() + "\n";
-                info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
-                info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
-                setTextForPopup(coworkerMarker.getInfoWindow().getView(), info );
-                coworkerMarker.setInfoWindowAnchor((float)coworkerMarker.getPosition().getLatitude(),(float) coworkerMarker.getPosition().getLongitude());
-                coworkerMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker, MapView mapView) {
-                        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> You just touched a coworker >>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                        if(!marker.getInfoWindow().isOpen())
-                        {
-
-                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
-                        }
-                        else
-                        {
-                            marker.getInfoWindow().close();
-                        }
-                        return true;
-                    }
-                });
-                if(!coworkersLocationMarkers.contains(coworkerMarker))
+                if(!locationReportsPresent.contains(((Long)report.getDatetimeLong()).toString() + report.getUserid()))
                 {
+                    Marker coworkerMarker = new Marker(mMapView);
+                    coworkerMarker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
+                    coworkerMarker.setTitle(report.getUserid());
+                    coworkerMarker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
+                    coworkerMarker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
+                        @Override
+                        public void onOpen(Object o) {
+                            System.out.println("==================== Info window should be open now!! ========================");
+                        }
+
+                        @Override
+                        public void onClose() {
+                            System.out.println("==================== Info window should be closed now!! ========================");
+                        }
+                    });
+                    String info = "User: " + coworkerMarker.getTitle() + "\n";
+                    info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
+                    info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
+                    setTextForPopup(coworkerMarker.getInfoWindow().getView(), info);
+                    coworkerMarker.setInfoWindowAnchor((float) coworkerMarker.getPosition().getLatitude(), (float) coworkerMarker.getPosition().getLongitude());
+                    coworkerMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker, MapView mapView) {
+                            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> You just touched a coworker >>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                            if (!marker.getInfoWindow().isOpen()) {
+
+                                marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                            } else {
+                                marker.getInfoWindow().close();
+                            }
+                            return true;
+                        }
+                    });
                     coworkersLocationMarkers.add(coworkerMarker);
-                    //System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>Added location report marker to the map....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    locationReportsPresent.add(((Long)report.getDatetimeLong()).toString() + report.getUserid());
+
+
                 }
                 else
                 {
-                    System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>This coworker's location report has already been added....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This location report has already been added<<<<<<<<<<<<<<<<");
                 }
 
-
-
+                System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Current content of location report present array>>>>>>>>>>>>>>>>>>>>>>>><<<");
+                for(String id : locationReportsPresent)
+                {
+                    System.out.println("ID:  " + id);
+                }
             }
 
             //TODO(Torgrim): Check to see the difference between localdb doa and server doa...
@@ -422,58 +424,56 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             // locationDoa in server db seems to use both textreport location and locationreport location????
 
             // NOTE(Torgrim): Get all team members text reports
-            List<TextReport> coworkersTextReportsList = new OSMmap().getAllCoworkersTextReports(getApplicationContext());
+            List<TextReport> coworkersTextReportsList = osmMap.getAllCoworkersTextReports(getApplicationContext());
             for(TextReport report : coworkersTextReportsList)
             {
-                Marker marker = new Marker(mMapView);
-                marker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
-                marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
-                marker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
-                    @Override
-                    public void onOpen(Object o)
-                    {
-                        System.out.println("========================TextReport Info window should now be open ======================");
-                    }
-
-                    @Override
-                    public void onClose()
-                    {
-                        System.out.println("======================== TextReport Info Window should now be closed =====================");
-                    }
-                });
-
-
-                String info = "User: " + report.getUserid() + "\n";
-                info += "Latitude: " + report.getLatitude() + "\n";
-                info += "Longitude:" + report.getLongitude() + "\n";
-                info += "-----------------------------------------\n";
-                info += "Acutal report: " + report.getReport();
-                setTextForPopup(marker.getInfoWindow().getView(), info );
-
-                marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker, MapView mapView) {
-                        if(!marker.getInfoWindow().isOpen())
-                        {
-
-                            marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                if(!textReportsPresent.contains(((Long)report.getDatetimeLong()).toString() + report.getUserid())) {
+                    report.getDatetime().getTimeInMillis();
+                    Marker marker = new Marker(mMapView);
+                    marker.setIcon(getResources().getDrawable(R.drawable.mypositionicon));
+                    marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
+                    marker.setInfoWindow(new InfoWindow(R.layout.mapinfowindow, mMapView) {
+                        @Override
+                        public void onOpen(Object o) {
+                            System.out.println("========================TextReport Info window should now be open ======================");
                         }
-                        else
-                        {
-                            marker.getInfoWindow().close();
-                        }
-                        return true;
-                    }
-                });
 
-                if(!coworkersTextReportMarkers.contains(marker))
-                {
-                    coworkersTextReportMarkers.add(marker);
-                    //System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>Added text report Marker to the map....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                        @Override
+                        public void onClose() {
+                            System.out.println("======================== TextReport Info Window should now be closed =====================");
+                        }
+                    });
+
+
+                    String info = "User: " + report.getUserid() + "\n";
+                    info += "Latitude: " + report.getLatitude() + "\n";
+                    info += "Longitude:" + report.getLongitude() + "\n";
+                    info += "-----------------------------------------\n";
+                    info += "Acutal report: " + report.getReport();
+                    setTextForPopup(marker.getInfoWindow().getView(), info);
+
+                    marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker, MapView mapView) {
+                            if (!marker.getInfoWindow().isOpen()) {
+
+                                marker.getInfoWindow().open(marker, marker.getPosition(), 0, -100);
+                            } else {
+                                marker.getInfoWindow().close();
+                            }
+                            return true;
+                        }
+                    });
+                    if(coworkersTextReportsList.size() > 0)
+                    {
+                        coworkersTextReportMarkers.add(marker);
+                        textReportsPresent.add(((Long)report.getDatetimeLong()).toString() + report.getUserid());
+                        addCoworkersTextReportMarkers(coworkersTextReportMarkers);
+                    }
                 }
                 else
                 {
-                    System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>This coworker's Text report has already been added....<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This text report is already present<<<<<<<<<<<<<<<<<<<<<<<<<");
                 }
 
 
@@ -497,14 +497,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             if (coworkerLocationReportsList.size() > 0) {
                 addCoWorkerMarkers(coworkerLocationReportsList);
             }
-            if(coworkersTextReportsList.size() > 0)
-            {
-                addCoworkersTextReportMarkers(coworkersTextReportMarkers);
-            }
+
+            System.out.println("Current number of location report markers: " + coworkersLocationMarkers.size());
+            System.out.println("Current number of text report markers: " + coworkersTextReportMarkers.size());
+            System.out.println("Current number of photo report markers: " + coworkerPhotoReportMarkers.size());
         }
     };
 
-    private void addCoWorkerMarkers(ArrayList<OverlayItem> markersOverlayItemArray) {
+    private void addCoWorkerMarkers(ArrayList<LocationReport> markersOverlayItemArray) {
         /*
 
 
