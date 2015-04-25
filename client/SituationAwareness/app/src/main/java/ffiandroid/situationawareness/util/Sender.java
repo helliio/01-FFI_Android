@@ -39,8 +39,6 @@ public class Sender {
             // NOTE(Torgrim): changed for testing purposes..
 
             String response = envelope.getResponse().toString();
-
-            System.out.println(">>>>>>>>>>>>>>>>>>> response: " + response);
             return response;
         } catch (Exception e) {
             e.printStackTrace();

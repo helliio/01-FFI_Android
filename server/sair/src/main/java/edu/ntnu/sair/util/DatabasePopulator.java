@@ -8,6 +8,7 @@ import edu.ntnu.sair.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.util.Date;
 
 /**
  * Created by Torgrim on 15/04/2015.
@@ -15,9 +16,9 @@ import java.io.File;
 public class DatabasePopulator {
 
     ReportService reportService;
-    private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
+    private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos/";
 
-    private static final String TIME_IN_MILLI = "1429628672966";
+    private static final String TIME_IN_MILLI = Long.toString(new Date().getTime());
 
 
     public void registerAllNewMembers(UserService userService)

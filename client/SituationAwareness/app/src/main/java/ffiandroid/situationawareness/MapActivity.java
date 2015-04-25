@@ -4,6 +4,8 @@ package ffiandroid.situationawareness;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ZoomButtonsController;
 
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
@@ -29,6 +32,9 @@ import org.osmdroid.bonuspack.cachemanager.CacheManager;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -79,18 +85,36 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
     private ArrayList<Marker> coworkerPhotoReportMarkers = new ArrayList<>();
     private ArrayList<String> photoReportsPresent = new ArrayList<>();
 
+    ArrayList<Marker> markerArray = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
 
+
+        // NOTE(Torgrim): Added for testing different ways of drawing maps markers
+        // in a more efficient way
+
         activeOpenStreetMap();
         checkGpsAvailability();
+        System.out.println("Size of mmapView overlay array on created: " + mMapView.getOverlays().size());
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
                 ParameterSetting.getLocationUpdateDistance(), this);
 
         StartSync.getInstance(getApplicationContext()).start();
+        mMapView.setMapListener(new MapListener() {
+            @Override
+            public boolean onScroll(ScrollEvent scrollEvent) {
+                return true;
+            }
+
+            @Override
+            public boolean onZoom(ZoomEvent zoomEvent) {
+                return true;
+            }
+        });
 
     }
 
@@ -130,7 +154,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
         mMapController = (MapController) mMapView.getController();
         mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
 
         updateLocation();
 
@@ -336,13 +359,21 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
         updateMyPositionMarker(location);
         updateCoworkersPositionMarker();
         addMyNewPositionToDB();
+        mMapView.invalidate();
     }
 
     /**
      * add my new position to local database
      */
-    private void addMyNewPositionToDB() {
-        new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
+    private void addMyNewPositionToDB()
+    {
+
+
+        // NOTE(Torgrim): Added to change your own location rather than insert a new one
+        if(new DAOlocation(getApplicationContext()).updateLocation(new LocationReport(true)) == 0)
+        {
+            new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
+        }
     }
 
     /**
@@ -360,9 +391,35 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
             // add markers to them and add them to the map...
             // Will probably do this in the OSMmap class later
+            for(int i = 0; i < 1000; i++)
+            {
+                Marker marker = new Marker(mMapView);
+                marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
+                marker.setPosition(new GeoPoint(Math.random() + 63, Math.random() + 10));
+                //marker.setEnabled(false);
+                if(mMapView.getBoundingBox().contains(marker.getPosition()))
+                {
+                    marker.setEnabled(true);
+                }
+                else
+                {
+                    marker.setEnabled(false);
+                }
+                mMapView.getOverlays().add(marker);
+                markerArray.add(marker);
 
+
+            }
+
+            System.out.println(" ======================== Current Overlay item array size: " + markerArray.size());
+            System.out.println(" ======================== Current mMapView overlay size: " + mMapView.getOverlays().size());
+
+            Rect rect = new Rect();
+            mMapView.getDrawingRect(rect);
+            System.out.println(" ========================Drawing rectangle: " + rect.toString());
 
             // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
+            /*
             OSMmap osmMap = new OSMmap();
             ArrayList<LocationReport> coworkerLocationReportsList = osmMap.getAllCoworkersLocationReports(getApplicationContext());
             for(LocationReport report : coworkerLocationReportsList)
@@ -501,6 +558,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             System.out.println("Current number of location report markers: " + coworkersLocationMarkers.size());
             System.out.println("Current number of text report markers: " + coworkersTextReportMarkers.size());
             System.out.println("Current number of photo report markers: " + coworkerPhotoReportMarkers.size());
+
+            */
         }
     };
 
@@ -538,6 +597,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
         int zoomMin = 11;
         int zoomMax = 17;
         cacheManager.downloadAreaAsync(this, mMapView.getBoundingBox(), zoomMin, zoomMax);
+
     }
 
     /**
@@ -546,6 +606,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
      * @param location
      */
     private void updateMyPositionMarker(Location location) {
+        mMapView.getOverlays().remove(startMarker);
         startMarker.setPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
         mMapView.getOverlays().add(startMarker);
@@ -573,9 +634,21 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
     }
 
+
+
     // NOTE(Torgrim): Added to be used for testing the popup window on map...
     public void setTextForPopup(View view, String text)
     {
         ((TextView)((LinearLayout)view).getChildAt(0)).setText(text);
     }
+
+
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+    }
+
+
 }

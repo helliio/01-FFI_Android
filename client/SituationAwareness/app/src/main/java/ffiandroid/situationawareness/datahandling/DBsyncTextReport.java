@@ -135,8 +135,6 @@ public class DBsyncTextReport extends DBsync {
             try {
                 String message = requestService.getAllTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID());
                 // NOTE(Torgrim): Testing....
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Inside download >>>>>>>>>>>>>>>>>>>>>>>>>>");
-                System.out.println(stringToJsonArray(message).toString());
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);
             } catch (Exception e) {

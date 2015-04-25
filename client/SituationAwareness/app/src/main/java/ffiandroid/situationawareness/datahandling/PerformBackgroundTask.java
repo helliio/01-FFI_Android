@@ -34,7 +34,6 @@ public class PerformBackgroundTask extends AsyncTask {
     @Override protected Object doInBackground(Object[] params) {
         if (isOnline()) {
             // NOTE(Torgrim): added for debugging
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>Inside doInBackground method.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             report.upload();
             location.upload();
             reportUnsendPhotos();
@@ -71,7 +70,6 @@ public class PerformBackgroundTask extends AsyncTask {
      */
     private void downloadPhotoHandling() {
         // NOTE(Torgrim): Added for debugging
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>Inside downloadPhotoHandling method.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         photo.download();
         new DownloadFilesTask().doInBackground();
     }

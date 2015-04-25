@@ -178,7 +178,7 @@ public class HttpTransport extends Transport {
                     if (hp.getValue() != null) {
                         try {
                             contentLength = Integer.parseInt(hp.getValue());
-                            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Here is the size of the request" + contentLength);
+                            System.out.println("Here is the size of the request: " + contentLength);
                         } catch (NumberFormatException nfe) {
                             contentLength = 8192;
                         }
@@ -275,7 +275,6 @@ public class HttpTransport extends Transport {
         zos.close();
         byteStream.close();
         requestData = byteStream.toByteArray();
-        System.out.println("Envelope: " + envelope.toString());
         System.out.println("Data length after gzip:  " + requestData.length);
 
         connection.setRequestProperty("Content-Length", "" + requestData.length);

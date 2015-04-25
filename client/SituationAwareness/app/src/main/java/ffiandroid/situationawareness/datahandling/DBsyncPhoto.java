@@ -89,8 +89,10 @@ public class DBsyncPhoto extends DBsync {
 
     Runnable downloadPhotoListThread = new Runnable() {
         @Override public void run() {
+
+            DAOphoto daoPhoto = null;
             try {
-                DAOphoto daoPhoto = new DAOphoto(context);
+                daoPhoto = new DAOphoto(context);
                 String message = requestService
                         .getPeriodTeamPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                                 String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
@@ -98,6 +100,11 @@ public class DBsyncPhoto extends DBsync {
                 savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            finally
+            {
+                    // NOTE(Torgrim): Is this necessary, added for testing..
+                   daoPhoto.close();
             }
         }
     };
@@ -167,6 +174,7 @@ public class DBsyncPhoto extends DBsync {
      */
     public void savePhoto(String photofile, PhotoReport photoReport) {
         String imgname = photoReport.getUserid() + photoReport.getDatetimeLong() + "." + photoReport.getExtension();
+        DAOphoto daOphoto = null;
 
         try {
             if (isExternalStorageWritable()) {
@@ -176,13 +184,18 @@ public class DBsyncPhoto extends DBsync {
                 Coder.decryptBASE64(file, photofile);
                 path += "/" + imgname;
                 photoReport.setPath(path);
-                DAOphoto daOphoto = new DAOphoto(context);
+                daOphoto = new DAOphoto(context);
                 daOphoto.updatePhotoPath(photoReport);
                 daOphoto.updateIsReported(photoReport);
                 daOphoto.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        finally
+        {
+            // NOTE(Torgrim): Added for testing fix of leaked database
+            daOphoto.close();
         }
     }
 
