@@ -1,10 +1,10 @@
-
-
 package ffiandroid.situationawareness.controller;
+
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,11 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
  * This Report Class is part of project: Situation Awareness
@@ -28,13 +29,19 @@ import ffiandroid.situationawareness.model.TextReport;
  */
 public class Report extends ActionBarActivity {
     private EditText textReport;
+    private TextView textLocation;
+    private Location location;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         textReport = (EditText) findViewById(R.id.report_edit_text_report);
+
+       location = MapActivity.newReportLocation;
+        textLocation = (TextView) findViewById(R.id.coordinates);
+        textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
     }
     /**
      * user click add photo button
@@ -43,8 +50,8 @@ public class Report extends ActionBarActivity {
         startActivity(new Intent(this, PhotoView.class));
     }
 
-    /**
-     * user click send report button
+
+    /* user click send report button
      *
      * @param view
      */
@@ -53,6 +60,7 @@ public class Report extends ActionBarActivity {
         if (validTextInput(report)) {
             Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
             sendTextReportToDB(report);
+            startActivity(new Intent(this, ReportView.class));
         } else {
             Toast.makeText(this, "input text not valid !", Toast.LENGTH_SHORT).show();
         }
@@ -64,7 +72,7 @@ public class Report extends ActionBarActivity {
      * @param report
      */
     private void sendTextReportToDB(String report) {
-        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report));
+        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report, location.getLatitude(), location.getLongitude()));
         Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
         textReport.getText().clear();
     }
@@ -135,7 +143,7 @@ public class Report extends ActionBarActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };

@@ -16,6 +16,7 @@ import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.soap.SOAPBinding;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by chun on 2/16/15.
@@ -82,6 +83,28 @@ public class UserServiceImpl implements UserService {
         member.setValidTime(calendar);
         this.memberDao.update(member);
         return "success";
+    }
+
+
+    // Added by Torgrim to show the all the current members
+    // of the local database as a string.
+    @Transactional
+    @Override
+    public String getAllMembers()
+    {
+        List<Member> members = memberDao.getAll();
+        String result = "";
+        for(Member member : members)
+        {
+            result += "Name         >>>>    " +  member.getName() + "<br>";
+            result += "Username     >>>>    " + member.getUsername() + "<br>";
+            result += "ID           >>>>    " + member.getId() + "<br>";
+            result += "UUID         >>>>    " + member.getUuid() + "<br>";
+            result += "Team ID      >>>>    " + member.getTeamId() + "<br>";
+            result += "Valid time   >>>>    " + member.getValidTime() + "<br><br><br>";
+        }
+
+        return result;
     }
 
     @Autowired

@@ -3,6 +3,7 @@ package ffiandroid.situationawareness.model;
 import android.content.Context;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
@@ -29,8 +30,32 @@ public class OSMmap {
         for (LocationReport lr : locationReports) {
             markersOverlayItemArray.add(new OverlayItem(lr.getUserid(), lr.getUserid(),
                     new GeoPoint(lr.getLatitude(), lr.getLongitude())));
+            System.out.println("id: " + lr.getUserid() + ".  Lat:  " + lr.getLatitude() + "  Long:  " + lr.getLongitude());
         }
+        System.out.println( "size " + locationReports.size());
         daOlocation.close();
         return markersOverlayItemArray;
     }
+
+
+    /*
+    // Created by Torgrim for testing purpose
+    // return all the locations in the server database.
+     */
+
+    public ArrayList<OverlayItem> getAllCoworkersLocationReports(Context context)
+    {
+        ArrayList<OverlayItem> markerOverlayItemArray = new ArrayList();
+        DAOlocation daoLocation = new DAOlocation(context);
+        List<LocationReport> locationReports = daoLocation.getCoWorkerLocations(UserInfo.getUserID());
+        for(LocationReport locationReport : locationReports)
+        {
+            markerOverlayItemArray.add( new OverlayItem(locationReport.getUserid(), locationReport.getUserid(),
+                                        new GeoPoint(locationReport.getLatitude(), locationReport.getLongitude())));
+        }
+
+        daoLocation.close();
+        return markerOverlayItemArray;
+    }
+
 }

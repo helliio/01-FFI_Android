@@ -1,6 +1,7 @@
 package edu.ntnu.sair.controller;
 
 import edu.ntnu.sair.service.ReportService;
+import edu.ntnu.sair.util.DatabasePopulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -81,6 +82,35 @@ public class ReportController {
             @RequestParam("extension") String extension,
             @RequestParam("description") String description) {
         return this.reportService.sendPhotoReport(username, uuid, sendingTime, latitude, longitude, direction, file, extension, description);
+    }
+
+
+    /*
+    // Created by Torgrim for test purposes...
+    // used to populate the local db with text and location reports (photo reports coming)
+     */
+    @Scope("prototype")
+    @ResponseBody
+    @RequestMapping(value = "/populateReports", method = RequestMethod.GET)
+    public String populateDatabaseWithNewReports()
+    {
+        DatabasePopulator dbPopulator = new DatabasePopulator();
+        dbPopulator.populateLocationReports(reportService);
+        dbPopulator.populateTextReports(reportService);
+
+        return "Success";
+    }
+
+    /*
+    // Created by torgrim to get all reports in the database
+     */
+
+    @Scope("prototype")
+    @ResponseBody
+    @RequestMapping(value = "/getAllReports", method = RequestMethod.GET)
+    public String getAllReports()
+    {
+        return reportService.getAllReports();
     }
 
     @Autowired

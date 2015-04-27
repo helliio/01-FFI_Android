@@ -57,7 +57,7 @@
     <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:~/database/sair"/>
+        <property name="url" value="jdbc:h2:p:/ProjectFFI/database/sair"/>
         <property name="username" value="sair"/>
         <property name="password" value="ffiandroid2015"/>
     </bean>

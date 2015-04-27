@@ -28,4 +28,6 @@ public interface UserService {
             @WebParam(name = "username") String username,
             @WebParam(name = "uuid") String uuid);
 
+    public String getAllMembers();
+
 }

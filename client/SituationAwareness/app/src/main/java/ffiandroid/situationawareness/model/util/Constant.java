@@ -10,6 +10,7 @@ public class Constant {
     public static final String AES_KEY = "01FFIAndroid2015";
 
     // URL of the server
+    // Real url(Torgrim): "http://sair.chun.no"
     public static final String SERVICE_URL = "http://sair.chun.no";
 
     // Timezone for time
