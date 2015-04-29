@@ -29,6 +29,7 @@ import android.widget.ZoomButtonsController;
 import org.json.JSONArray;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
+import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
@@ -106,7 +107,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
         StartSync.getInstance(getApplicationContext()).start();
         mMapView.setMapListener(new MapListener() {
             @Override
-            public boolean onScroll(ScrollEvent scrollEvent) {
+            public boolean onScroll(ScrollEvent scrollEvent)
+            {
+
                 return true;
             }
 
@@ -390,8 +393,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
             // add markers to them and add them to the map...
-            // Will probably do this in the OSMmap class later
-            for(int i = 0; i < 1000; i++)
+            for(int i = 0; i < 10000; i++)
             {
                 Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
@@ -410,7 +412,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
 
             }
-
+            
             System.out.println(" ======================== Current Overlay item array size: " + markerArray.size());
             System.out.println(" ======================== Current mMapView overlay size: " + mMapView.getOverlays().size());
 
