@@ -4,8 +4,10 @@ package ffiandroid.situationawareness;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -37,6 +39,7 @@ import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
@@ -393,7 +396,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
             // add markers to them and add them to the map...
-            for(int i = 0; i < 10000; i++)
+            RadiusMarkerClusterer mCluster = new RadiusMarkerClusterer(getApplicationContext());
+            Drawable clusterIconD = getResources().getDrawable(R.drawable.marker_cluster);
+            Bitmap clusterIcon = ((BitmapDrawable)clusterIconD).getBitmap();
+            mCluster.setIcon(clusterIcon);
+            mCluster.setRadius(500);
+            long startTime = System.currentTimeMillis();
+            for(int i = 0; i < 50; i++)
             {
                 Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
@@ -407,19 +416,40 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
                 {
                     marker.setEnabled(false);
                 }
-                mMapView.getOverlays().add(marker);
+                mCluster.add(marker);
                 markerArray.add(marker);
 
-
             }
-            
+            System.out.println("Get Latitude Span: " + mMapView.getLatitudeSpan());
+            System.out.println("Get Longitude Span: " + mMapView.getLongitudeSpan());
+
+            double finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
+            System.out.println("The time it took to iteretate through the loop: " + finalTime + " Seconds");
+
+            mMapView.getOverlays().add(mCluster);
+
             System.out.println(" ======================== Current Overlay item array size: " + markerArray.size());
             System.out.println(" ======================== Current mMapView overlay size: " + mMapView.getOverlays().size());
 
-            Rect rect = new Rect();
-            mMapView.getDrawingRect(rect);
-            System.out.println(" ========================Drawing rectangle: " + rect.toString());
+            startTime = System.currentTimeMillis();
+            for(Marker marker : markerArray)
+            {
+                if(mMapView.getBoundingBox().contains(marker.getPosition()))
+                {
+                    marker.setEnabled(true);
+                }
+                else
+                {
+                    marker.setEnabled(false);
+                }
+            }
+            finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>The time it took to loop through simple loop:  " + finalTime + " Seconds");
 
+            BoundingBoxE6 box = mMapView.getBoundingBox();
+            System.out.println(" ========================Drawing rectangle North: " + (double)box.getLatNorthE6() / 1000000.000000);
+            System.out.println(" ========================Drawing rectangle Span: " + box.getLatNorthE6() + box.getLatitudeSpanE6());
+            System.out.println(" ========================Drawing rectangle South: " + (double)box.getLatSouthE6() / 1000000.000000);
             // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
             /*
             OSMmap osmMap = new OSMmap();
