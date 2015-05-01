@@ -11,7 +11,7 @@ public class Constant {
 
     // URL of the server
     // Real url(Torgrim): "http://sair.chun.no"
-    public static final String SERVICE_URL = "http://78.91.67.135:8080/";
+    public static final String SERVICE_URL = "http://192.168.0.19:8080/";
 
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");

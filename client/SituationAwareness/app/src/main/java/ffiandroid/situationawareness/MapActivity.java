@@ -89,7 +89,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
     private ArrayList<Marker> coworkerPhotoReportMarkers = new ArrayList<>();
     private ArrayList<String> photoReportsPresent = new ArrayList<>();
 
-    ArrayList<Marker> markerArray = new ArrayList<>();
+    private ArrayList<Marker> markersEnabled = new ArrayList<>();
+    private ArrayList<Marker> markersDisabled = new ArrayList<>();
 
 
     @Override
@@ -257,46 +258,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
         }
     };
 
-    /**
-     * add markers to map view
-     *
-     * @param jsonArray
-     */
-    private void addAllMarkers(JSONArray jsonArray) {
-        //        ArrayList<OverlayItem> markersOverlayItemArray = new MyCoworkers().getCoworkerMarkersOverlay
-        // (jsonArray);
-        //                printteammarkers(markersOverlayItemArray);
-        //        ItemizedIconOverlay<OverlayItem> markerItemizedIconOverlay =
-        //                new ItemizedIconOverlay(this, markersOverlayItemArray, null);
-        //        mMapView.getOverlays().add(markerItemizedIconOverlay);
-        //        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
-        //        mMapView.getOverlays().add(myScaleBarOverlay);
-
-    }
-
-    /**
-     * temporary function to print team markers
-     *
-     * @param a
-     */
-    private void printteammarkers(ArrayList<OverlayItem> a) {
-        for (OverlayItem oi : a) {
-            System.out.println(">>>>>>>>>>>:" + oi.getTitle().toString() + " La: " + oi.getPoint().getLatitude() + " " +
-                    "Lo: " + oi.getPoint().getLongitude());
-        }
 
 
-    }
-
-    //    public void textReportOnClicked(View view) {
-    //        String report = textReport.getText().toString();
-    //        if (validTextInput(report)) {
-    //            Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
-    //            sendTextReportToServer(report);
-    //        } else {
-    //            Toast.makeText(this, "input text not valid !", Toast.LENGTH_LONG).show();
-    //        }
-    //    }
     public void refreshOnCLicked(View view) {
         updateLocation();
         System.out.println("Refreshed");
@@ -361,7 +324,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
     @Override public void onLocationChanged(Location location) {
         UserInfo.setCurrentLatitude(location.getLatitude());
         UserInfo.setCurrentLongitude(location.getLongitude());
-        mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        // NOTE(Torgrim): Disabled setCenter for now,
+        // this should be done with a separate button
+        //mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         updateMyPositionMarker(location);
         updateCoworkersPositionMarker();
         addMyNewPositionToDB();
@@ -396,28 +361,16 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
 
             // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
             // add markers to them and add them to the map...
-            RadiusMarkerClusterer mCluster = new RadiusMarkerClusterer(getApplicationContext());
-            Drawable clusterIconD = getResources().getDrawable(R.drawable.marker_cluster);
-            Bitmap clusterIcon = ((BitmapDrawable)clusterIconD).getBitmap();
-            mCluster.setIcon(clusterIcon);
-            mCluster.setRadius(500);
             long startTime = System.currentTimeMillis();
-            for(int i = 0; i < 50; i++)
+            for(int i = 0; i < 10000; i++)
             {
                 Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
                 marker.setPosition(new GeoPoint(Math.random() + 63, Math.random() + 10));
                 //marker.setEnabled(false);
-                if(mMapView.getBoundingBox().contains(marker.getPosition()))
-                {
-                    marker.setEnabled(true);
-                }
-                else
-                {
-                    marker.setEnabled(false);
-                }
-                mCluster.add(marker);
-                markerArray.add(marker);
+                marker.setEnabled(false);
+                coworkersLocationMarkers.add(marker);
+                mMapView.getOverlays().add(marker);
 
             }
             System.out.println("Get Latitude Span: " + mMapView.getLatitudeSpan());
@@ -426,30 +379,17 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             double finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
             System.out.println("The time it took to iteretate through the loop: " + finalTime + " Seconds");
 
-            mMapView.getOverlays().add(mCluster);
 
-            System.out.println(" ======================== Current Overlay item array size: " + markerArray.size());
+
+            System.out.println(" ======================== Current Location reports array size: " + coworkersLocationMarkers.size());
             System.out.println(" ======================== Current mMapView overlay size: " + mMapView.getOverlays().size());
-
-            startTime = System.currentTimeMillis();
-            for(Marker marker : markerArray)
-            {
-                if(mMapView.getBoundingBox().contains(marker.getPosition()))
-                {
-                    marker.setEnabled(true);
-                }
-                else
-                {
-                    marker.setEnabled(false);
-                }
-            }
-            finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>The time it took to loop through simple loop:  " + finalTime + " Seconds");
 
             BoundingBoxE6 box = mMapView.getBoundingBox();
             System.out.println(" ========================Drawing rectangle North: " + (double)box.getLatNorthE6() / 1000000.000000);
-            System.out.println(" ========================Drawing rectangle Span: " + box.getLatNorthE6() + box.getLatitudeSpanE6());
+            System.out.println(" ========================Drawing rectangle Span: " + (box.getLatSouthE6() + box.getLatitudeSpanE6()));
             System.out.println(" ========================Drawing rectangle South: " + (double)box.getLatSouthE6() / 1000000.000000);
+
+            calculateMarkers();
             // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
             /*
             OSMmap osmMap = new OSMmap();
@@ -594,6 +534,94 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
             */
         }
     };
+
+    // NOTE(Torgrim): Added by Torgrim for testing purposes
+    // to calculate the marker view status, meaning that
+    // we're trying to calculate whether to cluster or single markers
+    private boolean calculateMarkers()
+    {
+
+        double startTime = System.currentTimeMillis();
+        int count = 0;
+        //markersEnabled.removeAll(markersEnabled);
+        if(coworkersLocationMarkers.size() > 0)
+        {
+            for (Marker marker : coworkersLocationMarkers)
+            {
+                if (mMapView.getBoundingBox().contains(marker.getPosition()))
+                {
+                    if(count <= 100)
+                    {
+                        marker.setEnabled(true);
+                        count++;
+                    }
+                    else
+                    {
+                        marker.setEnabled(false);
+                    }
+
+                }
+                else
+                {
+                    marker.setEnabled(false);
+
+                }
+            }
+        }
+        if(count > 100)
+        {
+            System.out.println("Ready for Clustering");
+            for(Marker marker : coworkersLocationMarkers)
+            {
+                marker.setEnabled(false);
+            }
+            calculateCluster();
+        }
+        else
+        {
+            System.out.println("==================== Current screen does not contain more than 100 markers");
+        }
+        System.out.println("Current Numbers of Markers Disabled: " + (coworkersLocationMarkers.size() - count));
+        System.out.println("Current Numbers of Markers Enabled: " + count);
+        double finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>The time it took to loop through simple loop:  " + finalTime + " Seconds");
+        return false;
+    }
+
+    private void calculateCluster()
+    {
+        double latitudeSouth = (double)mMapView.getBoundingBox().getLatSouthE6() / 1000000.000000;
+        double latitudeNorth = (double)mMapView.getBoundingBox().getLatNorthE6() / 1000000.000000;
+        double longitudeWest = (double)mMapView.getBoundingBox().getLonWestE6() / 1000000.000000;
+        double longitudeEast = (double)mMapView.getBoundingBox().getLonEastE6() / 1000000.000000;
+        double latitudeSpan = (double)mMapView.getLatitudeSpan() / 1000000.000000;
+        double longitudeSpan = (double)mMapView.getLongitudeSpan() / 1000000.000000;
+
+        double latitudeSpanHalf = (latitudeSpan / 2.0f);
+        double longitudeSpanHalf = (longitudeSpan / 2.0f);
+
+        double latitudeMiddle = (latitudeNorth - latitudeSpanHalf);
+        double longitudeMiddle = (longitudeWest + longitudeSpanHalf);
+
+        System.out.println("---------Latitude South-----------------        " + latitudeSouth);
+        System.out.println("---------Latitude North-----------------        " + latitudeNorth);
+        System.out.println("---------Longitude West-----------------        " + longitudeWest);
+        System.out.println("---------Longitude East-----------------        " + longitudeEast);
+        System.out.println("---------Latitude Span-----------------         " + latitudeSpan);
+        System.out.println("---------Longitude Span-----------------        " + longitudeSpan);
+        System.out.println("---------Latitude Half Span-----------------    " + latitudeSpanHalf);
+        System.out.println("---------Longitude Half Span-----------------   " + longitudeSpanHalf);
+        System.out.println("---------Latitude Middle-----------------       " + latitudeMiddle);
+        System.out.println("---------Longitude Middle-----------------      " + longitudeMiddle);
+
+        Marker marker = new Marker(mMapView);
+        marker.setIcon(getResources().getDrawable(R.drawable.cluster_icon_test));
+        marker.setPosition(new GeoPoint(latitudeMiddle, longitudeMiddle));
+        mMapView.getOverlays().add(marker);
+
+
+
+    }
 
     private void addCoWorkerMarkers(ArrayList<LocationReport> markersOverlayItemArray) {
         /*
