@@ -41,5 +41,10 @@
             android:maxEms="17"
             android:text="Address"
             android:visibility="gone" />
+        <ImageView
+            android:id="@+id/black_bubble_photo_content"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"  />
     </LinearLayout>
 </LinearLayout>

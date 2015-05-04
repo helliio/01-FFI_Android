@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
+import ffiandroid.situationawareness.MapActivity;
 import ffiandroid.situationawareness.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
