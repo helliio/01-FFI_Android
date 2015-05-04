@@ -687,25 +687,30 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
     {
 
         List<PhotoReport> photoReports = new OSMmap().getAllCoworkersPhotoReports(getApplicationContext());
-        for(PhotoReport report : photoReports)
+        for(final PhotoReport report : photoReports)
         {
             if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
             {
                 currentPhotoReportsPresent.add(report.getPicId());
 
-                Marker marker = new Marker(mMapView);
+                final Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
                 marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
                 marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView)
                 {
                     @Override
                     public void onOpen(Object o) {
-                        System.out.println("========================TextReport Info window should now be open ======================");
+                        System.out.println("========================PhotoReport Info window should now be open ======================");
+                        Bitmap image = BitmapFactory.decodeFile(report.getPath());
+                        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
+                        ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
+                        marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
+                        System.out.println("======================================= Setting photo bubble thumbnail");
                     }
 
                     @Override
                     public void onClose() {
-                        System.out.println("======================== TextReport Info Window should now be closed =====================");
+                        System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
                 String info = "User: " + report.getUserid() + "\n";
@@ -714,12 +719,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener  
                 info += "-----------------------------------------\n";
                 info += "Title: " + report.getTitle() + "\n";
                 info += "Description: " + report.getDescription() + "\n\n";
+                /*
                 Bitmap image = BitmapFactory.decodeFile(report.getPath());
                 Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
                 ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
                 marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
                 System.out.println("======================================= Setting photo bubble thumbnail");
-
+                */
 
                 ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title)).setText("This is the title of a PhotoReport report");
                 ((TextView)marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
