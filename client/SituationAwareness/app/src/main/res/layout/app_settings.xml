@@ -3,7 +3,7 @@
              android:layout_width="wrap_content"
              android:layout_height="match_parent"
              android:layout_gravity="center_horizontal"
-             tools:context="ffiandroid.situationawareness.AppSettings">
+             tools:context="ffiandroid.situationawareness.controller.AppSettings">
 
     <TableRow
         android:paddingLeft="10dp"

@@ -11,21 +11,35 @@ public class TextReport extends LocationReport {
     private String report;
 
     /**
+     * location are user current location
+     * <p/>
      * current data time will be generated when insert to database; isreported by default is set to false;
      *
      * @param report
      */
     public TextReport(String report) {
         super(true);
+
+        this.report = report;
+    }
+
+    /**
+     * current data time will be generated when insert to database; isreported by default is set to false;
+     *
+     * @param report
+     */
+    public TextReport(String report, double latitude, double longitude) {
+        super(latitude, longitude);
         this.report = report;
     }
 
     public TextReport() {
+        super();
     }
 
 
     /**
-     * Sets new report.
+     * Sets new report.gi
      *
      * @param report New value of report.
      */

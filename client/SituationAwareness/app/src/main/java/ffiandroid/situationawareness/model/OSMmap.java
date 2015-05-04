@@ -10,9 +10,9 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import ffiandroid.situationawareness.localdb.DAOlocation;
-import ffiandroid.situationawareness.localdb.DAOphoto;
-import ffiandroid.situationawareness.localdb.DAOtextReport;
+import ffiandroid.situationawareness.model.localdb.DAOlocation;
+import ffiandroid.situationawareness.model.localdb.DAOphoto;
+import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
  * This OSMmap File is part of project: Situation Awareness
@@ -33,7 +33,9 @@ public class OSMmap {
         for (LocationReport lr : locationReports) {
             markersOverlayItemArray.add(new OverlayItem(lr.getUserid(), lr.getUserid(),
                     new GeoPoint(lr.getLatitude(), lr.getLongitude())));
+            System.out.println("id: " + lr.getUserid() + ".  Lat:  " + lr.getLatitude() + "  Long:  " + lr.getLongitude());
         }
+        System.out.println( "size " + locationReports.size());
         daOlocation.close();
         return markersOverlayItemArray;
     }
@@ -72,4 +74,5 @@ public class OSMmap {
         daoPhoto.close();
         return photoReports;
     }
+
 }
