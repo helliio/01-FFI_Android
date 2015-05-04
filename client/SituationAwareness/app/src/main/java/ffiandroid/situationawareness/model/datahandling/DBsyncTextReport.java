@@ -130,7 +130,7 @@ public class DBsyncTextReport extends DBsync {
     }
 
     /**
-     * down load report from server to local database
+     * download report from server to local database
      */
     @Override public void download() {
         new Thread(downloadThread).start();
@@ -140,9 +140,11 @@ public class DBsyncTextReport extends DBsync {
         @Override public void run() {
             try {
                 String message = requestService.getAllTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID());
-                saveTextReportToLocalDB(stringToJsonArray(message));
+                // NOTE(Torgrim): Testing....
+                JSONArray jArray = stringToJsonArray(message);
+                saveTextReportToLocalDB(jArray);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("This is message from download >>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +e.getMessage());
             }
         }
     };
@@ -161,6 +163,7 @@ public class DBsyncTextReport extends DBsync {
                     TextReport textReport = new TextReport();
                     textReport.setIsreported(true);
                     textReport.setUserid(job.getString("username"));
+                    textReport.setReport(job.getString("content"));
                     textReport.setDatetime(job.getLong("timestamp"));
                     textReport.setLatitude(job.getDouble("latitude"));
                     textReport.setLongitude(job.getDouble("longitude"));

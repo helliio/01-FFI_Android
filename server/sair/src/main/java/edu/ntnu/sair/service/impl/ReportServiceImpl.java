@@ -156,10 +156,11 @@ public class ReportServiceImpl implements ReportService {
 
     }
 
+    // NOTE(Torgrim): Added title to the parameters....
     @Transactional
     @Override
     public String sendPhotoReport(String username, String uuid, String sendingTime, String latitude, String
-            longitude, String direction, String file, String extension, String description) {
+            longitude, String direction, String file, String extension, String title, String description) {
         String checkLogin = this.userService.checkLogin(username, uuid);
         if (!checkLogin.equals("success")) {
             return checkLogin;
@@ -177,6 +178,10 @@ public class ReportServiceImpl implements ReportService {
 
         PhotoReport photoReport = new PhotoReport();
         photoReport.setLocation(location);
+        // NOTE(Torgrim): Set title...
+        photoReport.setTitle(title);
+
+
         photoReport.setDirection(Integer.valueOf(direction));
         photoReport.setName(username + location.getClientTimestamp().getTimeInMillis());
         photoReport.setExtension(extension);
@@ -212,7 +217,7 @@ public class ReportServiceImpl implements ReportService {
         List<TextReport> textReports = textReportDao.getAll();
         for (TextReport textReport : textReports)
         {
-            result += "User         >>>>    " +textReport.getLocation().getMember() + "<br>";
+            result += "User         >>>>    " +textReport.getLocation().getMember().getName() + "<br>";
             result += "ID           >>>>    " + textReport.getId() + "<br>";
             result += "Content      >>>>    " + textReport.getContent() + "<br>";
             result += "Latitude     >>>>    " +textReport.getLocation().getLatitude() + "<br>";
@@ -220,6 +225,24 @@ public class ReportServiceImpl implements ReportService {
         }
 
         result += "============================== End of text Reports ============================================";
+        result += "<br><br><br>";
+
+        List<PhotoReport> photoReports = photoReportDao.getAll();
+        for (PhotoReport photoReport : photoReports)
+        {
+            result += "User         >>>>    " + photoReport.getLocation().getMember().getName() + "<br>";
+            result += "ID           >>>>    " + photoReport.getId() + "<br>";
+            result += "Name         >>>>    " + photoReport.getName() + "<br>";
+            result += "Title        >>>>    " + photoReport.getTitle() + "<br>";
+            result += "Description  >>>>    " + photoReport.getDescription() + "<br>";
+            result += "Path         >>>>    " + photoReport.getPath() + "<br>";
+            result += "Extension    >>>>    " + photoReport.getExtension() + "<br>";
+            result += "Direction    >>>>    " + photoReport.getDirection() + "<br>";
+            result += "Latitude     >>>>    " + photoReport.getLocation().getLatitude() + "<br>";
+            result += "Longitude    >>>>    " + photoReport.getLocation().getLongitude() + "<br><br>";
+        }
+
+        result += "============================== End of photo Reports ============================================";
         result += "<br><br><br>";
         return result;
     }

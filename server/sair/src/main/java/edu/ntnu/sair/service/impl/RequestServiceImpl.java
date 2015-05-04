@@ -332,6 +332,11 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
                 obj.put("id", photoReport.getId());
+
+                // NOTE(Torgrim): Added title..
+                obj.put("title", photoReport.getTitle());
+
+
                 obj.put("description", photoReport.getDescription());
                 obj.put("direction", photoReport.getDirection());
                 obj.put("filename", photoReport.getName());
@@ -401,6 +406,9 @@ public class RequestServiceImpl implements RequestService {
         PhotoReport photoReport = this.photoReportDao.getById(Long.valueOf(picId));
         String photoPath = Constant.PHOTO_PATH + photoReport.getName() + "." + photoReport.getExtension();
         File photo = new File(photoPath);
+
+        // NOTE(Torgrim): added for testing purposes
+        String photoInBase64 = Coder.encryptBASE64(photo);
 
         return new Result("getPhoto", "success", "file", Coder.encryptBASE64(photo)).toString();
     }

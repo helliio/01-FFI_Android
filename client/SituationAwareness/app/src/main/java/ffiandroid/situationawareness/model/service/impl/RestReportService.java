@@ -79,7 +79,7 @@ public class RestReportService implements ReportService {
         return Sender.sendRESTRequest(requestData, "report/sendTextReportList");
     }
 
-    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String description) {
+    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String title, String description) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));
@@ -97,6 +97,9 @@ public class RestReportService implements ReportService {
         requestData.add("file", Coder.encryptBASE64(file));
         // arg7: extension
         requestData.add("extension", file.getName().substring(file.getName().lastIndexOf(".") + 1));
+
+        // NOTE(Torgrim): added title..
+        requestData.add("title", title);
         // arg8: description
         requestData.add("description", description);
 

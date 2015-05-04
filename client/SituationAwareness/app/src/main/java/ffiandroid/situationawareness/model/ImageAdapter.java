@@ -55,12 +55,17 @@ public class ImageAdapter extends ArrayAdapter<PhotoReport> {
         // set description text
         viewHolder.description.setText(image.toString());
 
-        Log.i(this.getClass().getSimpleName(),
-                "getPath: " + image.getPath() + " bitmap return " + BitmapFactory.decodeFile(image.getPath()));
-        if (image.getPath().contains(".")) {
-            // set image icon
-            viewHolder.imgIcon.setImageBitmap(
-                    ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath()), THUMBSIZE, THUMBSIZE));
+
+        // NOTE(Torgrim): Edited by torgrim to stop crash..
+        if(image.getPath() != null)
+        {
+            Log.i(this.getClass().getSimpleName(),
+                    "getPath: " + image.getPath() + " bitmap return " + BitmapFactory.decodeFile(image.getPath()));
+            if (image.getPath().contains(".")) {
+                // set image icon
+                viewHolder.imgIcon.setImageBitmap(
+                        ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath()), THUMBSIZE, THUMBSIZE));
+            }
         }
         // Return the completed view to render on screen
         return convertView;

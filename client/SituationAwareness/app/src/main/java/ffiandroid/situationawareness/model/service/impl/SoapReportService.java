@@ -77,7 +77,7 @@ public class SoapReportService implements ReportService {
         return Sender.sendSOAPRequest(soapObject, "ReportService?wsdl");
     }
 
-    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String description) {
+    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String title, String description) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "sendPhotoReport");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));
@@ -95,6 +95,9 @@ public class SoapReportService implements ReportService {
         soapObject.addProperty("file", Coder.encryptBASE64(file));
         // arg7: extension
         soapObject.addProperty("extension", file.getName().substring(file.getName().lastIndexOf(".") + 1));
+
+        // NOTE(Torgrim): added title
+        soapObject.addProperty("title", title);
         // arg8: description
         soapObject.addProperty("description", description);
 
