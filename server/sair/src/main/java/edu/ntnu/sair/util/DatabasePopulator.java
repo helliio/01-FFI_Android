@@ -16,7 +16,10 @@ import java.util.Date;
 public class DatabasePopulator {
 
     ReportService reportService;
-    private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
+
+    // NOTE(Torgrim): linux testphoto path = /home/tbstbs/Documents/BachelorNTNU/testPhotos/
+    // Windows path = p:/ProjectFFI/testPhotos
+    private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos";
 
     private static final String TIME_IN_MILLI = Long.toString(new Date().getTime());
 

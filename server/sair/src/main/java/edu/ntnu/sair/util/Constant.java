@@ -21,5 +21,7 @@ public class Constant {
 
     // Path of photos
     // Real photo path(Torgrim): "/Users/chun/database/sair/photos/"
-    public static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/photos/";
+    // NOTE(Torgrim): Linux path = /home/tbstbs/Documents/BachelorNTNU/photos/
+    // Windows path = p:/ProjectFFI/photos
+    public static final String PHOTO_PATH = "p:/ProjectFFI/photos";
 }
