@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.model.LocationReport;
+import ffiandroid.situationawareness.model.UserInfo;
 
 /**
  * This DAOlocation File is part of project: Situation Awareness
@@ -47,14 +48,24 @@ public class DAOlocation {
         cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
         cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
         cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
-        return database.insert(DBtables.LocationTB.TABLE_NAME, null, cv);
+        long result = database.insert(DBtables.LocationTB.TABLE_NAME, null, cv);
+        if (result >= 0) {
+            statusChanged();
+        }
+        return result;
+    }
+
+    /**
+     * set new un-reported location number value to UserInfo when it changed
+     */
+    private void statusChanged() {
+        UserInfo.setUnReportedLocations(getMyNOTReportedItemCount(UserInfo.getUserID()));
     }
 
     // NOTE(Torgrim): Created a update location in database so
     // that your own location will only be on report
     // instead of getting the path of the user..
-    public long updateLocation(LocationReport locationReport)
-    {
+    public long updateLocation(LocationReport locationReport) {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
         cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
@@ -62,7 +73,7 @@ public class DAOlocation {
         cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
         cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
         String where = DBtables.LocationTB.COLUMN_USER_ID + "=?";
-        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid()} );
+        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid()});
     }
 
     /**
@@ -77,8 +88,14 @@ public class DAOlocation {
 
         String where = DBtables.LocationTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.LocationTB.COLUMN_DATETIME + "=?";
-        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid(),
-                String.valueOf(locationReport.getDatetime().getTimeInMillis())});
+
+        long result = database.update(DBtables.LocationTB.TABLE_NAME, cv, where,
+                new String[]{locationReport.getUserid(),
+                        String.valueOf(locationReport.getDatetime().getTimeInMillis())});
+        if (result >= 0) {
+            statusChanged();
+        }
+        return result;
     }
 
     /**
@@ -203,6 +220,7 @@ public class DAOlocation {
                 new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         int count = cursor.getCount();
         cursor.close();
+        System.out.println(this.getClass().getSimpleName() + "------" + count);
         return count;
     }
 

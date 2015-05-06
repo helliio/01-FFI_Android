@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.UserInfo;
 
 
 /**
@@ -50,7 +51,12 @@ public class DAOtextReport {
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
         cv.put(DBtables.TextReportTB.COLUMN_LATITUDE, textReport.getLatitude());
         cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
-        return database.insert(DBtables.TextReportTB.TABLE_NAME, null, cv);
+        long result = database.insert(DBtables.TextReportTB.TABLE_NAME, null, cv);
+
+        if (result >= 0) {
+            statusChanged();
+        }
+        return result;
     }
 
     /**
@@ -65,8 +71,20 @@ public class DAOtextReport {
         String where = DBtables.TextReportTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.TextReportTB.COLUMN_DATETIME + "=?";
 
-        return database.update(DBtables.TextReportTB.TABLE_NAME, cv, where,
+        long result = database.update(DBtables.TextReportTB.TABLE_NAME, cv, where,
                 new String[]{textReport.getUserid(), String.valueOf(textReport.getDatetime().getTimeInMillis())});
+
+        if (result >= 0) {
+            statusChanged();
+        }
+        return result;
+    }
+
+    /**
+     * set new un-reported text report value to UserInfo when it changed
+     */
+    private void statusChanged() {
+        UserInfo.setUnReportedText(getMyNOTReportedItemCount(UserInfo.getUserID()));
     }
 
     /**
@@ -124,6 +142,7 @@ public class DAOtextReport {
         cursor.close();
         return count;
     }
+
     /**
      * @return total row count of the not reported items in the table
      */
@@ -135,6 +154,7 @@ public class DAOtextReport {
         cursor.close();
         return count;
     }
+
     /**
      * *
      *
