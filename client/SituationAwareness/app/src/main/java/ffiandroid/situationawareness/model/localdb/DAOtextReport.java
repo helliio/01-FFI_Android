@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.util.Coder;
 
 
 /**
@@ -44,7 +45,7 @@ public class DAOtextReport {
      */
     public long addReport(TextReport textReport) {
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.TextReportTB.COLUMN_USER_ID, textReport.getUserid());
+        cv.put(DBtables.TextReportTB.COLUMN_USER_ID, Coder.encryptMD5(textReport.getUserid()));
         cv.put(DBtables.TextReportTB.COLUMN_REPORT, textReport.getReport());
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
@@ -101,7 +102,7 @@ public class DAOtextReport {
 
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
                 DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -130,7 +131,7 @@ public class DAOtextReport {
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
                 DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         int count = cursor.getCount();
         cursor.close();
         return count;

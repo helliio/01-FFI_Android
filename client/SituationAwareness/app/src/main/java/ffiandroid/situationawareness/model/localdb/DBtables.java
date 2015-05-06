@@ -46,7 +46,7 @@ public class DBtables {
         public static final String TABLE_NAME = "photoreport";
         public static final String COLUMN_USER_ID = "userid";
 
-        // NOTE(Torgrim): Added picture id string by for debugging and testing purposes..
+        // NOTE(Torgrim): Added picture id string for debugging and testing purposes..
         public static final String COLUMN_PIC_ID = "picId";
 
 

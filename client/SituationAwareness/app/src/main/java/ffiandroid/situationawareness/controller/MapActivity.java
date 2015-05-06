@@ -114,10 +114,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
 
     // NOTE(Torgrim): Added for testing new UI drawer
+    /*
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private String[] optionsList;
+    */
 
 
     ArrayList<Marker> clusterMarkers = new ArrayList<>();
@@ -266,7 +268,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
                 ParameterSetting.getLocationUpdateDistance(), this);
         UserInfo.addListener(this);
-        //formatMenuStatus();
+        formatMenuStatus();
         StartSync.getInstance(getApplicationContext()).start();
 
         // NOTE(Torgrim): Added for tesing, might need to change this.
@@ -287,7 +289,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         setUpClusterMarkers();
 
-
+        /*
         // NOTE(Torgrim): Testing new ui drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -300,19 +302,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
 
         mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.string.drawer_open,  /* "open drawer" description */
-                R.string.drawer_close  /* "close drawer" description */
+                this,                  // host Activity
+                mDrawerLayout,         // DrawerLayout object
+                R.string.drawer_open,  // "open drawer" description
+                R.string.drawer_close  // "close drawer" description
         ) {
 
-            /** Called when a drawer has settled in a completely closed state. */
+            // Called when a drawer has settled in a completely closed state.
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 getSupportActionBar().setTitle("Drawer Closed");
             }
 
-            /** Called when a drawer has settled in a completely open state. */
+            // Called when a drawer has settled in a completely open state.
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 getSupportActionBar().setTitle("Drawer Opened");
@@ -328,13 +330,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mapEventsOverlay = new MapEventsOverlay(this, this);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Component Name = " + getLocalClassName());
         mMapView.getOverlays().add(0, mapEventsOverlay);
-
+        */
 
     }
 
-    /* The click listner for ListView in the navigation drawer */
+    // The click listner for ListView in the navigation drawer
+    /*
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         MapActivity mapActivity;
 
@@ -401,7 +403,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
+    */
     @Override
     protected void onResume() {
 
@@ -444,7 +446,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         updateLocation();
-        mMapController.setCenter(new GeoPoint(myCurrentLocation));
+        mMapController.setCenter(new GeoPoint(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
 
     }
 
@@ -504,9 +506,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             System.out.println("No location found");
             Log.i("gps", "Could not find any locations stored on device");
         }
-
-        startMarker = new Marker(mMapView);
-
+        if(startMarker == null)
+        {
+            startMarker = new Marker(mMapView);
+        }
 
         //        Reporting.reportMyLocation(myCurrentLocation);
         onLocationChanged(myCurrentLocation);
@@ -652,13 +655,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
      */
     private void addMyNewPositionToDB()
     {
-
-
-        // NOTE(Torgrim): Added to change your own location rather than insert a new one
-        if(new DAOlocation(getApplicationContext()).updateLocation(new LocationReport(true)) == 0)
-        {
-            new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
-        }
+        new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
     }
 
     /**
@@ -914,13 +911,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     // NOTE(Torgrim): Added by Torgrim for testing purposes
     // to calculate the marker view status, meaning that
     // we're trying to calculate whether to cluster or single markers
-    private synchronized boolean calculateMarkers()
+    private boolean calculateMarkers()
     {
 
         double startTime = System.currentTimeMillis();
         int count = 0;
         updatePhotoMarkers();
-        //markersEnabled.removeAll(markersEnabled);
         if(allCoworkersMarkers.size() > 0)
         {
             for (Marker marker : allCoworkersMarkers)
@@ -1425,7 +1421,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         menuItem.setTitle(String.valueOf(menuStatus));
         return super.onPrepareOptionsMenu(menu);
     }
-    /*
+
     private void formatMenuStatus() {
         int count = UserInfo.getTotalUnReportedItemsCout();
         if (count == 0) {
@@ -1434,10 +1430,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             menuStatus = count + " items not reported! send now?";
         }
     }
-    */
+
 
     @Override public void menuStatusChanged() {
-        //formatMenuStatus();
+        formatMenuStatus();
     }
 
     @Override public void locationStatusChanged() {
