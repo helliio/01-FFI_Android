@@ -13,7 +13,6 @@ public class Constant {
     // Real url(Torgrim): "http://sair.chun.no"
     public static final String SERVICE_URL = "http://sair.chun.no";
 
-
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");
 

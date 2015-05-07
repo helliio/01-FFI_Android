@@ -25,7 +25,7 @@
             android:gravity="center_vertical"
             android:height="40dp"
             android:paddingRight="10dp"
-            android:text="@string/user_id"/>
+            android:text="@string/username"/>
 
         <TextView
             android:textSize="16dp"
@@ -33,7 +33,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:height="40dp"
-            android:text="My user id"
+            android:text="My username"
             android:id="@+id/status_userid"
             />
     </TableRow>

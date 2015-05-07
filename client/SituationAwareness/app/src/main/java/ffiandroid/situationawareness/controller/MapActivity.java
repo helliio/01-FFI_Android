@@ -5,6 +5,7 @@ package ffiandroid.situationawareness.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,7 +23,10 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -30,7 +34,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +64,7 @@ import java.sql.SQLOutput;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ffiandroid.situationawareness.model.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.model.datahandling.StartSync;
@@ -91,6 +98,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private String menuStatus;
 
 
+
     // NOTE(Torgrim): Added for testing purpose
     private ArrayList<Marker> coworkersLocationMarkers = new ArrayList();
     private ArrayList<LocationReport> coworkersLocationReportsPresent = new ArrayList<>();
@@ -103,6 +111,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private ArrayList<String> currentPhotoReportsPresent = new ArrayList<>();
 
     private ArrayList<Marker> allCoworkersMarkers = new ArrayList<>();
+
+
+    // NOTE(Torgrim): Added for testing new UI drawer
+    /*
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private String[] optionsList;
+    */
 
 
     ArrayList<Marker> clusterMarkers = new ArrayList<>();
@@ -263,8 +280,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             }
 
             @Override
-            public boolean onZoom(ZoomEvent zoomEvent)
-            {
+            public boolean onZoom(ZoomEvent zoomEvent) {
                 calculateMarkers();
                 return true;
             }
@@ -273,15 +289,121 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         setUpClusterMarkers();
 
+        /*
+        // NOTE(Torgrim): Testing new ui drawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        optionsList = getResources().getStringArray(R.array.options_list);
+
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, optionsList));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  // host Activity
+                mDrawerLayout,         // DrawerLayout object
+                R.string.drawer_open,  // "open drawer" description
+                R.string.drawer_close  // "close drawer" description
+        ) {
+
+            // Called when a drawer has settled in a completely closed state.
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle("Drawer Closed");
+            }
+
+            // Called when a drawer has settled in a completely open state.
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Drawer Opened");
+            }
+        };
+        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        getSupportActionBar().setIcon(R.drawable.ic_drawer);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        //getSupportActionBar().setIcon(R.drawable.ic_drawer);
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mapEventsOverlay = new MapEventsOverlay(this, this);
-
         mMapView.getOverlays().add(0, mapEventsOverlay);
-
+        */
 
     }
 
+    // The click listner for ListView in the navigation drawer
+    /*
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        MapActivity mapActivity;
 
+        public DrawerItemClickListener(MapActivity mapActivity) {
+            this.mapActivity = mapActivity;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            System.out.println("Clicked on item at position " + position + " With ID: " + id);
+            switch (position) {
+                case 0:
+                    System.out.println("Already Here");
+                    break;
+                case 1:
+                    startActivity(new Intent(mapActivity, LocationView.class));
+                    System.out.println("Starting activity location View");
+                    break;
+                case 2:
+                    startActivity(new Intent(mapActivity, ReportView.class));
+                    System.out.println("Starting activity report view");
+                    break;
+                case 3:
+                    startActivity(new Intent(mapActivity, PhotoView.class));
+                    System.out.println("Starting activity photo view");
+                    break;
+                case 4:
+                    startActivity(new Intent(mapActivity, Report.class));
+                    System.out.println("Starting activity report");
+                    break;
+                case 5:
+                    startActivity(new Intent(mapActivity, Status.class));
+                    System.out.println("Starting activity status");
+                    break;
+                case 6:
+                    startActivity(new Intent(mapActivity, AppSettings.class));
+                    System.out.println("Starting activity settings");
+                    break;
+                case 7:
+                    cacheTiles();
+                    System.out.println("Clicked on cacheTiles");
+                    break;
+                case 8:
+                    logout();
+                    System.out.println("Clicked on logout");
+                    break;
+                default:
+
+                    System.out.println("Default item clicked!!!!!!!!!!!!!!!!!!!!!!!");
+            }
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    */
     @Override
     protected void onResume() {
 
@@ -323,8 +445,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapController = (MapController) mMapView.getController();
         mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         updateLocation();
+        mMapController.setCenter(new GeoPoint(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
 
     }
 
@@ -384,11 +506,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             System.out.println("No location found");
             Log.i("gps", "Could not find any locations stored on device");
         }
-
-        startMarker = new Marker(mMapView);
-
+        if(startMarker == null)
+        {
+            startMarker = new Marker(mMapView);
+        }
 
         //        Reporting.reportMyLocation(myCurrentLocation);
+        newReportLocation = new Location(myCurrentLocation);
         onLocationChanged(myCurrentLocation);
 
     }
@@ -532,13 +656,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
      */
     private void addMyNewPositionToDB()
     {
-
-
-        // NOTE(Torgrim): Added to change your own location rather than insert a new one
-        if(new DAOlocation(getApplicationContext()).updateLocation(new LocationReport(true)) == 0)
-        {
-            new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
-        }
+        new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
     }
 
     /**
@@ -731,12 +849,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         }
     };
-    // NOTE(Torgrim): Temporary method to update photo path..
-    // Used in DBSyncPhoto.Save()
+    // NOTE(Torgrim): Function to update photo reports on map,
+    // Called for every zoom and drag event on the map
     public void updatePhotoMarkers()
     {
 
         List<PhotoReport> photoReports = new OSMmap().getAllCoworkersPhotoReports(getApplicationContext());
+        Bitmap image = null;
+        Bitmap thumbnail = null;
         for(final PhotoReport report : photoReports)
         {
             if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
@@ -748,12 +868,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
                 marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView)
                 {
+
+                    Bitmap image = null;
+                    Bitmap thumbnail = null;
                     @Override
                     public void onOpen(Object o)
                     {
                         System.out.println("========================PhotoReport Info window should now be open ======================");
-                        Bitmap image = BitmapFactory.decodeFile(report.getPath());
-                        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
+                        image = BitmapFactory.decodeFile(report.getPath());
+                        thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
                         ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
                         marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
                         System.out.println("======================================= Setting photo bubble thumbnail");
@@ -762,6 +885,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                     @Override
                     public void onClose()
                     {
+                        if(image != null)
+                        {
+                            image.recycle();
+                        }
+                        if(thumbnail != null)
+                        {
+                            thumbnail.recycle();
+                        }
                         System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
@@ -794,20 +925,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     // NOTE(Torgrim): Added by Torgrim for testing purposes
     // to calculate the marker view status, meaning that
     // we're trying to calculate whether to cluster or single markers
-    private synchronized boolean calculateMarkers()
+    private boolean calculateMarkers()
     {
 
         double startTime = System.currentTimeMillis();
         int count = 0;
         updatePhotoMarkers();
-        //markersEnabled.removeAll(markersEnabled);
         if(allCoworkersMarkers.size() > 0)
         {
             for (Marker marker : allCoworkersMarkers)
             {
                 if (mMapView.getBoundingBox().contains(marker.getPosition()))
                 {
-                    if(count <= 100)
+                    if(count <= 100 || mMapView.getZoomLevel() == mMapView.getMaxZoomLevel())
                     {
                         marker.setEnabled(true);
                         count++;
@@ -823,7 +953,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 }
             }
         }
-        if(count > 100) {
+        if(count > 100 && mMapView.getZoomLevel() != mMapView.getMaxZoomLevel()) {
             System.out.println("Ready for Clustering");
             topLeftMarker.setEnabled(true);
             topLeftMiddleMarker.setEnabled(true);
@@ -1314,6 +1444,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             menuStatus = count + " items not reported! send now?";
         }
     }
+
 
     @Override public void menuStatusChanged() {
         formatMenuStatus();
