@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +65,7 @@ public class ImageAdapter extends ArrayAdapter<PhotoReport> {
             if (image.getPath().contains(".")) {
                 // set image icon
                 Bitmap bitmap = BitmapFactory.decodeFile(image.getPath());
-                viewHolder.imgIcon.setImageBitmap(ThumbnailUtils.extractThumbnail(bitmap, bitmap.getWidth(), bitmap.getHeight()));
+                viewHolder.imgIcon.setImageBitmap(ThumbnailUtils.extractThumbnail(bitmap, THUMBSIZE, THUMBSIZE));
             }
         }
         // Return the completed view to render on screen
