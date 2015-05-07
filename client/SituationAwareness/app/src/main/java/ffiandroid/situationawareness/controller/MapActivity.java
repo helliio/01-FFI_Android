@@ -252,6 +252,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 ParameterSetting.getLocationUpdateDistance(), this);
         UserInfo.addListener(this);
         formatMenuStatus();
+        /*test
+
+         */
+        GeoPoint myLoc = new GeoPoint(myCurrentLocation);
+        mMapController.setCenter(myLoc);
         StartSync.getInstance(getApplicationContext()).start();
 
         // NOTE(Torgrim): Added for tesing, might need to change this.
@@ -590,7 +595,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 {
                     Marker coworkerMarker = new Marker(mMapView);
                     coworkerMarker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
-                    coworkerMarker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
+                    coworkerMarker.setIcon(getResources().getDrawable(R.drawable.teammembericon));
 
                     coworkerMarker.setInfoWindow(new MarkerInfoWindow(R.layout.bonuspack_bubble_black, mMapView)
                     {
@@ -632,7 +637,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 if(!coworkerTextReportsPresent.contains(report)) {
 
                     Marker marker = new Marker(mMapView);
-                    marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
+                    marker.setIcon(getResources().getDrawable(R.drawable.observationicon));
                     marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
                     marker.setInfoWindow(new MarkerInfoWindow(R.layout.bonuspack_bubble_black, mMapView)
                     {
