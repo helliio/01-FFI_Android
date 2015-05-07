@@ -207,10 +207,14 @@ public class PhotoView extends ActionBarActivity {
             @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 PhotoReport image = (PhotoReport) listView.getItemAtPosition(position);
-                if (image.getPath().contains(".")) {
-                    Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                    intent.putExtra("IMAGE", (new Gson()).toJson(image));
-                    startActivity(intent);
+                try {
+                    if (image.getPath().contains(".")) {
+                        Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
+                        intent.putExtra("IMAGE", (new Gson()).toJson(image));
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+
                 }
             }
         });
