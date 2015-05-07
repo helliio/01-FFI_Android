@@ -285,8 +285,9 @@ public class DAOphoto {
                 new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME);
         int count = cursor.getCount();
         cursor.close();
-        System.out
-                .println(this.getClass().getSimpleName() + "------" + count + " --" + getOneNotReportedPhoto(myUserID));
+//        System.out
+        //                .println(this.getClass().getSimpleName() + "------" + count + " --" +
+        // getOneNotReportedPhoto(myUserID));
         return count;
     }
 
