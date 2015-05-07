@@ -16,5 +16,6 @@ public interface ReportService {
 
     public String sendTextReportList(String username, String deviceId, long sendingTime, JSONArray list);
 
-    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String description);
+    // NOTE(Torgrim): added title as a parameter..
+    public String sendPhotoReport(String username, String deviceId, long sendingTime, double latitude, double longitude, int direction, File file, String title, String description);
 }

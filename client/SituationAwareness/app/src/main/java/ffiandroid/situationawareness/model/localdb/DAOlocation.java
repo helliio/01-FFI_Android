@@ -50,6 +50,21 @@ public class DAOlocation {
         return database.insert(DBtables.LocationTB.TABLE_NAME, null, cv);
     }
 
+    // NOTE(Torgrim): Created a update location in database so
+    // that your own location will only be on report
+    // instead of getting the path of the user..
+    public long updateLocation(LocationReport locationReport)
+    {
+        ContentValues cv = new ContentValues();
+        cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
+        cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
+        cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
+        cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
+        cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
+        String where = DBtables.LocationTB.COLUMN_USER_ID + "=?";
+        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid()} );
+    }
+
     /**
      * update given location reports isReported value to true
      *

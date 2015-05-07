@@ -68,6 +68,8 @@ public class ReportController {
         return this.reportService.sendTextReportList(username, uuid, sendingTime, list);
     }
 
+
+    // NOTE(Torgrim): added title as a request param here...
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/sendPhotoReport", method = RequestMethod.POST)
@@ -80,8 +82,9 @@ public class ReportController {
             @RequestParam("direction") String direction,
             @RequestParam("file") String file,
             @RequestParam("extension") String extension,
+            @RequestParam("title") String title,
             @RequestParam("description") String description) {
-        return this.reportService.sendPhotoReport(username, uuid, sendingTime, latitude, longitude, direction, file, extension, description);
+        return this.reportService.sendPhotoReport(username, uuid, sendingTime, latitude, longitude, direction, file, extension, title, description);
     }
 
 
@@ -97,6 +100,7 @@ public class ReportController {
         DatabasePopulator dbPopulator = new DatabasePopulator();
         dbPopulator.populateLocationReports(reportService);
         dbPopulator.populateTextReports(reportService);
+        dbPopulator.pupulatePhotoReports(reportService);
 
         return "Success";
     }

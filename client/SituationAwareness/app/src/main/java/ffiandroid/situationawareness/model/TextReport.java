@@ -52,7 +52,9 @@ public class TextReport extends LocationReport {
      */
     public String getReport() { return report; }
 
-    @Override public String toString() {
+    /*
+    @Override
+    public String toString() {
         return "userid='" + userid +
                 ",      isreported=" + isreported +
                 "\nreport='" + report +
@@ -60,4 +62,5 @@ public class TextReport extends LocationReport {
                 "\nlatitude=" + latitude +
                 ", longitude=" + longitude;
     }
+    */
 }
