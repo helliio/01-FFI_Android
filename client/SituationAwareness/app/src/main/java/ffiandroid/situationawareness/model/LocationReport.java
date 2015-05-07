@@ -3,6 +3,8 @@ package ffiandroid.situationawareness.model;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import ffiandroid.situationawareness.model.util.Coder;
+
 /**
  * This LocationReport File is part of project: Situation Awareness
  * <p/>
@@ -29,7 +31,7 @@ public class LocationReport {
         if (autoFill) {
             this.longitude = UserInfo.getCurrentLongitude();
             this.latitude = UserInfo.getCurrentLatitude();
-            this.userid = UserInfo.getUserID();
+            this.userid = Coder.encryptMD5(UserInfo.getUserID());
             this.isreported = false;
         }
     }
@@ -43,7 +45,7 @@ public class LocationReport {
     public LocationReport(double latitude, double longitude) {
         this.longitude = longitude;
         this.latitude = latitude;
-        this.userid = UserInfo.getUserID();
+        this.userid = Coder.encryptMD5(UserInfo.getUserID());
         this.isreported = false;
     }
 

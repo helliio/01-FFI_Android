@@ -42,8 +42,9 @@ public class DAOlocation {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addLocation(LocationReport locationReport) {
+        System.out.println("Added location to DB with user ID " + locationReport.getUserid());
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.LocationTB.COLUMN_USER_ID, Coder.encryptMD5(locationReport.getUserid()));
+        cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
         cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
         cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
         cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
@@ -105,16 +106,15 @@ public class DAOlocation {
      * @return all team members location except the given user id' location (my location)
      */
     public List<LocationReport> getCoWorkerLocations(String myUserID) {
-        String userid = Coder.encryptMD5(myUserID);
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_USER_ID + " != ?", new String[]{userid}, null, null,
+                DBtables.LocationTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 LocationReport locationReport = cursorToTextReport(cursor);
-                System.out.println("Current user id: " + Coder.encryptMD5(myUserID) + "LocationReport userid: " + locationReport.getUserid());
+                System.out.println("Current user id: " + Coder.encryptMD5(myUserID) + " LocationReport userid: " + locationReport.getUserid());
                 locationReports.add(locationReport);
                 cursor.moveToNext();
             }
@@ -134,7 +134,7 @@ public class DAOlocation {
                 "SELECT *, MAX(" + DBtables.LocationTB.COLUMN_DATETIME + ") FROM " + DBtables.LocationTB.TABLE_NAME +
                         " GROUP BY '" + DBtables.LocationTB.COLUMN_USER_ID + "' AND " +
                         DBtables.LocationTB.COLUMN_USER_ID + " !=?";
-        Cursor cursor = database.rawQuery(lwQuery, new String[]{myUserID});
+        Cursor cursor = database.rawQuery(lwQuery, new String[]{Coder.encryptMD5(myUserID)});
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -155,7 +155,7 @@ public class DAOlocation {
     public List<LocationReport> getMyLocations(String myUserID) {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
-                DBtables.LocationTB.COLUMN_USER_ID + " = ?", new String[]{myUserID}, null, null,
+                DBtables.LocationTB.COLUMN_USER_ID + " = ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -175,7 +175,7 @@ public class DAOlocation {
         List<LocationReport> locationReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
                 DBtables.LocationTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.LocationTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             LocationReport locationReport = cursorToTextReport(cursor);
@@ -203,7 +203,7 @@ public class DAOlocation {
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
                 DBtables.LocationTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.LocationTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         int count = cursor.getCount();
         cursor.close();
         return count;

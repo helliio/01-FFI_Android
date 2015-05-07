@@ -40,6 +40,7 @@ public class DAOphoto {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addPhoto(PhotoReport photoReport) {
+        System.out.println("Added Photo report to DB with user ID " + photoReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
         cv.put(DBtables.PhotoTB.COLUMN_DATETIME, photoReport.getDatetimeLong());
@@ -47,7 +48,7 @@ public class DAOphoto {
         cv.put(DBtables.PhotoTB.COLUMN_EXTENSION, photoReport.getExtension());
         cv.put(DBtables.PhotoTB.COLUMN_LONGITUDE, photoReport.getLongitude());
         cv.put(DBtables.PhotoTB.COLUMN_LATITUDE, photoReport.getLatitude());
-        cv.put(DBtables.PhotoTB.COLUMN_USER_ID, Coder.encryptMD5(photoReport.getUserid()));
+        cv.put(DBtables.PhotoTB.COLUMN_USER_ID, photoReport.getUserid());
         cv.put(DBtables.PhotoTB.COLUMN_TITLE, photoReport.getTitle());
         cv.put(DBtables.PhotoTB.COLUMN_PIC_ID, photoReport.getPicId());
         cv.put(DBtables.PhotoTB.COLUMN_PATH, photoReport.getPath());
@@ -110,7 +111,7 @@ public class DAOphoto {
     public List<PhotoReport> getCoWorkerPhotos(String myUserID) {
         List<PhotoReport> photoReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{myUserID}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();

@@ -18,9 +18,9 @@ public class DatabasePopulator {
     ReportService reportService;
 
     // NOTE(Torgrim): linux path
-    private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
+    //private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
     // Windows path
-    //private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos";
+    private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos";
 
     private static final String TIME_IN_MILLI = Long.toString(new Date().getTime());
 

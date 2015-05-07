@@ -44,8 +44,9 @@ public class DAOtextReport {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addReport(TextReport textReport) {
+        System.out.println("Added Text report to DB with user ID " + textReport.getUserid());
         ContentValues cv = new ContentValues();
-        cv.put(DBtables.TextReportTB.COLUMN_USER_ID, Coder.encryptMD5(textReport.getUserid()));
+        cv.put(DBtables.TextReportTB.COLUMN_USER_ID, textReport.getUserid());
         cv.put(DBtables.TextReportTB.COLUMN_REPORT, textReport.getReport());
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());

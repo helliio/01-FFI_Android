@@ -107,6 +107,12 @@ public class LocationView extends ActionBarActivity {
                 broadcastIntent.setAction("ACTION_LOGOUT");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
                 return true;
+            case R.id.menu_item_photo_view:
+                startActivity(new Intent(this, PhotoView.class));
+                return true;
+            case R.id.menu_item_report_view:
+                startActivity(new Intent(this, ReportView.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

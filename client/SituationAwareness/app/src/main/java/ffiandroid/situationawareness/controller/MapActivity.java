@@ -512,6 +512,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         }
 
         //        Reporting.reportMyLocation(myCurrentLocation);
+        newReportLocation = new Location(myCurrentLocation);
         onLocationChanged(myCurrentLocation);
 
     }
@@ -848,12 +849,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         }
     };
-    // NOTE(Torgrim): Temporary method to update photo path..
-    // Used in DBSyncPhoto.Save()
+    // NOTE(Torgrim): Function to update photo reports on map,
+    // Called for every zoom and drag event on the map
     public void updatePhotoMarkers()
     {
 
         List<PhotoReport> photoReports = new OSMmap().getAllCoworkersPhotoReports(getApplicationContext());
+        Bitmap image = null;
+        Bitmap thumbnail = null;
         for(final PhotoReport report : photoReports)
         {
             if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
@@ -865,12 +868,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
                 marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView)
                 {
+
+                    Bitmap image = null;
+                    Bitmap thumbnail = null;
                     @Override
                     public void onOpen(Object o)
                     {
                         System.out.println("========================PhotoReport Info window should now be open ======================");
-                        Bitmap image = BitmapFactory.decodeFile(report.getPath());
-                        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
+                        image = BitmapFactory.decodeFile(report.getPath());
+                        thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
                         ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
                         marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
                         System.out.println("======================================= Setting photo bubble thumbnail");
@@ -879,6 +885,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                     @Override
                     public void onClose()
                     {
+                        if(image != null)
+                        {
+                            image.recycle();
+                        }
+                        if(thumbnail != null)
+                        {
+                            thumbnail.recycle();
+                        }
                         System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
@@ -923,7 +937,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             {
                 if (mMapView.getBoundingBox().contains(marker.getPosition()))
                 {
-                    if(count <= 100)
+                    if(count <= 100 || mMapView.getZoomLevel() == mMapView.getMaxZoomLevel())
                     {
                         marker.setEnabled(true);
                         count++;
@@ -939,7 +953,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 }
             }
         }
-        if(count > 100) {
+        if(count > 100 && mMapView.getZoomLevel() != mMapView.getMaxZoomLevel()) {
             System.out.println("Ready for Clustering");
             topLeftMarker.setEnabled(true);
             topLeftMiddleMarker.setEnabled(true);
