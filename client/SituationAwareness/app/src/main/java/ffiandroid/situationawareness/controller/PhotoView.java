@@ -25,9 +25,11 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.util.Coder;
 
 public class PhotoView extends ActionBarActivity {
 
@@ -189,6 +191,7 @@ public class PhotoView extends ActionBarActivity {
         DAOphoto daOphoto = new DAOphoto(this);
         photoReport.setDatetime(System.currentTimeMillis());
         photoReport.setPath(photoPath);
+        photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
         daOphoto.addPhoto(photoReport);
         daOphoto.close();
         refreshImageList();
@@ -264,6 +267,9 @@ public class PhotoView extends ActionBarActivity {
                 return true;
             case R.id.menu_item_location_view:
                 startActivity(new Intent(this, LocationView.class));
+                return true;
+            case R.id.menu_item_report_view:
+                startActivity(new Intent(this, ReportView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,6 +1,7 @@
 package ffiandroid.situationawareness.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.util.Log;
@@ -57,17 +58,19 @@ public class ImageAdapter extends ArrayAdapter<PhotoReport> {
 
 
         // NOTE(Torgrim): Edited by torgrim to stop crash..
+        // TODO(Torgrim): Work on improving the efficiency when creating a bitmap
+        long startTime = System.currentTimeMillis();
         if(image.getPath() != null)
         {
-            Log.i(this.getClass().getSimpleName(),
-                    "getPath: " + image.getPath() + " bitmap return " + BitmapFactory.decodeFile(image.getPath()));
+            //Log.i(this.getClass().getSimpleName(),"getPath: " + image.getPath() + " bitmap return " + BitmapFactory.decodeFile(image.getPath()));
             if (image.getPath().contains(".")) {
                 // set image icon
-                viewHolder.imgIcon.setImageBitmap(
-                        ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath()), THUMBSIZE, THUMBSIZE));
+                Bitmap bitmap = BitmapFactory.decodeFile(image.getPath());
+                viewHolder.imgIcon.setImageBitmap(ThumbnailUtils.extractThumbnail(bitmap, bitmap.getWidth(), bitmap.getHeight()));
             }
         }
         // Return the completed view to render on screen
+        System.out.println("Time it took to create a image view bitmap " + (System.currentTimeMillis() - startTime));
         return convertView;
     }
 }

@@ -55,7 +55,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/user_id"
+        android:hint="@string/username"
         android:id="@+id/register_user_id"
         android:maxLength="10"
         android:layout_above="@+id/register_group_id"
@@ -69,7 +69,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/user_name"
+        android:hint="@string/full_name"
         android:id="@+id/register_user_name"
         android:maxLength="10"
         android:layout_above="@+id/register_user_id"

@@ -10,6 +10,7 @@ import java.util.List;
 
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.util.Coder;
 
 /**
  * This file is part of SituationAwareness
@@ -40,6 +41,7 @@ public class DAOphoto {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addPhoto(PhotoReport photoReport) {
+        System.out.println("Added Photo report to DB with user ID " + photoReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
         cv.put(DBtables.PhotoTB.COLUMN_DATETIME, photoReport.getDatetimeLong());
@@ -127,7 +129,7 @@ public class DAOphoto {
     public List<PhotoReport> getCoWorkerPhotos(String myUserID) {
         List<PhotoReport> photoReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{myUserID}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
@@ -148,7 +150,7 @@ public class DAOphoto {
     public List<PhotoReport> getMyPhotos(String myUserID) {
         List<PhotoReport> photoReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " = ?", new String[]{myUserID}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " = ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -174,7 +176,8 @@ public class DAOphoto {
         // reports...
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null,
                 DBtables.PhotoTB.COLUMN_USER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null,
+                DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
 
         //        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, DBtables.PhotoTB
         // .COLUMN_ISREPORTED + " =?",
@@ -200,7 +203,7 @@ public class DAOphoto {
         PhotoReport photoReport;
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
                 DBtables.PhotoTB.COLUMN_USER_ID + " != ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
             photoReport = cursorToPhotoReport(cursor);
@@ -218,7 +221,7 @@ public class DAOphoto {
     public long getLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{myUserID}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
@@ -239,7 +242,7 @@ public class DAOphoto {
         List<PhotoReport> photoReports = new ArrayList<>();
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
                 DBtables.PhotoTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             PhotoReport photoReport = cursorToPhotoReport(cursor);
@@ -279,7 +282,7 @@ public class DAOphoto {
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
                 DBtables.PhotoTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME);
         int count = cursor.getCount();
         cursor.close();
         System.out
