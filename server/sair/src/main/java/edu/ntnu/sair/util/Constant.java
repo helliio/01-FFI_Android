@@ -24,5 +24,5 @@ public class Constant {
     // Linux path
     //public static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/photos/";
     // Windows path
-    public static final String PHOTO_PATH = "p:/ProjectFFI/photos";
+    public static final String PHOTO_PATH = "p:/ProjectFFI/photos/";
 }

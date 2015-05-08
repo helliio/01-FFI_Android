@@ -49,7 +49,16 @@ public class DAOlocation {
         cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
         cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
         cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
-        cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
+
+        // NOTE(Torgrim): Added to test datetime as an identifier for the report in mapActivity
+        if(locationReport.getDatetime() == null)
+        {
+            cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
+        }
+        else
+        {
+            cv.put(DBtables.LocationTB.COLUMN_DATETIME, locationReport.getDatetimeLong());
+        }
         long result = database.insert(DBtables.LocationTB.TABLE_NAME, null, cv);
         if (result >= 0) {
             statusChanged();

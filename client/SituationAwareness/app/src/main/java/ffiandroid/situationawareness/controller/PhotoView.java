@@ -7,17 +7,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -29,11 +34,12 @@ import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.util.BitmapAndDescriptionHolder;
 import ffiandroid.situationawareness.model.util.Coder;
 
 public class PhotoView extends ActionBarActivity {
 
-    private ArrayList<PhotoReport> images;
+    private ArrayList<BitmapAndDescriptionHolder> images;
     private ImageAdapter imageAdapter;
     private ListView listView;
     private Uri mCapturedImageURI;
@@ -61,7 +67,8 @@ public class PhotoView extends ActionBarActivity {
      */
     private void initDB() {
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 refreshImageList();
             }
         });
@@ -72,10 +79,22 @@ public class PhotoView extends ActionBarActivity {
      */
     private void refreshImageList() {
         DAOphoto daOphoto = new DAOphoto(this);
+        BitmapAndDescriptionHolder bitmapAndDescriptionHolder;
         images.clear();
         //                add images from database to images ArrayList
+        // NOTE(Torgrim): trying to decode and scale images in a batch rather than individually
         for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
-            images.add(photoReport);
+            Bitmap bitmap = null;
+            if(photoReport.getPath() != null)
+            {
+                bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(photoReport.getPath()), 64, 64, true);
+            }
+            String description = photoReport.toString();
+            bitmapAndDescriptionHolder = new BitmapAndDescriptionHolder(bitmap, description, photoReport);
+            // NOTE(Torgrim): Testing new method..
+            images.add(bitmapAndDescriptionHolder);
+            // NOTE(Torgrim): Old method
+            //images.add(photoReport);
         }
         daOphoto.close();
     }
@@ -206,11 +225,11 @@ public class PhotoView extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                PhotoReport image = (PhotoReport) listView.getItemAtPosition(position);
+                BitmapAndDescriptionHolder image = (BitmapAndDescriptionHolder) listView.getItemAtPosition(position);
                 try {
                     if (image.getPath().contains(".")) {
                         Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                        intent.putExtra("IMAGE", (new Gson()).toJson(image));
+                        intent.putExtra("IMAGE", (new Gson()).toJson(image.report));
                         startActivity(intent);
                     }
                 } catch (Exception e) {
