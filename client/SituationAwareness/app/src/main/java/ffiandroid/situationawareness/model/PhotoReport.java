@@ -19,6 +19,15 @@ public class PhotoReport extends LocationReport {
         setDatetime(datetimeLong);
     }
 
+    public PhotoReport(String title, String description, String path, long datetimeLong, boolean reported) {
+        super(true);
+        this.title = title;
+        this.description = description;
+        this.path = path;
+        setDatetime(datetimeLong);
+        setIsreported(reported);
+    }
+
     public String getExtension() {
         return extension;
     }

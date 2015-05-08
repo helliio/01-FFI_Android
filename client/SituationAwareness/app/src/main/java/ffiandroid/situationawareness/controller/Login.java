@@ -44,8 +44,7 @@ public class Login extends ActionBarActivity {
     protected static final String PREF_USERNAME = "username";
     protected static final String PREF_PASSWORD = "password";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
@@ -61,8 +60,7 @@ public class Login extends ActionBarActivity {
     public void softkeyboardDone() {
         EditText editTextpass = (EditText) findViewById(R.id.editTextLoginPass);
         editTextpass.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     login();
                 }
@@ -77,7 +75,7 @@ public class Login extends ActionBarActivity {
      * @param view
      */
     public void loginClicked(View view) {
-        Toast.makeText(this, "Login ....." + hasinput(), Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(this, "Login ....." + hasinput(), Toast.LENGTH_SHORT).show();
         if (hasinput()) {
             login();
         } else {
@@ -111,8 +109,7 @@ public class Login extends ActionBarActivity {
     }
 
     private Runnable loginThread = new Runnable() {
-        @Override
-        public void run() {
+        @Override public void run() {
             Looper.prepare();
             String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
             String userPass = ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString();
@@ -126,13 +123,14 @@ public class Login extends ActionBarActivity {
                         rememberMe(userName, userPass);
                         toMapWindow();
                     } else {
-                        Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT);
+                        Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                 }
                 Looper.loop();
             } else {
-                Toast.makeText(getBaseContext(), "Need network connection for first time login!", Toast.LENGTH_SHORT);
+                Toast.makeText(getBaseContext(), "Need network connection for first time login!", Toast.LENGTH_SHORT)
+                        .show();
             }
         }
     };
@@ -171,15 +169,13 @@ public class Login extends ActionBarActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -197,14 +193,13 @@ public class Login extends ActionBarActivity {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+        @Override public void onReceive(Context context, Intent intent) {
             //            if (!getIntent().getExtras().getBoolean("LOGIN_ON")) {
             //                Intent i = new Intent(getBaseContext(), Login.class);
             //                i.putExtra("LOGIN_ON", true);
             //                startActivity(i);
             //            }
-//            startActivity(new Intent(getBaseContext(), Login.class));
+            //            startActivity(new Intent(getBaseContext(), Login.class));
 
             finish();
         }

@@ -29,8 +29,7 @@ public class ImageDisplay extends Activity {
     private TextView description;
     private String jstring;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
@@ -55,7 +54,7 @@ public class ImageDisplay extends Activity {
         try {
             JSONObject job = new JSONObject(jsonS);
             return (new PhotoReport(job.getString("title"), job.getString("description"), job.getString("path"),
-                    job.getLong("datetimeLong")));
+                    job.getLong("datetimeLong"), job.getBoolean("isreported")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,15 +103,13 @@ public class ImageDisplay extends Activity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_image_display, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -130,9 +127,8 @@ public class ImageDisplay extends Activity {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        @Override public void onReceive(Context context, Intent intent) {
+            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };

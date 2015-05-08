@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.util.Coder;
 
 
 /**
@@ -43,6 +45,7 @@ public class DAOtextReport {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addReport(TextReport textReport) {
+        System.out.println("Added Text report to DB with user ID " + textReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.TextReportTB.COLUMN_USER_ID, textReport.getUserid());
         cv.put(DBtables.TextReportTB.COLUMN_REPORT, textReport.getReport());
@@ -50,7 +53,12 @@ public class DAOtextReport {
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
         cv.put(DBtables.TextReportTB.COLUMN_LATITUDE, textReport.getLatitude());
         cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
-        return database.insert(DBtables.TextReportTB.TABLE_NAME, null, cv);
+        long result = database.insert(DBtables.TextReportTB.TABLE_NAME, null, cv);
+
+        if (result >= 0) {
+            statusChanged();
+        }
+        return result;
     }
 
     /**
@@ -65,8 +73,20 @@ public class DAOtextReport {
         String where = DBtables.TextReportTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.TextReportTB.COLUMN_DATETIME + "=?";
 
-        return database.update(DBtables.TextReportTB.TABLE_NAME, cv, where,
+        long result = database.update(DBtables.TextReportTB.TABLE_NAME, cv, where,
                 new String[]{textReport.getUserid(), String.valueOf(textReport.getDatetime().getTimeInMillis())});
+
+        if (result >= 0) {
+            statusChanged();
+        }
+        return result;
+    }
+
+    /**
+     * set new un-reported text report value to UserInfo when it changed
+     */
+    private void statusChanged() {
+        UserInfo.setUnReportedText(getMyNOTReportedItemCount(UserInfo.getUserID()));
     }
 
     /**
@@ -101,7 +121,7 @@ public class DAOtextReport {
 
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
                 DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -124,17 +144,19 @@ public class DAOtextReport {
         cursor.close();
         return count;
     }
+
     /**
      * @return total row count of the not reported items in the table
      */
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
                 DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{myUserID, "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         int count = cursor.getCount();
         cursor.close();
         return count;
     }
+
     /**
      * *
      *

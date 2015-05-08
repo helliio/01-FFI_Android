@@ -9,25 +9,25 @@ public interface StatusListener {
     /**
      * menu status changed
      */
-    public void menuStatusChanged();
+     void menuStatusChanged();
 
     /**
      * location status changed
      */
-    public void locationStatusChanged();
+     void locationStatusChanged();
 
     /**
      * text status changed
      */
-    public void textStatusChanged();
+     void textStatusChanged();
 
     /**
      * photo status changed
      */
-    public void photoStatusChanged();
+     void photoStatusChanged();
 
     /**
      * last time report succeed or not
      */
-    public void lastReportStatusChanged();
+     void lastReportStatusChanged();
 }

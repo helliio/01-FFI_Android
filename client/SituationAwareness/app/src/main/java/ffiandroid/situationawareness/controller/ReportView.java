@@ -108,6 +108,9 @@ public class ReportView extends ActionBarActivity {
             case R.id.menu_item_location_view:
                 startActivity(new Intent(this, LocationView.class));
                 return true;
+            case R.id.menu_item_photo_view:
+                startActivity(new Intent(this, PhotoView.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

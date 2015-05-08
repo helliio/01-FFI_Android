@@ -39,7 +39,7 @@ public class Report extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         textReport = (EditText) findViewById(R.id.report_edit_text_report);
 
-       location = MapActivity.newReportLocation;
+        location = MapActivity.newReportLocation;
         textLocation = (TextView) findViewById(R.id.coordinates);
         textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
     }

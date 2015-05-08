@@ -25,9 +25,11 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.util.Coder;
 
 public class PhotoView extends ActionBarActivity {
 
@@ -39,8 +41,7 @@ public class PhotoView extends ActionBarActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private String photoPath;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
@@ -189,6 +190,7 @@ public class PhotoView extends ActionBarActivity {
         DAOphoto daOphoto = new DAOphoto(this);
         photoReport.setDatetime(System.currentTimeMillis());
         photoReport.setPath(photoPath);
+        photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
         daOphoto.addPhoto(photoReport);
         daOphoto.close();
         refreshImageList();
@@ -205,10 +207,14 @@ public class PhotoView extends ActionBarActivity {
             @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 PhotoReport image = (PhotoReport) listView.getItemAtPosition(position);
-                if (image.getPath().contains(".")) {
-                    Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                    intent.putExtra("IMAGE", (new Gson()).toJson(image));
-                    startActivity(intent);
+                try {
+                    if (image.getPath().contains(".")) {
+                        Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
+                        intent.putExtra("IMAGE", (new Gson()).toJson(image));
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+
                 }
             }
         });
@@ -234,15 +240,13 @@ public class PhotoView extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_photo_view, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_map_view:
                 startActivity(new Intent(this, MapActivity.class));
@@ -265,6 +269,9 @@ public class PhotoView extends ActionBarActivity {
             case R.id.menu_item_location_view:
                 startActivity(new Intent(this, LocationView.class));
                 return true;
+            case R.id.menu_item_report_view:
+                startActivity(new Intent(this, ReportView.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -282,9 +289,8 @@ public class PhotoView extends ActionBarActivity {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        @Override public void onReceive(Context context, Intent intent) {
+            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };

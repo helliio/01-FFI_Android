@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:windowSoftInputMode="stateVisible|adjustResize"
-                tools:context=".Login">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="stateVisible|adjustResize"
+    tools:context=".Login">
 
     <TextView
         android:text="@string/app_name_sair"
@@ -29,7 +29,7 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:width="200dp"
-        android:hint="@string/user_id"
+        android:hint="@string/username"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView" />
 
