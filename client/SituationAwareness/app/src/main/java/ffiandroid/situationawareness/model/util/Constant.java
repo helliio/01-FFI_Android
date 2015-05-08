@@ -11,6 +11,7 @@ public class Constant {
 
     // URL of the server
     // Real url(Torgrim): "http://sair.chun.no"
+    // Public Server
     public static final String SERVICE_URL = "http://sair.chun.no";
 
     // Local server ip
