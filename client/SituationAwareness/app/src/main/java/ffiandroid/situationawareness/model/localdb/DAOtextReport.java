@@ -52,7 +52,14 @@ public class DAOtextReport {
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
         cv.put(DBtables.TextReportTB.COLUMN_LATITUDE, textReport.getLatitude());
-        cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
+        if(textReport.getDatetime() == null)
+        {
+            cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
+        }
+        else
+        {
+            cv.put(DBtables.TextReportTB.COLUMN_DATETIME, textReport.getDatetimeLong());
+        }
         long result = database.insert(DBtables.TextReportTB.TABLE_NAME, null, cv);
 
         if (result >= 0) {

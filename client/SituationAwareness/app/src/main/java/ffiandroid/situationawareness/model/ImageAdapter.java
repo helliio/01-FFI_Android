@@ -14,13 +14,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.util.BitmapAndDescriptionHolder;
 
 /**
  * This file is part of SituationAwareness
  * <p/>
  * Created by GuoJunjun <junjunguo.com> on March 23, 2015.
  */
-public class ImageAdapter extends ArrayAdapter<PhotoReport> {
+public class ImageAdapter extends ArrayAdapter<BitmapAndDescriptionHolder> {
     private final int THUMBSIZE = 96;
 
     /**
@@ -32,7 +33,7 @@ public class ImageAdapter extends ArrayAdapter<PhotoReport> {
         TextView description;
     }
 
-    public ImageAdapter(Context context, ArrayList<PhotoReport> images) {
+    public ImageAdapter(Context context, ArrayList<BitmapAndDescriptionHolder> images) {
         super(context, 0, images);
     }
 
@@ -51,22 +52,26 @@ public class ImageAdapter extends ArrayAdapter<PhotoReport> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         // Get the data item for this position
-        PhotoReport image = getItem(position);
+        BitmapAndDescriptionHolder image = getItem(position);
         // set description text
-        viewHolder.description.setText(image.toString());
+        viewHolder.description.setText(image.description);
 
 
         // NOTE(Torgrim): Edited by torgrim to stop crash..
         // TODO(Torgrim): Work on improving the efficiency when creating a bitmap
         long startTime = System.currentTimeMillis();
-        if(image.getPath() != null)
+        if(image.bitmap != null)
         {
+            /*
             //Log.i(this.getClass().getSimpleName(),"getPath: " + image.getPath() + " bitmap return " + BitmapFactory.decodeFile(image.getPath()));
             if (image.getPath().contains(".")) {
                 // set image icon
-                Bitmap bitmap = BitmapFactory.decodeFile(image.getPath());
-                viewHolder.imgIcon.setImageBitmap(ThumbnailUtils.extractThumbnail(bitmap, THUMBSIZE, THUMBSIZE));
+                Bitmap bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(image.getPath()), 64, 64, true);
+                viewHolder.imgIcon.setImageBitmap(bitmap);
             }
+            */
+
+            viewHolder.imgIcon.setImageBitmap(image.bitmap);
         }
         // Return the completed view to render on screen
         System.out.println("Time it took to create a image view bitmap " + (System.currentTimeMillis() - startTime));

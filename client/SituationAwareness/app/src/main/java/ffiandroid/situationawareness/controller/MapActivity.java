@@ -100,14 +100,17 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
 
     // NOTE(Torgrim): Added for testing purpose
+    // TODO(Torgrim): Clean up unnecessary member variables, methods and imports
     private ArrayList<Marker> coworkersLocationMarkers = new ArrayList();
     private ArrayList<LocationReport> coworkersLocationReportsPresent = new ArrayList<>();
+    private ArrayList<String> coworkersLocationReportsIDPresent = new ArrayList<>();
 
     private ArrayList<Marker> coworkersTextReportMarkers = new ArrayList<>();
     private ArrayList<TextReport> coworkerTextReportsPresent = new ArrayList<>();
+    private ArrayList<String> coworkersTextReportsIDPresent = new ArrayList<>();
 
     private ArrayList<Marker> coworkersPhotoReportMarkers = new ArrayList<>();
-    private static ArrayList<PhotoReport> coworkersPhotoReportsPresent = new ArrayList<>();
+    private ArrayList<PhotoReport> coworkersPhotoReportsPresent = new ArrayList<>();
     private ArrayList<String> currentPhotoReportsPresent = new ArrayList<>();
 
     private ArrayList<Marker> allCoworkersMarkers = new ArrayList<>();
@@ -289,121 +292,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         setUpClusterMarkers();
 
-        /*
-        // NOTE(Torgrim): Testing new ui drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        optionsList = getResources().getStringArray(R.array.options_list);
-
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, optionsList));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener(this));
-
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  // host Activity
-                mDrawerLayout,         // DrawerLayout object
-                R.string.drawer_open,  // "open drawer" description
-                R.string.drawer_close  // "close drawer" description
-        ) {
-
-            // Called when a drawer has settled in a completely closed state.
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle("Drawer Closed");
-            }
-
-            // Called when a drawer has settled in a completely open state.
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Drawer Opened");
-            }
-        };
-        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
-        getSupportActionBar().setIcon(R.drawable.ic_drawer);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        //getSupportActionBar().setIcon(R.drawable.ic_drawer);
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        mapEventsOverlay = new MapEventsOverlay(this, this);
-        mMapView.getOverlays().add(0, mapEventsOverlay);
-        */
-
     }
-
-    // The click listner for ListView in the navigation drawer
-    /*
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        MapActivity mapActivity;
-
-        public DrawerItemClickListener(MapActivity mapActivity) {
-            this.mapActivity = mapActivity;
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            System.out.println("Clicked on item at position " + position + " With ID: " + id);
-            switch (position) {
-                case 0:
-                    System.out.println("Already Here");
-                    break;
-                case 1:
-                    startActivity(new Intent(mapActivity, LocationView.class));
-                    System.out.println("Starting activity location View");
-                    break;
-                case 2:
-                    startActivity(new Intent(mapActivity, ReportView.class));
-                    System.out.println("Starting activity report view");
-                    break;
-                case 3:
-                    startActivity(new Intent(mapActivity, PhotoView.class));
-                    System.out.println("Starting activity photo view");
-                    break;
-                case 4:
-                    startActivity(new Intent(mapActivity, Report.class));
-                    System.out.println("Starting activity report");
-                    break;
-                case 5:
-                    startActivity(new Intent(mapActivity, Status.class));
-                    System.out.println("Starting activity status");
-                    break;
-                case 6:
-                    startActivity(new Intent(mapActivity, AppSettings.class));
-                    System.out.println("Starting activity settings");
-                    break;
-                case 7:
-                    cacheTiles();
-                    System.out.println("Clicked on cacheTiles");
-                    break;
-                case 8:
-                    logout();
-                    System.out.println("Clicked on logout");
-                    break;
-                default:
-
-                    System.out.println("Default item clicked!!!!!!!!!!!!!!!!!!!!!!!");
-            }
-        }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    */
     @Override
     protected void onResume() {
 
@@ -671,40 +560,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         @Override public void run() {
 
             long startTime = System.currentTimeMillis();
-            /*
-            // NOTE(Torgrim): Added for testing purposes the get all coworkers location reports,
-            // add markers to them and add them to the map...
-            long startTime = System.currentTimeMillis();
-            for(int i = 0; i < 1000; i++)
-            {
-<<<<<<< HEAD:client/SituationAwareness/app/src/main/java/ffiandroid/situationawareness/MapActivity.java
-                Marker marker = new Marker(mMapView);
-                marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
-                marker.setPosition(new GeoPoint(Math.random() + 63, Math.random() + 10));
-                mMapView.getOverlays().add(marker);
-                marker.setEnabled(false);
-                coworkersLocationMarkers.add(marker);
 
-            }
-            System.out.println("Get Latitude Span: " + mMapView.getLatitudeSpan());
-            System.out.println("Get Longitude Span: " + mMapView.getLongitudeSpan());
-
-            double finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
-            System.out.println("The time it took to iteretate through the loop: " + finalTime + " Seconds");
-
-
-
-            System.out.println(" ======================== Current Location reports array size: " + coworkersLocationMarkers.size());
-            System.out.println(" ======================== Current mMapView overlay size: " + mMapView.getOverlays().size());
-
-            */
             // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
 
             OSMmap osmMap = new OSMmap();
             ArrayList<LocationReport> coworkerLocationReportsList = osmMap.getAllCoworkersLocationReports(getApplicationContext());
             for(LocationReport report : coworkerLocationReportsList)
             {
-                if(!coworkersLocationReportsPresent.contains(report))
+                String reportID = (report.getDatetimeLong() + report.getUserid());
+                if(!coworkersLocationReportsIDPresent.contains(reportID))
                 {
                     Marker coworkerMarker = new Marker(mMapView);
                     coworkerMarker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
@@ -729,6 +593,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                     ((TextView)coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
                     allCoworkersMarkers.add(coworkerMarker);
                     coworkersLocationReportsPresent.add(report);
+                    coworkersLocationReportsIDPresent.add(reportID);
                     mMapView.getOverlays().add(coworkerMarker);
 
 
@@ -747,7 +612,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             List<TextReport> coworkersTextReportsList = osmMap.getAllCoworkersTextReports(getApplicationContext());
             for(TextReport report : coworkersTextReportsList)
             {
-                if(!coworkerTextReportsPresent.contains(report)) {
+                String reportID = (report.getDatetimeLong() + report.getUserid());
+                if(!coworkersTextReportsIDPresent.contains(reportID)) {
 
                     Marker marker = new Marker(mMapView);
                     marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
@@ -773,6 +639,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                     ((TextView)marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
 
                     coworkerTextReportsPresent.add(report);
+                    coworkersTextReportsIDPresent.add(reportID);
                     allCoworkersMarkers.add(marker);
                     mMapView.getOverlays().add(marker);
                 }
@@ -784,62 +651,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
             }
 
-            /*
-            List<PhotoReport> photoReports = osmMap.getAllCoworkersPhotoReports(getApplicationContext());
-            for(PhotoReport report : photoReports)
-            {
-                if(!coworkerTextReportsPresent.contains(report))
-                {
 
-                    Marker marker = new Marker(mMapView);
-                    marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
-                    marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
-                    marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView)
-                    {
-                        @Override
-                        public void onOpen(Object o) {
-                            System.out.println("========================TextReport Info window should now be open ======================");
-                        }
-
-                        @Override
-                        public void onClose() {
-                            System.out.println("======================== TextReport Info Window should now be closed =====================");
-                        }
-                    });
-                    String info = "User: " + report.getUserid() + "\n";
-                    info += "Latitude: " + report.getLatitude() + "\n";
-                    info += "Longitude:" + report.getLongitude() + "\n";
-                    info += "-----------------------------------------\n";
-                    info += "Title: " + report.getTitle() + "\n";
-                    info += "Description: " + report.getDescription();
-                    if(report.getPath() != null)
-                    {
-                        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(report.getPath()), 50, 50);
-                        ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
-                        marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
-                        System.out.println("======================================= Setting photo bubble thumbnail");
-                    }
-
-                    ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title)).setText("This is the title of a PhotoReport report");
-                    ((TextView)marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
-                    marker.setRelatedObject(report);
-                    coworkersPhotoReportsPresent.add(report);
-                    allCoworkersMarkers.add(marker);
-                    coworkersPhotoReportMarkers.add(marker);
-                    mMapView.getOverlays().add(marker);
-                }
-                else
-                {
-                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This text report is already present<<<<<<<<<<<<<<<<<<<<<<<<<");
-                }
-
-
-            }
-            */
-
-
-            System.out.println("Current number of location report markers: " + coworkersLocationMarkers.size());
-            System.out.println("Current number of text report markers: " + coworkersTextReportMarkers.size());
+            System.out.println("Current number of location report markers: " + coworkersLocationReportsPresent.size());
+            System.out.println("Current number of text report markers: " + coworkerTextReportsPresent.size());
             System.out.println("Current number of photo report markers: " + coworkersPhotoReportMarkers.size());
             System.out.println("Current number of All report markers: " + allCoworkersMarkers.size());
 
@@ -851,6 +665,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     };
     // NOTE(Torgrim): Function to update photo reports on map,
     // Called for every zoom and drag event on the map
+    // TODO(Torgrim): Check and clean up this method
     public void updatePhotoMarkers()
     {
 
@@ -862,37 +677,51 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
             {
                 currentPhotoReportsPresent.add(report.getPicId());
-
                 final Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
                 marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
                 marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView)
                 {
 
-                    Bitmap image = null;
+                    Bitmap image = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(report.getPath()), 128, 128, true);;
                     Bitmap thumbnail = null;
+                    //Drawable drawable = Drawable.createFromPath(report.getPath());
+
                     @Override
                     public void onOpen(Object o)
                     {
                         System.out.println("========================PhotoReport Info window should now be open ======================");
-                        image = BitmapFactory.decodeFile(report.getPath());
-                        thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
-                        ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
+                        long startTime = System.currentTimeMillis();
+                        //drawable.setVisible(true, false);
+                        //image = BitmapFactory.decodeFile(report.getPath());
+                        //image = Bitmap.createScaledBitmap(image, 200, 200, true);
+                        //drawable = Drawable.createFromPath(report.getPath());
+                        System.out.println("Allocation count by bytes of the image: " + image.getAllocationByteCount());
+                        System.out.println("Image byte count: " + image.getByteCount());
+                        //thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
+                        //System.out.println("Allocation count by bytes of the thumbnail: " + thumbnail.getAllocationByteCount());
+                        //System.out.println("Thumbnail byte count: " + thumbnail.getByteCount());
+                                ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(image);
                         marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
+                        System.out.println("Time it took to create a infoWindow bitmap for photo Report " + (System.currentTimeMillis() - startTime) + " ms");
                         System.out.println("======================================= Setting photo bubble thumbnail");
                     }
 
                     @Override
                     public void onClose()
                     {
+                        /*
                         if(image != null)
                         {
                             image.recycle();
                         }
+                        */
                         if(thumbnail != null)
                         {
                             thumbnail.recycle();
                         }
+                        //drawable.setVisible(false, false);
+
                         System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
@@ -991,12 +820,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             bottomLeftMiddleMarker.setEnabled(false);
             bottomRightMiddleMarker.setEnabled(false);
             bottomRightMarker.setEnabled(false);
-            System.out.println("==================== Current screen does not contain more than 100 markers");
+            //System.out.println("==================== Current screen does not contain more than 100 markers");
         }
-        System.out.println("Current Number of Markers Disabled: " + (allCoworkersMarkers.size() - count));
-        System.out.println("Current Number of Markers Enabled: " + count);
+        //System.out.println("Current Number of Markers Disabled: " + (allCoworkersMarkers.size() - count));
+        //System.out.println("Current Number of Markers Enabled: " + count);
         double finalTime = ((double)System.currentTimeMillis() - (double)startTime) / 1000;
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>The time it took to calculate markers:  " + finalTime + " Seconds");
+        //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>The time it took to calculate markers:  " + finalTime + " Seconds");
         return false;
     }
 
