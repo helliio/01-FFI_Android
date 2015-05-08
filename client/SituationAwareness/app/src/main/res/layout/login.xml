@@ -1,38 +1,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".Login">
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextLoginID"
-        android:maxLength="20"
-        android:singleLine="true"
-        android:imeOptions="actionNext"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="30dp"
-        android:gravity="center"
-        android:layout_centerInParent="true"
-        android:width="200dp"
-        android:hint="@string/username"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="stateVisible|adjustResize"
+    tools:context=".Login">
 
     <TextView
         android:text="@string/app_name_sair"
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/editTextLoginID"
+        android:layout_marginBottom="20dp"
         android:textSize="20dp"
         android:width="200dp"
-        android:id="@+id/textView"/>
+        android:id="@+id/textView"
+        android:layout_alignLeft="@+id/editTextLoginID"
+        android:layout_alignStart="@+id/editTextLoginID"
+        android:layout_alignParentTop="true"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/editTextLoginID"
+        android:maxLength="20"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:width="200dp"
+        android:hint="@string/username"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textView" />
+
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:inputType="textPassword"
         android:singleLine="true"
         android:maxLength="20"
@@ -48,7 +53,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/editTextLoginPass"
         android:id="@+id/btn_login"
-        android:layout_marginTop="30dp"
         android:width="200dp"
         android:text="Login"
         android:onClick="loginClicked"
@@ -58,9 +62,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_login"
-        android:layout_marginTop="10dp"
         android:width="200dp"
         android:text="Register"
         android:onClick="registerClicked"
         android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>
