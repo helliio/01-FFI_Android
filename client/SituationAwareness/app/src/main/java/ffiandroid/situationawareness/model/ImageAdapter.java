@@ -59,7 +59,7 @@ public class ImageAdapter extends ArrayAdapter<BitmapAndDescriptionHolder> {
 
         // NOTE(Torgrim): Edited by torgrim to stop crash..
         // TODO(Torgrim): Work on improving the efficiency when creating a bitmap
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         if(image.bitmap != null)
         {
             /*
@@ -74,7 +74,7 @@ public class ImageAdapter extends ArrayAdapter<BitmapAndDescriptionHolder> {
             viewHolder.imgIcon.setImageBitmap(image.bitmap);
         }
         // Return the completed view to render on screen
-        System.out.println("Time it took to create a image view bitmap " + (System.currentTimeMillis() - startTime));
+        //System.out.println("Time it took to create a image view bitmap " + (System.currentTimeMillis() - startTime));
         return convertView;
     }
 }

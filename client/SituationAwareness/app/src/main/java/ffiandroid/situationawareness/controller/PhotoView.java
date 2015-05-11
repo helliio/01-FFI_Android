@@ -27,6 +27,10 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
@@ -83,7 +87,10 @@ public class PhotoView extends ActionBarActivity {
         images.clear();
         //                add images from database to images ArrayList
         // NOTE(Torgrim): trying to decode and scale images in a batch rather than individually
+        /*
+        long startTimeAll = System.currentTimeMillis();
         for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
+            long startTimeEach = System.currentTimeMillis();
             Bitmap bitmap = null;
             if(photoReport.getPath() != null)
             {
@@ -95,8 +102,57 @@ public class PhotoView extends ActionBarActivity {
             images.add(bitmapAndDescriptionHolder);
             // NOTE(Torgrim): Old method
             //images.add(photoReport);
+            System.out.println("Time it took to create each bitmap for photoView: " + (System.currentTimeMillis() - startTimeEach) + " ms");
         }
+        System.out.println("Time it took to create all bitmaps for photoView: " + (System.currentTimeMillis() - startTimeAll) + " ms");
+        */
+        long startTimeAll = System.currentTimeMillis();
+        for (PhotoReport report : daOphoto.getAllPhotos())
+        {
+            Bitmap bitmap = null;
+            long startTime = System.currentTimeMillis();
+
+            File image = new File(report.getPath());
+            FileInputStream is = null;
+            try
+            {
+                is = new FileInputStream(image);
+
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+            byte[] bytes = new byte[(int)image.length()];
+            if (is != null && image != null)
+            {
+                try
+                {
+                    is.read(bytes, 0, (int)image.length());
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            if(bytes.length != 0)
+            {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 4;
+                bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options), 64, 64, true);
+                String description = report.toString();
+                bitmapAndDescriptionHolder = new BitmapAndDescriptionHolder(bitmap, description, report);
+                // NOTE(Torgrim): Testing new method..
+                images.add(bitmapAndDescriptionHolder);
+            }
+            System.out.println("Time it took to read a image file from path with BitmapFactory " +
+                    (System.currentTimeMillis() - startTime) + " ms");
+
+        }
+        System.out.println("Time it took to create all bitmaps for photoView: " + (System.currentTimeMillis() - startTimeAll) + " ms");
         daOphoto.close();
+
+
     }
 
     public void btnNewPhotoReportOnClick(View view) {
@@ -110,7 +166,8 @@ public class PhotoView extends ActionBarActivity {
             }
         });
         dialog.findViewById(R.id.btnChoosePath).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 activeGallery();
                 dialog.dismiss();
             }
