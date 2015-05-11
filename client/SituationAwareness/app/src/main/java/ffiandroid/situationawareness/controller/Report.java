@@ -17,7 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
@@ -27,10 +29,11 @@ import ffiandroid.situationawareness.model.localdb.DAOtextReport;
  * <p/>
  * responsible for this file: GuoJunjun
  */
-public class Report extends ActionBarActivity {
+public class Report extends ActionBarActivity implements StatusListener{
     private EditText textReport;
     private TextView textLocation;
     private Location location;
+    private String menuStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -42,6 +45,7 @@ public class Report extends ActionBarActivity {
         location = MapActivity.newReportLocation;
         textLocation = (TextView) findViewById(R.id.coordinates);
         textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
+        formatMenuStatus();
     }
     /**
      * user click add photo button
@@ -151,5 +155,53 @@ public class Report extends ActionBarActivity {
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
     }
 }

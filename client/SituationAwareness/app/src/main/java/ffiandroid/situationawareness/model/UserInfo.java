@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 /**
  * Constant information of android id & user name + current location
- * <p/>
+ * <p>
  * This file is part of Situation Awareness
- * <p/>
+ * <p>
  * Created by GuoJunjun <junjunguo.com> on 20/02/15.
- * <p/>
+ * <p>
  * responsible for this file: GuoJunjun
  */
 public class UserInfo {
@@ -165,7 +165,17 @@ public class UserInfo {
      */
     public static String getUserID() { return userID; }
 
-    public static int getTotalUnReportedItemsCout() {
+    /**
+     * @return total un-reported item counts
+     */
+    public static int getTotalUnReportedItemsCount() {
         return getUnReportedLocations() + getUnReportedPhotos() + getUnReportedText();
+    }
+
+    /**
+     * @return a string of detailed unreported category counts
+     */
+    public static String getReportDetails() {
+        return "Loc:" + getUnReportedLocations() + "  Pho:" + getUnReportedPhotos() + "  Txt:" + getUnReportedText();
     }
 }
