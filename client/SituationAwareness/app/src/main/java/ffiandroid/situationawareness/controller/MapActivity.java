@@ -274,6 +274,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         setUpClusterMarkers();
 
+        //Used for creating menu from long click event
+        mapEventsOverlay = new MapEventsOverlay(this, this);
+        mMapView.getOverlays().add(0, mapEventsOverlay);
+
     }
 
     @Override protected void onResume() {
