@@ -14,6 +14,7 @@ import ffiandroid.situationawareness.model.util.Coder;
  */
 public class LocationReport {
     protected String userid;
+    protected String name;
     protected boolean isreported;
     protected Calendar datetime;
     protected long datetimeLong;
@@ -136,6 +137,15 @@ public class LocationReport {
      */
     public String getUserid() { return userid; }
 
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    public String getName()
+    {
+        return name;
+    }
+
     /**
      * Sets new isreported.
      *
@@ -144,7 +154,7 @@ public class LocationReport {
     public void setIsreported(boolean isreported) { this.isreported = isreported; }
 
     @Override public String toString() {
-        return "id:" + userid +
+        return "name:" + name +
                 ", reported:" + isreported +
                 ", " + df.format(datetime.getTime()) +
                 ", " + latitude +

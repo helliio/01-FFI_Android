@@ -16,26 +16,40 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.UserInfo;
-import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.ImageAdapter;
+import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.localdb.DAOlocation;
+import ffiandroid.situationawareness.model.localdb.DAOphoto;
+import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.util.AdapterContentHolder;
 import ffiandroid.situationawareness.model.util.Coder;
 
-public class PhotoView extends ActionBarActivity {
+/**
+ * Created by Torgrim on 13/05/2015.
+ */
+public class AllReportsView extends ActionBarActivity
+{
+    private DAOlocation daOlocation;
+
+    private DAOtextReport daOtextReport;
 
     private ArrayList<PhotoReport> images;
-    private ArrayList<AdapterContentHolder> reports;
+    private ArrayList<AdapterContentHolder> listContent;
     private ImageAdapter imageAdapter;
     private ListView listView;
     private Uri mCapturedImageURI;
@@ -43,22 +57,177 @@ public class PhotoView extends ActionBarActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private String photoPath;
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // LocationReport View OnCreate
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo_view);
+        setContentView(R.layout.activity_all_reports_view);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
+
+
         // Construct the data source
         images = new ArrayList();
-        reports = new ArrayList<>();
+        listContent = new ArrayList<>();
         // Create the adapter to convert the array to views
-        imageAdapter = new ImageAdapter(this, reports);
+        imageAdapter = new ImageAdapter(this, listContent);
         // Attach the adapter to a ListView
-        listView = (ListView) findViewById(R.id.photoReportListView);
+        listView = (ListView) findViewById(R.id.ReportListView);
         listView.setAdapter(imageAdapter);
         addItemClickListener(listView);
         initDB();
     }
 
+    @Override protected void onResume() {
+
+        // LocationReport view OnResume
+        /*
+        super.onResume();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getList());
+        ListView listView = (ListView) findViewById(R.id.ReportListView);
+        listView.setAdapter(adapter);
+        addItemClickListener(listView);
+        */
+        super.onResume();
+        getList();
+
+
+    }
+
+
+
+    // LocationReport View Methods
+    /**
+     * get all data entries from database as a string list
+     *
+     * @return String [] list
+     */
+    public String[] getList() {
+        daOlocation = new DAOlocation(getApplicationContext());
+        List<LocationReport> locationReportlist = daOlocation.getAllLocations();
+
+
+        daOtextReport = new DAOtextReport(getApplicationContext());
+        List<TextReport> textReportlist = daOtextReport.getAllTextReports();
+
+        AdapterContentHolder contentHolder;
+        int totalListSize = (locationReportlist.size() + textReportlist.size());
+        String[] list = new String[totalListSize];
+        for (int i = 0; i < locationReportlist.size(); i++) {
+            list[i] = locationReportlist.get(i).toString();
+            listContent.add(new AdapterContentHolder(null, locationReportlist.get(i).toString()));
+
+        }
+        for (int i = 0; i < textReportlist.size(); i++) {
+            list[locationReportlist.size() + i] = textReportlist.get(i).toString();
+            listContent.add(new AdapterContentHolder(null, textReportlist.get(i).toString()));
+        }
+        daOlocation.close();
+        daOtextReport.close();
+        return list;
+
+    }
+
+    /**
+     * Toast the clicked item
+     *
+     * @param listView
+     */
+    private void addItemClickListener(final ListView listView) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                AdapterContentHolder contentHolder = (AdapterContentHolder) listView.getItemAtPosition(position);
+                if (contentHolder.report != null) {
+                    Toast.makeText(getApplicationContext(), "Position: " + position + " item: " + contentHolder.report,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        if (contentHolder.photoReport.getPath().contains(".")) {
+                            Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
+                            intent.putExtra("IMAGE", (new Gson()).toJson(contentHolder.photoReport));
+                            startActivity(intent);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_report_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_map_view:
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
+            case R.id.menu_item_app_settings:
+                startActivity(new Intent(this, AppSettings.class));
+                return true;
+            case R.id.menu_item_report:
+                startActivity(new Intent(this, Report.class));
+                return true;
+            case R.id.menu_item_status:
+                startActivity(new Intent(this, Status.class));
+                return true;
+            case R.id.menu_item_logout:
+                rememberMeDelete();
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("ACTION_LOGOUT");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+                return true;
+            case R.id.menu_item_photo_view:
+                startActivity(new Intent(this, PhotoView.class));
+                return true;
+            case R.id.menu_item_report_view:
+                startActivity(new Intent(this, ReportView.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * delete remembered information from a user
+     */
+    private void rememberMeDelete() {
+        getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
+                .putString(Login.PREF_PASSWORD, null).commit();
+    }
+
+    /**
+     * receive broadcast for logout
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            startActivity(new Intent(getBaseContext(), Login.class));
+            finish();
+        }
+    };
+
+    @Override protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
+
+
+    // PhotoReport View Methods
     /**
      * initialize database
      */
@@ -76,11 +245,12 @@ public class PhotoView extends ActionBarActivity {
      */
     private void refreshImageList() {
         DAOphoto daOphoto = new DAOphoto(this);
-
+        AdapterContentHolder contentHolder;
         for(PhotoReport report : daOphoto.getAllPhotos())
         {
+            contentHolder = new AdapterContentHolder(report, null);
             images.add(report);
-            reports.add(new AdapterContentHolder(report, null));
+            listContent.add(contentHolder);
         }
         daOphoto.close();
 
@@ -173,12 +343,14 @@ public class PhotoView extends ActionBarActivity {
         final EditText desP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_description);
 
         dialog.findViewById(R.id.customDialogDesbtnBack).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(false, dialog, titleP, desP);
             }
         });
         dialog.findViewById(R.id.customDialogDesbtnSave).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(true, dialog, titleP, desP);
             }
         });
@@ -205,28 +377,6 @@ public class PhotoView extends ActionBarActivity {
         dialog.dismiss();
     }
 
-    /**
-     * Move to Image Display screen and show the selected photo
-     *
-     * @param listView
-     */
-    private void addItemClickListener(final ListView listView) {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                PhotoReport image = (PhotoReport)listView.getItemAtPosition(position);
-                try {
-                    if (image.getPath().contains(".")) {
-                        Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                        intent.putExtra("IMAGE", (new Gson()).toJson(image));
-                        startActivity(intent);
-                    }
-                } catch (Exception e) {
-
-                }
-            }
-        });
-    }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
         // Save the user's current game state
@@ -248,63 +398,4 @@ public class PhotoView extends ActionBarActivity {
     }
 
 
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_photo_view, menu);
-        return true;
-    }
-
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_map_view:
-                startActivity(new Intent(this, MapActivity.class));
-                return true;
-            case R.id.menu_item_app_settings:
-                startActivity(new Intent(this, AppSettings.class));
-                return true;
-            case R.id.menu_item_report:
-                startActivity(new Intent(this, Report.class));
-                return true;
-            case R.id.menu_item_status:
-                startActivity(new Intent(this, Status.class));
-                return true;
-            case R.id.menu_item_logout:
-                rememberMeDelete();
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction("ACTION_LOGOUT");
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
-                return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * delete remembered information from a user
-     */
-    private void rememberMeDelete() {
-        getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
-                .putString(Login.PREF_PASSWORD, null).commit();
-    }
-
-    /**
-     * receive broadcast for logout
-     */
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override public void onReceive(Context context, Intent intent) {
-            //            startActivity(new Intent(getBaseContext(), Login.class));
-            finish();
-        }
-    };
-
-    @Override protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        super.onDestroy();
-    }
 }

@@ -98,6 +98,7 @@ public class DBsyncPhoto extends DBsync {
                                 String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
                                 String.valueOf(System.currentTimeMillis()));
                 savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
+                System.out.println("Message from photo report list >>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -123,6 +124,7 @@ public class DBsyncPhoto extends DBsync {
                     PhotoReport pr = new PhotoReport();
                     pr.setIsreported(false);
                     pr.setUserid(job.getString("username"));
+                    pr.setName(job.getString("name"));
                     pr.setDatetime(job.getLong("timestamp"));
                     pr.setLatitude(Double.parseDouble(job.getString("latitude")));
                     pr.setLongitude(Double.parseDouble(job.getString("longitude")));

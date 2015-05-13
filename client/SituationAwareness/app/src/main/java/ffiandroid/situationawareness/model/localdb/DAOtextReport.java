@@ -48,6 +48,7 @@ public class DAOtextReport {
         System.out.println("Added Text report to DB with user ID " + textReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.TextReportTB.COLUMN_USER_ID, textReport.getUserid());
+        cv.put(DBtables.TextReportTB.COLUMN_NAME, textReport.getName());
         cv.put(DBtables.TextReportTB.COLUMN_REPORT, textReport.getReport());
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
@@ -173,6 +174,7 @@ public class DAOtextReport {
     private TextReport cursorToTextReport(Cursor cursor) {
         TextReport tr = new TextReport();
         tr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_USER_ID)));
+        tr.setName(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_NAME)));
         tr.setReport(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_REPORT)));
         tr.setDatetime(cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME)));
         tr.setLongitude(cursor.getDouble(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_LONGITUDE)));

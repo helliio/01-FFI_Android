@@ -81,6 +81,10 @@
             android:name=".controller.PhotoView"
             android:label="@string/title_activity_photo_view" >
         </activity>
+        <activity
+            android:name=".controller.AllReportsView"
+            android:label="@string/title_activity_app_settings" >
+        </activity>
     </application>
 
 </manifest>

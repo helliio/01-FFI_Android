@@ -52,15 +52,15 @@ public class TextReport extends LocationReport {
      */
     public String getReport() { return report; }
 
-    /*
+
     @Override
     public String toString() {
-        return "userid='" + userid +
+        return "name='" + name +
                 ",      isreported=" + isreported +
                 "\nreport='" + report +
                 "\ndatetime=" + df.format(datetime.getTime()) +
                 "\nlatitude=" + latitude +
                 ", longitude=" + longitude;
     }
-    */
+
 }

@@ -60,6 +60,11 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLOutput;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -77,6 +82,8 @@ import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.StatusListener;
+import ffiandroid.situationawareness.model.util.AsyncDrawable;
+import ffiandroid.situationawareness.model.util.BitmapWorkerTask;
 
 /**
  * This file is part of project: Situation Awareness
@@ -471,6 +478,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             case R.id.menu_item_status:
                 startActivity(new Intent(this, Status.class));
                 return true;
+            case R.id.menu_item_all_reports:
+                startActivity(new Intent(this, AllReportsView.class));
+                return true;
             case R.id.menu_item_report_view:
                 startActivity(new Intent(this, ReportView.class));
                 return true;
@@ -591,7 +601,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                             System.out.println("==================== Info window should be closed now!! ========================");
                         }
                     });
-                    String info = "User: " + report.getUserid() + "\n";
+                    String info = "User: " + report.getName() + "\n";
                     info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
                     info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
                     ((TextView)coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_title)).setText("This is the title of a location report");
@@ -635,7 +645,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                             System.out.println("======================== TextReport Info Window should now be closed =====================");
                         }
                     });
-                    String info = "User: " + report.getUserid() + "\n";
+                    String info = "User: " + report.getName() + "\n";
                     info += "Latitude: " + report.getLatitude() + "\n";
                     info += "Longitude:" + report.getLongitude() + "\n";
                     info += "-----------------------------------------\n";
@@ -688,49 +698,72 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView)
                 {
 
-                    Bitmap image = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(report.getPath()), 128, 128, true);;
-                    Bitmap thumbnail = null;
-                    //Drawable drawable = Drawable.createFromPath(report.getPath());
-
+                    Bitmap bitmap = null;
                     @Override
                     public void onOpen(Object o)
                     {
-                        System.out.println("========================PhotoReport Info window should now be open ======================");
+                        /*
                         long startTime = System.currentTimeMillis();
-                        //drawable.setVisible(true, false);
-                        //image = BitmapFactory.decodeFile(report.getPath());
-                        //image = Bitmap.createScaledBitmap(image, 200, 200, true);
-                        //drawable = Drawable.createFromPath(report.getPath());
-                        System.out.println("Allocation count by bytes of the image: " + image.getAllocationByteCount());
-                        System.out.println("Image byte count: " + image.getByteCount());
-                        //thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
-                        //System.out.println("Allocation count by bytes of the thumbnail: " + thumbnail.getAllocationByteCount());
-                        //System.out.println("Thumbnail byte count: " + thumbnail.getByteCount());
-                                ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(image);
+
+                        File imageFile = new File(report.getPath());
+                        FileInputStream is = null;
+                        try
+                        {
+                            is = new FileInputStream(imageFile);
+                        }
+                        catch (FileNotFoundException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        byte[] bytes = new byte[(int) imageFile.length()];
+                        if (is != null && report != null)
+                        {
+                            try
+                            {
+                                is.read(bytes, 0, (int) imageFile.length());
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (bytes.length != 0)
+                        {
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inSampleSize = 4;
+                            bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options), 256, 256, true);
+                        }
+                        System.out.println("Time it took to decode a image file from path with BitmapFactory " +
+                                (System.currentTimeMillis() - startTime) + " ms with extension " + report.getExtension() );
+                        System.out.println("Size of the created bitmap in memory: " + bitmap.getAllocationByteCount() + " bytes");
+                        */
+                        ImageView view = ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content));
                         marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
-                        System.out.println("Time it took to create a infoWindow bitmap for photo Report " + (System.currentTimeMillis() - startTime) + " ms");
-                        System.out.println("======================================= Setting photo bubble thumbnail");
+                        Bitmap pl = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
+                        Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);
+                        if (AsyncDrawable.cancelPotentialWork(report, view)) {
+                            final BitmapWorkerTask task = new BitmapWorkerTask(view);
+                            final AsyncDrawable asyncDrawable =
+                                    new AsyncDrawable(getApplicationContext().getResources(), placeHolderBitmap, task);
+                            view.setImageDrawable(asyncDrawable);
+                            task.execute(report);
+                        }
+
                     }
 
                     @Override
                     public void onClose()
                     {
-                        /*
-                        if(image != null)
+
+                        if(bitmap != null)
                         {
-                            image.recycle();
+                            bitmap.recycle();
                         }
-                        */
-                        if(thumbnail != null)
-                        {
-                            thumbnail.recycle();
-                        }
-                        //drawable.setVisible(false, false);
 
                         System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
-                String info = "User: " + report.getUserid() + "\n";
+                String info = "User: " + report.getName() + "\n";
                 info += "Latitude: " + report.getLatitude() + "\n";
                 info += "Longitude:" + report.getLongitude() + "\n";
                 info += "-----------------------------------------\n";

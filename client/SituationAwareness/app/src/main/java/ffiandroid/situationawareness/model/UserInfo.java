@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * responsible for this file: GuoJunjun
  */
 public class UserInfo {
-    private static String myAndroidID, userID;
+    private static String myAndroidID, userID, name;
     private static double currentLatitude = 0;
     private static double currentLongitude = 0;
     private static boolean lastSyncSucceed = false;
@@ -164,6 +164,17 @@ public class UserInfo {
      * @return Value of userID.
      */
     public static String getUserID() { return userID; }
+
+    // NOTE(Torgrim):
+    // Added to get and set current users full name
+    public static String getName()
+    {
+        return name;
+    }
+    public static void setName(String name)
+    {
+        UserInfo.name = name;
+    }
 
     public static int getTotalUnReportedItemsCout() {
         return getUnReportedLocations() + getUnReportedPhotos() + getUnReportedText();

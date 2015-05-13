@@ -18,9 +18,9 @@ public class DatabasePopulator {
     ReportService reportService;
 
     // NOTE(Torgrim): linux path
-    private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
+    //private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
     // Windows path
-    //private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos/";
+    private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos/";
 
     private static final String TIME_IN_MILLI = Long.toString(new Date().getTime());
 
@@ -36,6 +36,7 @@ public class DatabasePopulator {
         userService.register(Coder.encryptMD5("si"), "test", "Simen", "1");
         userService.register(Coder.encryptMD5("mo"), "test", "Morten", "1");
         userService.register(Coder.encryptMD5("tbs"), "test", "Torgrim", "1");
+        userService.register(Coder.encryptMD5("tbstbs"), "test", "tbstbs", "1");
 
     }
 
@@ -50,6 +51,7 @@ public class DatabasePopulator {
         userService.login(Coder.encryptMD5("si"), "6", "test", TIME_IN_MILLI);
         userService.login(Coder.encryptMD5("mo"), "7", "test", TIME_IN_MILLI);
         userService.login(Coder.encryptMD5("tbs"), "8", "test", TIME_IN_MILLI);
+        userService.login(Coder.encryptMD5("tbstbs"), "9", "test", TIME_IN_MILLI);
 
     }
 
@@ -99,31 +101,35 @@ public class DatabasePopulator {
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("pe"), "2", TIME_IN_MILLI, "63.439602", "10.201492", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test2.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from pe, sending photo");
+                                                            "This is the title for pe's picture", "This is a test from pe, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("bå"), "3", TIME_IN_MILLI, "63.38859", "10.401993", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test3.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from bå, sending photo");
+                                                            "This is the title for bå's picture", "This is a test from bå, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("ch"), "4", TIME_IN_MILLI, "63.310977", "10.204239", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test4.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from ch, sending photo");
+                                                            "This is the title for ch's picture", "This is a test from ch, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("ju"), "5", TIME_IN_MILLI, "63.396586", "10.097122", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test5.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from ju, sending photo");
+                                                            "This is the title for ju's picture", "This is a test from ju, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("si"), "6", TIME_IN_MILLI, "63.391051", "10.160294", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test6.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from si, sending photo");
+                                                            "This is the title for si's picture", "This is a test from si, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("mo"), "7", TIME_IN_MILLI, "63.411956", "10.244064", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test7.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from mo, sending photo");
+                                                            "This is the title for mo's picture", "This is a test from mo, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("tbs"), "8", TIME_IN_MILLI, "63.383053", "10.226212", "0",
                                                             Coder.encryptBASE64(new File(PHOTO_PATH + "test8.jpg")), "jpg",
-                                                            "This is the title for to's picture", "This is a test from tbs, sending photo");
+                                                            "This is the title for tbs's picture", "This is a test from tbs, sending photo");
+
+        result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("tbstbs"), "9", TIME_IN_MILLI, "63.383070", "10.226228", "0",
+                Coder.encryptBASE64(new File(PHOTO_PATH + "test14.jpg")), "jpg",
+                "This is the title for tbs's picture", "This is a test from tbs, sending a PNG photo");
 
         System.out.println("=================== Result of populating the photo reports =================\n");
         System.out.println(result);

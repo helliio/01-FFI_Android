@@ -341,6 +341,7 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("direction", photoReport.getDirection());
                 obj.put("filename", photoReport.getName());
                 obj.put("extension", photoReport.getExtension());
+                System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>    Sending photo report with extension " + photoReport.getExtension());
                 array.put(obj);
             }
             return new Result("getPeriodTeamPhotoReports", "success", "JSONArray", array.toString()).toString();

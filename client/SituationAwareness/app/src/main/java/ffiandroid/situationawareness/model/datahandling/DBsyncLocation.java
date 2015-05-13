@@ -150,6 +150,7 @@ public class DBsyncLocation extends DBsync {
                     LocationReport lr = new LocationReport();
                     lr.setIsreported(true);
                     lr.setUserid(job.getString("username"));
+                    lr.setName(job.getString("name"));
                     lr.setDatetime(job.getLong("timestamp"));
                     lr.setLatitude(job.getDouble("latitude"));
                     lr.setLongitude(job.getDouble("longitude"));

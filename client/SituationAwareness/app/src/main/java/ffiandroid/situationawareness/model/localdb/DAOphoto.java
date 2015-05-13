@@ -44,6 +44,7 @@ public class DAOphoto {
         System.out.println("Added Photo report to DB with user ID " + photoReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
+        cv.put(DBtables.PhotoTB.COLUMN_NAME, photoReport.getName());
         cv.put(DBtables.PhotoTB.COLUMN_DATETIME, photoReport.getDatetimeLong());
         cv.put(DBtables.PhotoTB.COLUMN_ISREPORTED, photoReport.isIsreported());
         cv.put(DBtables.PhotoTB.COLUMN_EXTENSION, photoReport.getExtension());
@@ -300,6 +301,7 @@ public class DAOphoto {
     private PhotoReport cursorToPhotoReport(Cursor cursor) {
         PhotoReport photoReport = new PhotoReport();
         photoReport.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_USER_ID)));
+        photoReport.setName(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_NAME)));
         photoReport.setDatetime(cursor.getLong(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_DATETIME)));
         photoReport.setLongitude(cursor.getDouble(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_LONGITUDE)));
         photoReport.setLatitude(cursor.getDouble(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_LATITUDE)));

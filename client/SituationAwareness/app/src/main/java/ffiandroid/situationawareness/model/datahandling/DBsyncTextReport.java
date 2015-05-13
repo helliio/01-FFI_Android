@@ -163,6 +163,7 @@ public class DBsyncTextReport extends DBsync {
                     TextReport textReport = new TextReport();
                     textReport.setIsreported(true);
                     textReport.setUserid(job.getString("username"));
+                    textReport.setName(job.getString("name"));
                     textReport.setReport(job.getString("content"));
                     textReport.setDatetime(job.getLong("timestamp"));
                     textReport.setLatitude(job.getDouble("latitude"));
