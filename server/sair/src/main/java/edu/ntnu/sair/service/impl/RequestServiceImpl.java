@@ -77,10 +77,11 @@ public class RequestServiceImpl implements RequestService {
 
         try {
             Member member = this.memberDao.getByUsername(username);
-            List<Location> list = this.locationDao.getByTeamLatest(member.getTeamId());
+            List<Location> list = this.locationDao.getByTeamLatest(member.getTeamId(), member.getTimeOfLastLocationReportRequest());
             if (list == null) {
                 return new Result("getLatestTeamLocations", "No result").toString();
             }
+            member.setTimeOfLastLocationReportRequest(System.currentTimeMillis());
             JSONArray array = new JSONArray();
             for (Location location : list) {
                 JSONObject obj = new JSONObject();
@@ -165,6 +166,7 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
+    // NOTE(Torgrim): added timeoflastrequest param here for testing
     @Transactional
     @Override
     public String getLatestTeamTextReports(String username, String uuid, String sendingTime) {
@@ -175,10 +177,14 @@ public class RequestServiceImpl implements RequestService {
 
         try {
             Member member = this.memberDao.getByUsername(username);
-            List<TextReport> list = this.textReportDao.getByTeamLatest(member.getTeamId());
+            System.out.println("Inside latest text report...");
+            List<TextReport> list = this.textReportDao.getByTeamLatest(member.getTeamId(), member.getTimeOfLastTextReportRequest());
             if (list == null) {
+                System.out.println("list was null...");
                 return new Result("getLatestTeamTextReports", "No result").toString();
             }
+            System.out.println("Setting time of last text report request...");
+            member.setTimeOfLastTextReportRequest(System.currentTimeMillis());
             JSONArray array = new JSONArray();
             for (TextReport textReport : list) {
                 JSONObject obj = new JSONObject();

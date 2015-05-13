@@ -18,6 +18,12 @@ public class Member {
     private Calendar validTime;
     private String teamId;
 
+    // NOTE(Torgrim): Added to test getting only reports not
+    // already sent to the client
+    private long timeOfLastLocationReportRequest = 0;
+    private long timeOfLastTextReportRequest = 0;
+    private long timeOfLastPhotoReportRequest = 0;
+
     @Id
     @GeneratedValue
     public long getId() {
@@ -77,5 +83,36 @@ public class Member {
 
     public void setTeamId(String teamId) {
         this.teamId = teamId;
+    }
+
+    public void setTimeOfLastLocationReportRequest(long timeOfLastLocationReportRequest)
+    {
+        this.timeOfLastLocationReportRequest = timeOfLastLocationReportRequest;
+    }
+    public void setTimeOfLastTextReportRequest(long timeOfLastTextReportRequest)
+    {
+        this.timeOfLastTextReportRequest = timeOfLastTextReportRequest;
+    }
+    public void setTimeOfLastPhotoReportRequest(long timeOfLastPhotoReportRequest)
+    {
+        this.timeOfLastPhotoReportRequest = timeOfLastPhotoReportRequest;
+    }
+
+    @Column(name = "lastLocationRequest")
+    public long getTimeOfLastLocationReportRequest()
+    {
+        return timeOfLastLocationReportRequest;
+    }
+
+    @Column(name = "lastTextRequest")
+    public long getTimeOfLastTextReportRequest()
+    {
+        return timeOfLastTextReportRequest;
+    }
+
+    @Column(name = "lastPhotoRequest")
+    public long getTimeOfLastPhotoReportRequest()
+    {
+        return timeOfLastTextReportRequest;
     }
 }

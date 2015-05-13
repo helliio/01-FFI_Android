@@ -95,18 +95,21 @@ public class TextReportDaoImpl implements TextReportDao {
         return q.list();
     }
 
+    // NOTE(Torgrim): Added timeoflastrequest here for testing..
     @Override
-    public List<TextReport> getByTeamLatest(String teamId) {
+    public List<TextReport> getByTeamLatest(String teamId, long timeOfLastRequest) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q1 = this.session.createQuery("select id from Member" +
                 " where teamId = '" + teamId + "'" +
                 " order by id asc");
         Query q2 = this.session.createQuery("from TextReport o" +
                 " where o.location.member.teamId = '" + teamId + "'" +
+                        "and " + timeOfLastRequest + " < o.location.serverTimeStampMilli" +
                 " order by o.location.member.id asc, o.location.clientTimestamp desc");
         List list1 = q1.list();
         TextReport temp;
         List<TextReport> list = new ArrayList<>();
+        System.out.println("List 2: " + q2);
         Iterator iterator = q2.list().iterator();
         while (iterator.hasNext()) {
             temp = (TextReport) iterator.next();

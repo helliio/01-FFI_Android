@@ -139,7 +139,7 @@ public class DBsyncTextReport extends DBsync {
     Runnable downloadThread = new Runnable() {
         @Override public void run() {
             try {
-                String message = requestService.getAllTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID());
+                String message = requestService.getLatestTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID());
                 // NOTE(Torgrim): Testing....
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);

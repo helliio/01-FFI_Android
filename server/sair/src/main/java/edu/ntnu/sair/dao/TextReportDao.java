@@ -28,7 +28,7 @@ public interface TextReportDao {
 
     public List<TextReport> getByTeam(String teamId);
 
-    public List<TextReport> getByTeamLatest(String teamId);
+    public List<TextReport> getByTeamLatest(String teamId, long timeOfLastRequest);
 
     public List<TextReport> getByTeamPeriod(String teamId, long startTime, long endTime);
 }

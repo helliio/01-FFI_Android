@@ -95,17 +95,21 @@ public class LocationDaoImpl implements LocationDao {
         return q.list();
     }
 
+
+    // NOTE(Torgrim): Added testing for timestamp here..
     @Override
-    public List<Location> getByTeamLatest(String teamId) {
+    public List<Location> getByTeamLatest(String teamId, long timeOfLastRequest) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q1 = this.session.createQuery("select id from Member" +
                 " where teamId = '" + teamId + "'" +
                 " order by id asc");
         Query q2 = this.session.createQuery("from Location l" +
                 " where l.member.teamId = '" + teamId + "'" +
+                "and l.serverTimeStampMilli > " + timeOfLastRequest +
                 " order by l.member.id asc, l.clientTimestamp desc");
         List list1 = q1.list();
         Location temp;
+        System.out.println(q2);
         List<Location> list = new ArrayList<>();
         Iterator iterator = q2.list().iterator();
         while (iterator.hasNext()) {

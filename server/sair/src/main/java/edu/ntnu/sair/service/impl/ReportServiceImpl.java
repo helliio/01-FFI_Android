@@ -203,12 +203,13 @@ public class ReportServiceImpl implements ReportService {
         String result = "";
         for(Location location : locationReports)
         {
-            result += "User             >>>>    " + location.getMember().getName() + "<br>";
-            result += "ID               >>>>    " + location.getId() + "<br>";
-            result += "Latitude         >>>>    " + location.getLatitude() + "<br>";
-            result += "Longitude        >>>>    " + location.getLongitude() + "<br>";
-            result += "Client timestamp >>>>    " + location.getClientTimestamp().toString() + "<br>";
-            result += "Server timestamp >>>>    " + location.getServerTimestamp().toString() + "<br><br>";
+            result += "User                 >>>>    " + location.getMember().getName() + "<br>";
+            result += "ID                   >>>>    " + location.getId() + "<br>";
+            result += "Latitude             >>>>    " + location.getLatitude() + "<br>";
+            result += "Longitude            >>>>    " + location.getLongitude() + "<br>";
+            result += "Client timestamp     >>>>    " + location.getClientTimestamp().getTimeInMillis() + "<br>";
+            result += "Server timestamp     >>>>    " + location.getServerTimestamp().getTimeInMillis() + "<br>";
+            result += "Time of last request >>>>    " + ((Long)location.getMember().getTimeOfLastLocationReportRequest()).toString() + "<br><br>";
 
         }
 
@@ -217,11 +218,12 @@ public class ReportServiceImpl implements ReportService {
         List<TextReport> textReports = textReportDao.getAll();
         for (TextReport textReport : textReports)
         {
-            result += "User         >>>>    " +textReport.getLocation().getMember().getName() + "<br>";
-            result += "ID           >>>>    " + textReport.getId() + "<br>";
-            result += "Content      >>>>    " + textReport.getContent() + "<br>";
-            result += "Latitude     >>>>    " +textReport.getLocation().getLatitude() + "<br>";
-            result += "Longitude    >>>>    " + textReport.getLocation().getLongitude() + "<br><br>";
+            result += "User                 >>>>    " +textReport.getLocation().getMember().getName() + "<br>";
+            result += "ID                   >>>>    " + textReport.getId() + "<br>";
+            result += "Content              >>>>    " + textReport.getContent() + "<br>";
+            result += "Latitude             >>>>    " +textReport.getLocation().getLatitude() + "<br>";
+            result += "Longitude            >>>>    " + textReport.getLocation().getLongitude() + "<br>";
+            result += "Time of last request >>>>    " + ((Long)textReport.getLocation().getMember().getTimeOfLastLocationReportRequest()).toString() + "<br><br>";
         }
 
         result += "============================== End of text Reports ============================================";
@@ -230,16 +232,17 @@ public class ReportServiceImpl implements ReportService {
         List<PhotoReport> photoReports = photoReportDao.getAll();
         for (PhotoReport photoReport : photoReports)
         {
-            result += "User         >>>>    " + photoReport.getLocation().getMember().getName() + "<br>";
-            result += "ID           >>>>    " + photoReport.getId() + "<br>";
-            result += "Name         >>>>    " + photoReport.getName() + "<br>";
-            result += "Title        >>>>    " + photoReport.getTitle() + "<br>";
-            result += "Description  >>>>    " + photoReport.getDescription() + "<br>";
-            result += "Path         >>>>    " + photoReport.getPath() + "<br>";
-            result += "Extension    >>>>    " + photoReport.getExtension() + "<br>";
-            result += "Direction    >>>>    " + photoReport.getDirection() + "<br>";
-            result += "Latitude     >>>>    " + photoReport.getLocation().getLatitude() + "<br>";
-            result += "Longitude    >>>>    " + photoReport.getLocation().getLongitude() + "<br><br>";
+            result += "User                 >>>>    " + photoReport.getLocation().getMember().getName() + "<br>";
+            result += "ID                   >>>>    " + photoReport.getId() + "<br>";
+            result += "Name                 >>>>    " + photoReport.getName() + "<br>";
+            result += "Title                >>>>    " + photoReport.getTitle() + "<br>";
+            result += "Description          >>>>    " + photoReport.getDescription() + "<br>";
+            result += "Path                 >>>>    " + photoReport.getPath() + "<br>";
+            result += "Extension            >>>>    " + photoReport.getExtension() + "<br>";
+            result += "Direction            >>>>    " + photoReport.getDirection() + "<br>";
+            result += "Latitude             >>>>    " + photoReport.getLocation().getLatitude() + "<br>";
+            result += "Longitude            >>>>    " + photoReport.getLocation().getLongitude() + "<br>";
+            result += "Time of last request >>>>    " + ((Long)photoReport.getLocation().getMember().getTimeOfLastLocationReportRequest()).toString() + "<br><br>";
         }
 
         result += "============================== End of photo Reports ============================================";
