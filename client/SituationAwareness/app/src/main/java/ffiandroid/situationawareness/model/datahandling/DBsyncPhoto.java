@@ -69,10 +69,21 @@ public class DBsyncPhoto extends DBsync {
     private Handler handlerUploadPhoto = new Handler() {
         @Override public void handleMessage(Message msg) {
             if (msg.obj.toString().equalsIgnoreCase("success")) {
-                DAOphoto daOphoto = new DAOphoto(context);
-                daOphoto.updateIsReported(photoReportR);
-                UserInfo.setLastSyncSucceed(true);
-                daOphoto.close();
+                DAOphoto daOphoto = null;
+                try
+                {
+                    daOphoto = new DAOphoto(context);
+                    daOphoto.updateIsReported(photoReportR);
+                    UserInfo.setLastSyncSucceed(true);
+
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally {
+                    daOphoto.close();
+                }
             } else {
                 UserInfo.setLastSyncSucceed(false);
             }
@@ -97,8 +108,8 @@ public class DBsyncPhoto extends DBsync {
                         .getPeriodTeamPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                                 String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
                                 String.valueOf(System.currentTimeMillis()));
+                System.out.println("Message from Photo Download thread.. "  + message);
                 savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
-                System.out.println("Message from photo report list >>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + message);
             } catch (Exception e) {
                 e.printStackTrace();
             }

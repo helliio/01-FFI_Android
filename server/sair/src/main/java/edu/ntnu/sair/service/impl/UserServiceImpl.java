@@ -101,9 +101,6 @@ public class UserServiceImpl implements UserService {
             result += "ID                               >>>>    " + member.getId() + "<br>";
             result += "UUID                             >>>>    " + member.getUuid() + "<br>";
             result += "Team ID                          >>>>    " + member.getTeamId() + "<br>";
-            result += "Time Of Last Location Request    >>>>    " + member.getTimeOfLastLocationReportRequest() + "<br>";
-            result += "Time Of Last Text Request        >>>>    " + member.getTimeOfLastTextReportRequest() + "<br>";
-            result += "Time Of Last Photo Request       >>>>    " + member.getTimeOfLastPhotoReportRequest() + "<br>";
             result += "Valid time                       >>>>    " + member.getValidTime() + "<br><br><br>";
         }
 

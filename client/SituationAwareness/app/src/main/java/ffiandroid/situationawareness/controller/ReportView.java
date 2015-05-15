@@ -52,13 +52,23 @@ public class ReportView extends ActionBarActivity {
      * @return String [] list
      */
     public String[] getList() {
-        daOtextReport = new DAOtextReport(getApplicationContext());
-        List<TextReport> alist = daOtextReport.getAllTextReports();
-        String[] list = new String[alist.size()];
-        for (int i = 0; i < alist.size(); i++) {
-            list[i] = alist.get(i).toString();
+        String[] list = null;
+        try {
+            daOtextReport = new DAOtextReport(getApplicationContext());
+            List<TextReport> alist = daOtextReport.getAllTextReports();
+            list = new String[alist.size()];
+            for (int i = 0; i < alist.size(); i++) {
+                list[i] = alist.get(i).toString();
+            }
         }
-        daOtextReport.close();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            daOtextReport.close();
+        }
         return list;
     }
 

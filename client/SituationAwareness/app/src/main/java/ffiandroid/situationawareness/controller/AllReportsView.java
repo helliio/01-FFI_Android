@@ -105,27 +105,37 @@ public class AllReportsView extends ActionBarActivity
      * @return String [] list
      */
     public String[] getList() {
-        daOlocation = new DAOlocation(getApplicationContext());
-        List<LocationReport> locationReportlist = daOlocation.getAllLocations();
+        String[] list = null;
+        try {
+            daOlocation = new DAOlocation(getApplicationContext());
+            List<LocationReport> locationReportlist = daOlocation.getAllLocations();
 
 
-        daOtextReport = new DAOtextReport(getApplicationContext());
-        List<TextReport> textReportlist = daOtextReport.getAllTextReports();
+            daOtextReport = new DAOtextReport(getApplicationContext());
+            List<TextReport> textReportlist = daOtextReport.getAllTextReports();
 
-        AdapterContentHolder contentHolder;
-        int totalListSize = (locationReportlist.size() + textReportlist.size());
-        String[] list = new String[totalListSize];
-        for (int i = 0; i < locationReportlist.size(); i++) {
-            list[i] = locationReportlist.get(i).toString();
-            listContent.add(new AdapterContentHolder(null, locationReportlist.get(i).toString()));
+            AdapterContentHolder contentHolder;
+            int totalListSize = (locationReportlist.size() + textReportlist.size());
+            list = new String[totalListSize];
+            for (int i = 0; i < locationReportlist.size(); i++) {
+                list[i] = locationReportlist.get(i).toString();
+                listContent.add(new AdapterContentHolder(null, locationReportlist.get(i).toString()));
 
+            }
+            for (int i = 0; i < textReportlist.size(); i++) {
+                list[locationReportlist.size() + i] = textReportlist.get(i).toString();
+                listContent.add(new AdapterContentHolder(null, textReportlist.get(i).toString()));
+            }
         }
-        for (int i = 0; i < textReportlist.size(); i++) {
-            list[locationReportlist.size() + i] = textReportlist.get(i).toString();
-            listContent.add(new AdapterContentHolder(null, textReportlist.get(i).toString()));
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
-        daOlocation.close();
-        daOtextReport.close();
+        finally {
+
+            daOlocation.close();
+            daOtextReport.close();
+        }
         return list;
 
     }
@@ -244,15 +254,22 @@ public class AllReportsView extends ActionBarActivity
      * refresh image list
      */
     private void refreshImageList() {
-        DAOphoto daOphoto = new DAOphoto(this);
-        AdapterContentHolder contentHolder;
-        for(PhotoReport report : daOphoto.getAllPhotos())
+        DAOphoto daOphoto = null;
+        try {
+            daOphoto = new DAOphoto(this);
+            AdapterContentHolder contentHolder;
+            for (PhotoReport report : daOphoto.getAllPhotos()) {
+                contentHolder = new AdapterContentHolder(report, null);
+                images.add(report);
+                listContent.add(contentHolder);
+            }
+        }catch (Exception e)
         {
-            contentHolder = new AdapterContentHolder(report, null);
-            images.add(report);
-            listContent.add(contentHolder);
+            e.printStackTrace();
         }
-        daOphoto.close();
+        finally {
+            daOphoto.close();
+        }
 
 
     }
@@ -367,12 +384,21 @@ public class AllReportsView extends ActionBarActivity
             photoReport.setTitle("Photo Report");
             photoReport.setDescription("Photo Report Observation");
         }
-        DAOphoto daOphoto = new DAOphoto(this);
-        photoReport.setDatetime(System.currentTimeMillis());
-        photoReport.setPath(photoPath);
-        photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
-        daOphoto.addPhoto(photoReport);
-        daOphoto.close();
+        DAOphoto daOphoto = null;
+        try {
+            daOphoto = new DAOphoto(this);
+            photoReport.setDatetime(System.currentTimeMillis());
+            photoReport.setPath(photoPath);
+            photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
+            daOphoto.addPhoto(photoReport);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
         refreshImageList();
         dialog.dismiss();
     }

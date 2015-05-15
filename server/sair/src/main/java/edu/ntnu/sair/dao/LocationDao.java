@@ -29,7 +29,7 @@ public interface LocationDao {
 
     public List<Location> getByTeam(String teamId);
 
-    public List<Location> getByTeamLatest(String teamId, long timeOfLastRequest);
+    public List<Location> getByTeamLatest(String teamId);
 
     public List<Location> getByTeamPeriod(String teamId, long startTime, long endTime);
 }

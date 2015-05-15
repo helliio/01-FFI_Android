@@ -66,10 +66,10 @@ public class BitmapWorkerTask extends AsyncTask<PhotoReport, Void, Bitmap>
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4;
             bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options), 256, 256, true);
+            System.out.println("Time it took to decode a image file from path with BitmapFactory " +
+                    (System.currentTimeMillis() - startTime) + " ms with extension " + report.getExtension() );
+            System.out.println("Size of the created bitmap in memory: " + bitmap.getAllocationByteCount() + " bytes");
         }
-        System.out.println("Time it took to decode a image file from path with BitmapFactory " +
-                (System.currentTimeMillis() - startTime) + " ms with extension " + report.getExtension() );
-        System.out.println("Size of the created bitmap in memory: " + bitmap.getAllocationByteCount() + " bytes");
         return bitmap;
     }
 

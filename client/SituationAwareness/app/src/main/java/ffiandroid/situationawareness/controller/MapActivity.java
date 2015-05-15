@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -560,7 +561,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
      */
     private void addMyNewPositionToDB()
     {
-        new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
+        DAOlocation daOlocation = new DAOlocation(getApplicationContext());
+        try
+        {
+            daOlocation.addLocation(new LocationReport(true));
+        }
+        catch (SQLiteException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            daOlocation.close();
+        }
     }
 
     /**
@@ -1294,6 +1307,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+
         super.onDestroy();
     }
 

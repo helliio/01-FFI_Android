@@ -47,6 +47,7 @@ public class DBsyncTextReport extends DBsync {
                         .sendTextReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
                                 getWaitingList(reports));
                 Message msg = handlerUploadLocation.obtainMessage();
+                System.out.println("Message from TextReport upload thread...  " + message);
                 JSONObject jsonObject = new JSONObject(message);
                 msg.obj = jsonObject.get("desc");
                 handlerUploadLocation.sendMessage(msg);
@@ -119,13 +120,24 @@ public class DBsyncTextReport extends DBsync {
      */
     private void myReportStatusIssent(List<TextReport> textReports) {
         if (textReports.size() > 0) {
-            DAOtextReport daOtextReport = new DAOtextReport(context);
-            for (TextReport textReport : textReports) {
-                daOtextReport.updateIsReported(textReport);
-                System.out.println("update text report status number of rows affected: " +
-                        daOtextReport.updateIsReported(textReport));
+            DAOtextReport daOtextReport = null;
+            try {
+                daOtextReport = new DAOtextReport(context);
+                for (TextReport textReport : textReports) {
+                    daOtextReport.updateIsReported(textReport);
+                    System.out.println("update text report status number of rows affected: " +
+                            daOtextReport.updateIsReported(textReport));
+                }
+            }catch (Exception e)
+            {
+                e.printStackTrace();
             }
-            daOtextReport.close();
+            finally {
+                if(daOtextReport != null)
+                {
+                    daOtextReport.close();
+                }
+            }
         }
     }
 
@@ -138,13 +150,29 @@ public class DBsyncTextReport extends DBsync {
 
     Runnable downloadThread = new Runnable() {
         @Override public void run() {
+            DAOtextReport daOtextReport = null;
             try {
-                String message = requestService.getLatestTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID());
+                daOtextReport = new DAOtextReport(context);
+                String message = requestService.getPeriodTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID())),
+                        String.valueOf(System.currentTimeMillis()));
                 // NOTE(Torgrim): Testing....
+                System.out.println("Message from text report download thread... " + message);
+                System.out.println("last download location report time without String.valueOf: " +
+                        daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID()));
+                System.out.println("last download location report time with String.valueOf: " +
+                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID())));
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);
             } catch (Exception e) {
                 System.out.println("This is message from download >>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +e.getMessage());
+            }
+            finally
+            {
+                if(daOtextReport != null)
+                {
+                    daOtextReport.close();
+                }
             }
         }
     };

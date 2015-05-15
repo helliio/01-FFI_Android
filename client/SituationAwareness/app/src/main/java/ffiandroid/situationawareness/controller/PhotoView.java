@@ -75,14 +75,24 @@ public class PhotoView extends ActionBarActivity {
      * refresh image list
      */
     private void refreshImageList() {
-        DAOphoto daOphoto = new DAOphoto(this);
+        DAOphoto daOphoto = null;
+        try {
 
-        for(PhotoReport report : daOphoto.getAllPhotos())
-        {
-            images.add(report);
-            reports.add(new AdapterContentHolder(report, null));
+            daOphoto = new DAOphoto(this);
+            for(PhotoReport report : daOphoto.getAllPhotos())
+            {
+                images.add(report);
+                reports.add(new AdapterContentHolder(report, null));
+            }
         }
-        daOphoto.close();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
+
 
 
     }
@@ -173,12 +183,14 @@ public class PhotoView extends ActionBarActivity {
         final EditText desP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_description);
 
         dialog.findViewById(R.id.customDialogDesbtnBack).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(false, dialog, titleP, desP);
             }
         });
         dialog.findViewById(R.id.customDialogDesbtnSave).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(true, dialog, titleP, desP);
             }
         });
@@ -195,12 +207,21 @@ public class PhotoView extends ActionBarActivity {
             photoReport.setTitle("Photo Report");
             photoReport.setDescription("Photo Report Observation");
         }
-        DAOphoto daOphoto = new DAOphoto(this);
-        photoReport.setDatetime(System.currentTimeMillis());
-        photoReport.setPath(photoPath);
-        photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
-        daOphoto.addPhoto(photoReport);
-        daOphoto.close();
+        DAOphoto daOphoto = null;
+        try {
+            daOphoto = new DAOphoto(this);
+            photoReport.setDatetime(System.currentTimeMillis());
+            photoReport.setPath(photoPath);
+            photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
+            daOphoto.addPhoto(photoReport);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
         refreshImageList();
         dialog.dismiss();
     }

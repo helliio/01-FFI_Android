@@ -4,6 +4,7 @@ package ffiandroid.situationawareness.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.location.Location;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.TextReport;
+import ffiandroid.situationawareness.model.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 
 /**
@@ -72,8 +74,22 @@ public class Report extends ActionBarActivity {
      * @param report
      */
     private void sendTextReportToDB(String report) {
-        new DAOtextReport(getApplicationContext()).addReport(new TextReport(report, location.getLatitude(), location.getLongitude()));
-        Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
+        DAOtextReport daOtextReport = null;
+        try
+        {
+            daOtextReport = new DAOtextReport(getApplicationContext());
+            daOtextReport.addReport(new TextReport(report, location.getLatitude(), location.getLongitude()));
+            Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
+        }
+        catch (SQLiteException e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            if(daOtextReport != null){
+                daOtextReport.close();
+            }
+        }
         textReport.getText().clear();
     }
 

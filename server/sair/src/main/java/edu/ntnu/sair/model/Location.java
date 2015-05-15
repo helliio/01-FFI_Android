@@ -17,16 +17,16 @@ public class Location {
     private Calendar clientTimestamp;
     private Calendar serverTimestamp;
 
-    public long getServerTimeStampMilli() {
-        return serverTimeStampMilli;
+    private Integer checkBit = 0;
+
+    @Column(name = "checkbit")
+    public Integer getCheckBit() {
+        return checkBit;
     }
 
-    public void setServerTimeStampMilli(long serverTimeStampMilli) {
-        this.serverTimeStampMilli = serverTimeStampMilli;
+    public void setCheckBit(Integer checkBit) {
+        this.checkBit = checkBit;
     }
-
-    // NOTE(Torgrim): added timestamp in milli for testing
-    private long serverTimeStampMilli = 0;
 
     @Id
     @GeneratedValue
@@ -71,7 +71,6 @@ public class Location {
 
     public void setClientTimestamp(Calendar clientTimestamp) {
         this.clientTimestamp = clientTimestamp;
-        this.setServerTimeStampMilli(clientTimestamp.getTimeInMillis());
     }
 
     @Column(name = "servertimestamp")
