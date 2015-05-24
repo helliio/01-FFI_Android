@@ -1,9 +1,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/all_report_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="ffiandroid.situationawareness.controller.AllReportsView">
+    <TableRow
+        android:id="@+id/table_row"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true">
+
+        <CheckBox
+            android:id="@+id/location_report_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location Reports"
+            android:checked="false"
+            android:onClick="onCheckboxClicked"/>
+        <CheckBox
+            android:id="@+id/text_report_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Text Reports"
+            android:checked="false"
+            android:onClick="onCheckboxClicked"/>
+
+        <CheckBox
+            android:id="@+id/photo_report_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Photo Reports"
+            android:checked="false"
+            android:onClick="onCheckboxClicked"/>
+
+    </TableRow>
 
     <ListView
         android:id="@+id/ReportListView"

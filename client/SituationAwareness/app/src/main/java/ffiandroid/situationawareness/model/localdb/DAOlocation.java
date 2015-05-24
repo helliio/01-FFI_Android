@@ -44,7 +44,6 @@ public class DAOlocation {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addLocation(LocationReport locationReport)  {
-        System.out.println("Added location to DB with user ID " + locationReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
         cv.put(DBtables.LocationTB.COLUMN_NAME, locationReport.getName());
@@ -130,7 +129,6 @@ public class DAOlocation {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 LocationReport locationReport = cursorToTextReport(cursor);
-                System.out.println("Current user id: " + Coder.encryptMD5(myUserID) + " LocationReport userid: " + locationReport.getUserid());
                 locationReports.add(locationReport);
                 cursor.moveToNext();
             }

@@ -422,7 +422,7 @@ public class RequestServiceImpl implements RequestService {
         PhotoReport photoReport = this.photoReportDao.getById(Long.valueOf(picId));
         String photoPath = Constant.PHOTO_PATH + photoReport.getName() + "." + photoReport.getExtension();
         File photo = new File(photoPath);
-
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>    Sending the actual photo....");
         return new Result("getPhoto", "success", "file", Coder.encryptBASE64(photo)).toString();
     }
 

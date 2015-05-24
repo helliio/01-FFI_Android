@@ -25,6 +25,8 @@ public class DBsyncTextReport extends DBsync {
 
     private List<TextReport> reports;
 
+
+
     public DBsyncTextReport(Context context) {
         super(context);
     }
@@ -47,10 +49,12 @@ public class DBsyncTextReport extends DBsync {
                         .sendTextReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
                                 getWaitingList(reports));
                 Message msg = handlerUploadLocation.obtainMessage();
-                System.out.println("Message from TextReport upload thread...  " + message);
-                JSONObject jsonObject = new JSONObject(message);
-                msg.obj = jsonObject.get("desc");
-                handlerUploadLocation.sendMessage(msg);
+                if(msg != null && message != null) {
+                    JSONObject jsonObject = new JSONObject(message);
+                    msg.obj = jsonObject.get("desc");
+                    handlerUploadLocation.sendMessage(msg);
+                    MapActivity.getTimeSinceLastTextUpload();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -110,6 +114,9 @@ public class DBsyncTextReport extends DBsync {
                     activity.logout();
                 }
             }
+
+
+
         }
     };
 
@@ -156,14 +163,11 @@ public class DBsyncTextReport extends DBsync {
                 String message = requestService.getPeriodTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                         String.valueOf(daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID())),
                         String.valueOf(System.currentTimeMillis()));
-                // NOTE(Torgrim): Testing....
-                System.out.println("Message from text report download thread... " + message);
-                System.out.println("last download location report time without String.valueOf: " +
-                        daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID()));
-                System.out.println("last download location report time with String.valueOf: " +
-                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID())));
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);
+
+
+                MapActivity.getTimeSinceLastTextDownload();
             } catch (Exception e) {
                 System.out.println("This is message from download >>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +e.getMessage());
             }

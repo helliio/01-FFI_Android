@@ -28,13 +28,13 @@ public class AsyncDrawable extends BitmapDrawable
         return bitmapWorkerTaskReference.get();
     }
 
-    public static boolean cancelPotentialWork(PhotoReport report, ImageView imageView) {
+    public static boolean cancelPotentialWork(String imagePath, ImageView imageView) {
         final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
         if (bitmapWorkerTask != null) {
-            final PhotoReport bitmapData = bitmapWorkerTask.report;
+            final String bitmapData = bitmapWorkerTask.imagePath;
             // If bitmapData is not yet set or it differs from the new data
-            if (bitmapData == null || bitmapData.equals(report)) {
+            if (bitmapData == null || bitmapData.equals(imagePath)) {
                 // Cancel previous task
                 bitmapWorkerTask.cancel(true);
             } else {

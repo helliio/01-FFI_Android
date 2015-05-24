@@ -174,6 +174,7 @@ public class PhotoView extends ActionBarActivity {
         }
     }
 
+
     private void activePhotoReport() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.custom_dialog_box_des);
@@ -324,8 +325,42 @@ public class PhotoView extends ActionBarActivity {
         }
     };
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Resumed");
+    }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Paused");
+    }
+
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Restarted");
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Stopped");
+    }
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
+    }
+
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
     }
 }

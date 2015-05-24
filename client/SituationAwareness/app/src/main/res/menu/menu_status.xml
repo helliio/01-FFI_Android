@@ -7,6 +7,15 @@
         android:title="@string/map_view"
         android:orderInCategory="100"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_item_all_reports"
+        android:title="@string/show_all_reports"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+
+
+    <!--
     <item
         android:id="@+id/menu_item_report_view"
         android:title="@string/title_report_view"
@@ -22,6 +31,8 @@
         android:title="@string/location_view"
         android:orderInCategory="100"
         app:showAsAction="never"/>
+
+        -->
     <item
         android:id="@+id/menu_item_report"
         android:title="@string/title_report"

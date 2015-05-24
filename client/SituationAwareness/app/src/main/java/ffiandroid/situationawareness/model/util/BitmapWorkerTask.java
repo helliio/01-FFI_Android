@@ -19,11 +19,11 @@ import ffiandroid.situationawareness.model.PhotoReport;
 /**
  * Created by Torgrim on 08/05/2015.
  */
-public class BitmapWorkerTask extends AsyncTask<PhotoReport, Void, Bitmap>
+public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>
 {
 
     private final WeakReference<ImageView> imageViewReference;
-    public  PhotoReport report;
+    public  String imagePath;
 
 
 
@@ -34,12 +34,11 @@ public class BitmapWorkerTask extends AsyncTask<PhotoReport, Void, Bitmap>
 
     // Decode image in background.
     @Override
-    protected Bitmap doInBackground(PhotoReport... params) {
-        report = params[0];
+    protected Bitmap doInBackground(String... params) {
+        imagePath = params[0];
         Bitmap bitmap = null;
-        long startTime = System.currentTimeMillis();
 
-        File imageFile = new File(report.getPath());
+        File imageFile = new File(imagePath);
         FileInputStream is = null;
         try
         {
@@ -50,7 +49,7 @@ public class BitmapWorkerTask extends AsyncTask<PhotoReport, Void, Bitmap>
             e.printStackTrace();
         }
         byte[] bytes = new byte[(int) imageFile.length()];
-        if (is != null && report != null)
+        if (is != null && imagePath != null)
         {
             try
             {
@@ -66,12 +65,11 @@ public class BitmapWorkerTask extends AsyncTask<PhotoReport, Void, Bitmap>
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4;
             bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options), 256, 256, true);
-            System.out.println("Time it took to decode a image file from path with BitmapFactory " +
-                    (System.currentTimeMillis() - startTime) + " ms with extension " + report.getExtension() );
-            System.out.println("Size of the created bitmap in memory: " + bitmap.getAllocationByteCount() + " bytes");
         }
         return bitmap;
     }
+
+
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {

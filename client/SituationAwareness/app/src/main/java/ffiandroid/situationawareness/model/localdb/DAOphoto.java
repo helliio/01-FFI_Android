@@ -41,6 +41,7 @@ public class DAOphoto {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addPhoto(PhotoReport photoReport) {
+        // TODO(Torgrim): Check to make sure that no row is duplicated....
         System.out.println("Added Photo report to DB with user ID " + photoReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
@@ -71,7 +72,10 @@ public class DAOphoto {
     public long updateIsReported(PhotoReport photoReport) {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_ISREPORTED, true);
-
+        /*
+        String where = DBtables.PhotoTB.COLUMN_USER_ID + "=?" + " AND " +
+                DBtables.PhotoTB.COLUMN_DATETIME + "=?";
+                */
         String where = DBtables.PhotoTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.PhotoTB.COLUMN_DATETIME + "=?";
         long result = database.update(DBtables.PhotoTB.TABLE_NAME, cv, where,
@@ -188,7 +192,11 @@ public class DAOphoto {
 
         if (!cursor.isAfterLast()) {
             photoReport = cursorToPhotoReport(cursor);
-        } else {
+        }
+        else {
+            photoReport = null;
+        }
+        if(photoReport != null && photoReport.getPath() == null){
             photoReport = null;
         }
         cursor.close();
@@ -202,9 +210,14 @@ public class DAOphoto {
      */
     public PhotoReport getOneNotDownloadedPhoto(String myUserID) {
         PhotoReport photoReport;
+        /*
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
                 DBtables.PhotoTB.COLUMN_USER_ID + " != ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
                 new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                */
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
+                DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
+                new String[]{"0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
             photoReport = cursorToPhotoReport(cursor);
@@ -221,9 +234,13 @@ public class DAOphoto {
      */
     public long getLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
+        /*
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
                 DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                */
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
+               null, null, null, null,DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
 

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -48,13 +49,13 @@ public class AllReportsView extends ActionBarActivity
 
     private DAOtextReport daOtextReport;
 
-    private ArrayList<PhotoReport> images;
+    //private ArrayList<PhotoReport> images;
     private ArrayList<AdapterContentHolder> listContent;
     private ImageAdapter imageAdapter;
     private ListView listView;
     private Uri mCapturedImageURI;
-    private static final int RESULT_LOAD_IMAGE = 1;
-    private static final int REQUEST_IMAGE_CAPTURE = 2;
+
+
     private String photoPath;
 
 
@@ -69,7 +70,7 @@ public class AllReportsView extends ActionBarActivity
 
 
         // Construct the data source
-        images = new ArrayList();
+        //images = new ArrayList();
         listContent = new ArrayList<>();
         // Create the adapter to convert the array to views
         imageAdapter = new ImageAdapter(this, listContent);
@@ -77,7 +78,10 @@ public class AllReportsView extends ActionBarActivity
         listView = (ListView) findViewById(R.id.ReportListView);
         listView.setAdapter(imageAdapter);
         addItemClickListener(listView);
-        initDB();
+
+        refreshLocationAndTextReportList();
+        refreshImageList();
+        //initDB();
     }
 
     @Override protected void onResume() {
@@ -91,7 +95,10 @@ public class AllReportsView extends ActionBarActivity
         addItemClickListener(listView);
         */
         super.onResume();
-        getList();
+        listContent.clear();
+        refreshLocationAndTextReportList();
+        refreshImageList();
+        imageAdapter.notifyDataSetChanged();
 
 
     }
@@ -104,8 +111,7 @@ public class AllReportsView extends ActionBarActivity
      *
      * @return String [] list
      */
-    public String[] getList() {
-        String[] list = null;
+    public void refreshLocationAndTextReportList() {
         try {
             daOlocation = new DAOlocation(getApplicationContext());
             List<LocationReport> locationReportlist = daOlocation.getAllLocations();
@@ -114,16 +120,13 @@ public class AllReportsView extends ActionBarActivity
             daOtextReport = new DAOtextReport(getApplicationContext());
             List<TextReport> textReportlist = daOtextReport.getAllTextReports();
 
-            AdapterContentHolder contentHolder;
             int totalListSize = (locationReportlist.size() + textReportlist.size());
-            list = new String[totalListSize];
             for (int i = 0; i < locationReportlist.size(); i++) {
-                list[i] = locationReportlist.get(i).toString();
                 listContent.add(new AdapterContentHolder(null, locationReportlist.get(i).toString()));
 
             }
-            for (int i = 0; i < textReportlist.size(); i++) {
-                list[locationReportlist.size() + i] = textReportlist.get(i).toString();
+            for (int i = 0; i < textReportlist.size(); i++)
+            {
                 listContent.add(new AdapterContentHolder(null, textReportlist.get(i).toString()));
             }
         }
@@ -136,7 +139,6 @@ public class AllReportsView extends ActionBarActivity
             daOlocation.close();
             daOtextReport.close();
         }
-        return list;
 
     }
 
@@ -175,7 +177,7 @@ public class AllReportsView extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_report_view, menu);
+        getMenuInflater().inflate(R.menu.menu_item_all_reports, menu);
         return true;
     }
 
@@ -185,11 +187,11 @@ public class AllReportsView extends ActionBarActivity
             case R.id.menu_item_map_view:
                 startActivity(new Intent(this, MapActivity.class));
                 return true;
-            case R.id.menu_item_app_settings:
-                startActivity(new Intent(this, AppSettings.class));
-                return true;
             case R.id.menu_item_report:
                 startActivity(new Intent(this, Report.class));
+                return true;
+            case R.id.menu_item_app_settings:
+                startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_status:
                 startActivity(new Intent(this, Status.class));
@@ -199,12 +201,6 @@ public class AllReportsView extends ActionBarActivity
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction("ACTION_LOGOUT");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
-                return true;
-            case R.id.menu_item_photo_view:
-                startActivity(new Intent(this, PhotoView.class));
-                return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -241,6 +237,7 @@ public class AllReportsView extends ActionBarActivity
     /**
      * initialize database
      */
+    // NOTE(Torgrim): Is this necessary??
     private void initDB() {
         runOnUiThread(new Runnable() {
             @Override
@@ -260,7 +257,7 @@ public class AllReportsView extends ActionBarActivity
             AdapterContentHolder contentHolder;
             for (PhotoReport report : daOphoto.getAllPhotos()) {
                 contentHolder = new AdapterContentHolder(report, null);
-                images.add(report);
+                //images.add(report);
                 listContent.add(contentHolder);
             }
         }catch (Exception e)
@@ -274,134 +271,59 @@ public class AllReportsView extends ActionBarActivity
 
     }
 
-    public void btnNewPhotoReportOnClick(View view) {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.custom_dialog_box);
-        dialog.setTitle("New Photo Report");
-        Button btnExit = (Button) dialog.findViewById(R.id.btnExit);
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.findViewById(R.id.btnChoosePath).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activeGallery();
-                dialog.dismiss();
-            }
-        });
-        dialog.findViewById(R.id.btnTakePhoto).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                activeTakePhoto();
-                dialog.dismiss();
-            }
-        });
-        // show dialog on screen
-        dialog.show();
-    }
+    // NOTE(Torgrim): Added for testing of filtering
+    public void onCheckboxClicked(View view) {
 
-    /**
-     * take a photo
-     */
-    private void activeTakePhoto() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            String fileName = "temp.jpg";
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.TITLE, fileName);
-            mCapturedImageURI = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
 
-    /**
-     * to gallery
-     */
-    private void activeGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, RESULT_LOAD_IMAGE);
-    }
+        CheckBox location_report = (CheckBox)findViewById(R.id.location_report_filter);
+        CheckBox text_report = (CheckBox)findViewById(R.id.text_report_filter);
+        CheckBox photo_report = (CheckBox)findViewById(R.id.photo_report_filter);
 
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case RESULT_LOAD_IMAGE:
-                if (requestCode == RESULT_LOAD_IMAGE &&
-                        resultCode == RESULT_OK && null != data) {
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    photoPath = cursor.getString(columnIndex);
-                    cursor.close();
-                    activePhotoReport();
-                }
-            case REQUEST_IMAGE_CAPTURE:
-                if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                    String[] projection = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = managedQuery(mCapturedImageURI, projection, null, null, null);
-                    int column_index_data = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    cursor.moveToFirst();
-                    photoPath = cursor.getString(column_index_data);
-                    activePhotoReport();
-                }
-        }
-    }
+        listContent.clear();
 
-    private void activePhotoReport() {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.custom_dialog_box_des);
-        dialog.setTitle("Photo Description");
-
-        final EditText titleP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_title);
-        final EditText desP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_description);
-
-        dialog.findViewById(R.id.customDialogDesbtnBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getPhotoInfor(false, dialog, titleP, desP);
-            }
-        });
-        dialog.findViewById(R.id.customDialogDesbtnSave).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getPhotoInfor(true, dialog, titleP, desP);
-            }
-        });
-        // show dialog on screen
-        dialog.show();
-    }
-
-    private void getPhotoInfor(boolean b, Dialog dialog, EditText titleP, EditText desP) {
-        PhotoReport photoReport = new PhotoReport();
-        if (b) {
-            photoReport.setTitle(String.valueOf(titleP.getText()));
-            photoReport.setDescription((desP.getText().toString()));
-        } else {
-            photoReport.setTitle("Photo Report");
-            photoReport.setDescription("Photo Report Observation");
-        }
-        DAOphoto daOphoto = null;
-        try {
-            daOphoto = new DAOphoto(this);
-            photoReport.setDatetime(System.currentTimeMillis());
-            photoReport.setPath(photoPath);
-            photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
-            daOphoto.addPhoto(photoReport);
-        }
-        catch (Exception e)
+        if(!location_report.isChecked() && !text_report.isChecked() && !photo_report.isChecked())
         {
-            e.printStackTrace();
+            refreshLocationAndTextReportList();
+            refreshImageList();
         }
-        finally {
-            daOphoto.close();
+        else {
+            try {
+                if (location_report.isChecked()) {
+
+                    daOlocation = new DAOlocation(getApplicationContext());
+                    List<LocationReport> locationReportlist = daOlocation.getAllLocations();
+                    for (int i = 0; i < locationReportlist.size(); i++) {
+                        listContent.add(new AdapterContentHolder(null, locationReportlist.get(i).toString()));
+                    }
+
+                }
+                if (text_report.isChecked()) {
+
+                    daOtextReport = new DAOtextReport(getApplicationContext());
+                    List<TextReport> textReportlist = daOtextReport.getAllTextReports();
+                    for (int i = 0; i < textReportlist.size(); i++) {
+                        listContent.add(new AdapterContentHolder(null, textReportlist.get(i).toString()));
+                    }
+                }
+                if (photo_report.isChecked()) {
+                    refreshImageList();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                daOlocation.close();
+                daOtextReport.close();
+            }
         }
-        refreshImageList();
-        dialog.dismiss();
+
+        imageAdapter.notifyDataSetChanged();
     }
+
+
+
+
+
+
 
 
     @Override protected void onSaveInstanceState(Bundle outState) {

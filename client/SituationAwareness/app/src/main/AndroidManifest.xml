@@ -54,8 +54,7 @@
         </activity>
         <activity
             android:name=".controller.Report"
-            android:label="@string/title_activity_report"
-            android:noHistory="true" >
+            android:label="@string/title_activity_report" >
         </activity>
         <activity
             android:name=".controller.Register"
@@ -75,7 +74,8 @@
         <activity
             android:name=".controller.ImageDisplay"
             android:label="@string/title_activity_image_display"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+
         </activity>
         <activity
             android:name=".controller.PhotoView"

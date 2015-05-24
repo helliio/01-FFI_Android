@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import ffiandroid.situationawareness.controller.MapActivity;
 import ffiandroid.situationawareness.model.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.UserInfo;
@@ -23,6 +24,9 @@ import ffiandroid.situationawareness.model.util.Coder;
  * Created by GuoJunjun <junjunguo.com> on March 15, 2015.
  */
 public class DBsyncLocation extends DBsync {
+
+
+
     public DBsyncLocation(Context context) {
         super(context);
     }
@@ -45,11 +49,15 @@ public class DBsyncLocation extends DBsync {
                 locationReports = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
                 String message = reportService.sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                         System.currentTimeMillis(), getWaitingLocations(locationReports));
-                System.out.println("Message from location upload thread..  " + message);
                 Message msg = handlerUploadLocation.obtainMessage();
-                JSONObject jsonObject = new JSONObject(message);
-                msg.obj = jsonObject.get("desc");
-                handlerUploadLocation.sendMessage(msg);
+                if(msg != null && message != null) {
+                    JSONObject jsonObject = new JSONObject(message);
+                    msg.obj = jsonObject.get("desc");
+                    handlerUploadLocation.sendMessage(msg);
+
+                    MapActivity.getTimeSinceLastLocationUpload();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -146,12 +154,11 @@ public class DBsyncLocation extends DBsync {
                 String message = requestService.getPeriodTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                                                 String.valueOf(daOlocation.getLastDownloadedLocationReportTime(UserInfo.getUserID())),
                                                 String.valueOf(System.currentTimeMillis()));
-                System.out.println("Message from location Download Thread... " + message);
-                System.out.println("last download location report time without String.valueOf: " +
-                        daOlocation.getLastDownloadedLocationReportTime(UserInfo.getUserID()));
-                System.out.println("last download location report time with String.valueOf: " +
-                        String.valueOf(daOlocation.getLastDownloadedLocationReportTime(UserInfo.getUserID())));
                 saveLocationToLocalDB(stringToJsonArray(message));
+
+                MapActivity.getTimeSinceLastLocationDownload();
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -173,9 +180,6 @@ public class DBsyncLocation extends DBsync {
                 daOlocation = new DAOlocation(context);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
-                    System.out.println("adding to location db with userID: " + job.getString("username"));
-                    System.out.println("Current userID: " + Coder.encryptMD5(UserInfo.getUserID()));
-                    System.out.println("Result of comparison: " + Coder.encryptMD5(UserInfo.getUserID()).equals(job.getString("username")));
                     if(!Coder.encryptMD5(UserInfo.getUserID()).equals(job.getString("username")))
                     {
                         LocationReport lr = new LocationReport();

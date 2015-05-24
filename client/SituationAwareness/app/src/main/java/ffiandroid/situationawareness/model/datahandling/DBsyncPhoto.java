@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
+import ffiandroid.situationawareness.controller.MapActivity;
 import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.UserInfo;
@@ -27,6 +28,8 @@ public class DBsyncPhoto extends DBsync {
 
     private PhotoReport photoReportR;
     private PhotoReport photoReportD;
+
+
 
     public DBsyncPhoto(Context context) {
         super(context);
@@ -45,23 +48,29 @@ public class DBsyncPhoto extends DBsync {
         Looper.prepare();
         try {
             photoReportR = daOphoto.getOneNotReportedPhoto(UserInfo.getUserID());
-            File file = new File(photoReportR.getPath());
-            String message = reportService
-                    .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportR.getDatetimeLong(),
-                                    photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
-                                    photoReportR.getTitle(), photoReportR.getDescription());
-            Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);
-            if (message != null) {
-                Message msg = handlerUploadPhoto.obtainMessage();
-                JSONObject jsonObject = new JSONObject(message);
-                msg.obj = jsonObject.get("desc");
-                handlerUploadPhoto.sendMessage(msg);
+            if(photoReportR != null && photoReportR.getPath() != null) {
+                File file = new File(photoReportR.getPath());
+                String message = reportService
+                        .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportR.getDatetimeLong(),
+                                photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
+                                photoReportR.getTitle(), photoReportR.getDescription());
+                Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);
+                if (message != null) {
+                    Message msg = handlerUploadPhoto.obtainMessage();
+                    JSONObject jsonObject = new JSONObject(message);
+                    msg.obj = jsonObject.get("desc");
+                    handlerUploadPhoto.sendMessage(msg);
+                }
+
+                MapActivity.getTimeSinceLastPhotoUpload();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             daOphoto.close();
         }
+        // TODO(Torgrim): fix async not working, follow the looper....
         Looper.loop();
     }
     //    };
@@ -108,8 +117,10 @@ public class DBsyncPhoto extends DBsync {
                         .getPeriodTeamPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                                 String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
                                 String.valueOf(System.currentTimeMillis()));
-                System.out.println("Message from Photo Download thread.. "  + message);
                 savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
+
+                MapActivity.getTimeSinceLastPhotoDownload();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -132,6 +143,7 @@ public class DBsyncPhoto extends DBsync {
             try {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
+                    System.out.println("Photo report list json object >>>>>>>>>>>>>>>  " + job.toString());
                     PhotoReport pr = new PhotoReport();
                     pr.setIsreported(false);
                     pr.setUserid(job.getString("username"));
@@ -168,9 +180,11 @@ public class DBsyncPhoto extends DBsync {
 
     Runnable downloadOnePhotoThread = new Runnable() {
         @Override public void run() {
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> Inside download one photo report thread....");
             try {
                 String message =
                         requestService.getPhoto(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportD.getPicId());
+                System.out.println("Message from downloadOnPhotoThread >>>>>>>>> " + message);
                 savePhoto(new JSONObject(message).getString("obj"), photoReportD);
 
             } catch (Exception e) {

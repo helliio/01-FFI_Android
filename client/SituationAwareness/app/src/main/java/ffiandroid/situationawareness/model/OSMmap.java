@@ -93,4 +93,23 @@ public class OSMmap {
         return photoReports;
     }
 
+    public List<PhotoReport> getAllPhotoReports(Context context)
+    {
+        DAOphoto daoPhoto = null;
+        List<PhotoReport> photoReports = null;
+        try
+        {
+            daoPhoto = new DAOphoto(context);
+            photoReports = daoPhoto.getAllPhotos();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daoPhoto.close();
+        }
+        return photoReports;
+    }
+
 }

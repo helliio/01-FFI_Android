@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import java.net.URL;
 
@@ -20,7 +21,7 @@ import ffiandroid.situationawareness.model.localdb.DAOtextReport;
  * <p/>
  * Responsible for this file: GuoJunjun
  */
-public class PerformBackgroundTask extends AsyncTask {
+public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
     private Context context;
     private DBsyncPhoto photo;
     private DBsync report;
@@ -33,7 +34,7 @@ public class PerformBackgroundTask extends AsyncTask {
         location = new DBsyncLocation(context);
     }
 
-    @Override protected Object doInBackground(Object[] params) {
+    protected String doInBackground(Void... params) {
         if (isOnline()) {
             report.upload();
             location.upload();
@@ -43,7 +44,7 @@ public class PerformBackgroundTask extends AsyncTask {
             downloadPhotoHandling();
         }
         updateReportStatus();
-        return null;
+        return "test";
     }
 
     /**
@@ -120,7 +121,10 @@ public class PerformBackgroundTask extends AsyncTask {
     private void downloadPhotoHandling() {
         // NOTE(Torgrim): Added for debugging
         photo.download();
-        new DownloadFilesTask().doInBackground();
+        if(Build.VERSION.SDK_INT >= 11)
+            new DownloadFilesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        else
+            new DownloadFilesTask().doInBackground();
     }
 
     /**
@@ -133,7 +137,7 @@ public class PerformBackgroundTask extends AsyncTask {
      * connection</li>
      */
     private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
-        protected Long doInBackground(URL... urls) {
+        @Override protected Long doInBackground(URL... urls) {
             DAOphoto daOphoto = null;
             try {
                 daOphoto = new DAOphoto(context);
@@ -141,7 +145,8 @@ public class PerformBackgroundTask extends AsyncTask {
                 if (isOnline()) {
                     if (photoReport != null) {
                         photo.downloadOnePhoto(photoReport);
-                    } else if (daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                    }
+                    else if (daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
                         photo.upload();
                     }
                 }
@@ -163,7 +168,8 @@ public class PerformBackgroundTask extends AsyncTask {
                 PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
                 if (isOnline()) {
                     if (photoReport != null || daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
-                        doInBackground();
+                        //doInBackground();
+                        System.out.println("This is where we would send a request for a second photo...");
                     }
                 }
             }

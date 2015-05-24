@@ -65,18 +65,16 @@ public class ImageAdapter extends ArrayAdapter<AdapterContentHolder> {
             viewHolder.description.setText(photoReport.toString());
 
 
-            // NOTE(Torgrim): Edited by torgrim to stop crash..
             // TODO(Torgrim): Work on improving the efficiency when creating a bitmap
-            //long startTime = System.currentTimeMillis();
             if (photoReport.getPath() != null) {
                 Bitmap pl = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_launcher);
                 Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);
-                if (AsyncDrawable.cancelPotentialWork(photoReport, viewHolder.imgIcon)) {
+                if (AsyncDrawable.cancelPotentialWork(photoReport.getPath(), viewHolder.imgIcon)) {
                     final BitmapWorkerTask task = new BitmapWorkerTask(viewHolder.imgIcon);
                     final AsyncDrawable asyncDrawable =
                             new AsyncDrawable(getContext().getResources(), placeHolderBitmap, task);
                     viewHolder.imgIcon.setImageDrawable(asyncDrawable);
-                    task.execute(photoReport);
+                    task.execute(photoReport.getPath());
                 }
 
             }

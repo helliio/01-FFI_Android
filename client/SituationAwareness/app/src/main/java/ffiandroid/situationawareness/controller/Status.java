@@ -70,29 +70,23 @@ public class Status extends ActionBarActivity implements StatusListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_app_settings:
-                startActivity(new Intent(this, AppSettings.class));
+            case R.id.menu_item_map_view:
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
+            case R.id.menu_item_all_reports:
+                startActivity(new Intent(this, AllReportsView.class));
                 return true;
             case R.id.menu_item_report:
                 startActivity(new Intent(this, Report.class));
                 return true;
-            case R.id.menu_item_map_view:
-                startActivity(new Intent(this, MapActivity.class));
-                return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
-                return true;
-            case R.id.menu_item_photo_view:
-                startActivity(new Intent(this, PhotoView.class));
+            case R.id.menu_item_app_settings:
+                startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_logout:
                 rememberMeDelete();
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction("ACTION_LOGOUT");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

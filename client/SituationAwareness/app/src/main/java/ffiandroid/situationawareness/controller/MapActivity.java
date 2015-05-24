@@ -5,7 +5,6 @@ package ffiandroid.situationawareness.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,15 +18,11 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -35,15 +30,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
-import org.osmdroid.bonuspack.overlays.InfoWindow;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
 import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.bonuspack.overlays.Marker;
@@ -52,25 +45,13 @@ import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.Projection;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.ScaleBarOverlay;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLOutput;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import ffiandroid.situationawareness.model.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.model.datahandling.StartSync;
@@ -131,6 +112,23 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private ActionBarDrawerToggle mDrawerToggle;
     private String[] optionsList;
     */
+
+    private static long timeSinceLastLocationUpload = 0;
+    private static long timeSinceLastLocationDownload = 0;
+    private static long timeOfLastLocationUpload = 0;
+    private static long timeOfLastLocationDownload = 0;
+
+    private static long timeSinceLastTextUpload = 0;
+    private static long timeSinceLastTextDownload = 0;
+    private static long timeOfLastTextDownload = 0;
+    private static long timeOfLastTextUpload = 0;
+
+    private static long timeSinceLastPhotoUpload = 0;
+    private static long timeSinceLastPhotoDownload = 0;
+    private static long timeOfLastPhotoUpload = 0;
+    private static long timeOfLastPhotoDownload = 0;
+
+    private long timeOfLastNewPositionAdded = 0;
 
 
     ArrayList<Marker> clusterMarkers = new ArrayList<>();
@@ -347,6 +345,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapController = (MapController) mMapView.getController();
         mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        updatePhotoMarkers();
         updateLocation();
         mMapController.setCenter(new GeoPoint(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
 
@@ -458,6 +457,63 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         //TODO Add timer to not flood app if pressed many times in a row
     }
 
+    // NOTE(Torgrim): Helper method to help with timeing of events..
+
+
+    public static void getTimeSinceLastLocationDownload()
+    {
+        timeSinceLastLocationDownload = (System.currentTimeMillis() - timeOfLastLocationDownload);
+        timeOfLastLocationDownload = System.currentTimeMillis();
+
+        System.out.println("Time since last location Download = " + timeSinceLastLocationDownload + " ms");
+    }
+
+    public static void getTimeSinceLastLocationUpload()
+    {
+
+        timeSinceLastLocationUpload = (System.currentTimeMillis() - timeOfLastLocationUpload);
+        timeOfLastLocationUpload = System.currentTimeMillis();
+
+        System.out.println("Time since last location Upload = " + timeSinceLastLocationUpload + " ms");
+    }
+
+    public static void getTimeSinceLastTextUpload()
+    {
+
+        timeSinceLastTextUpload = (System.currentTimeMillis() - timeOfLastTextUpload);
+        timeOfLastTextUpload = System.currentTimeMillis();
+
+        System.out.println("Time since last text report upload = " + timeSinceLastTextUpload + " ms");
+    }
+
+    public static void getTimeSinceLastTextDownload()
+    {
+
+        timeSinceLastTextDownload = (System.currentTimeMillis() - timeOfLastTextDownload);
+        timeOfLastTextDownload = System.currentTimeMillis();
+
+        System.out.println("Time since last text report download = " + timeSinceLastTextDownload + " ms");
+    }
+
+    public static void getTimeSinceLastPhotoUpload()
+    {
+
+        timeSinceLastPhotoUpload = (System.currentTimeMillis() - timeOfLastPhotoUpload);
+        timeOfLastPhotoUpload = System.currentTimeMillis();
+
+        System.out.println("Time since last photo report upload = " + timeSinceLastPhotoUpload + " ms");
+    }
+
+    public static void getTimeSinceLastPhotoDownload()
+    {
+
+        timeSinceLastPhotoDownload = (System.currentTimeMillis() - timeOfLastPhotoDownload);
+        timeOfLastPhotoDownload = System.currentTimeMillis();
+
+        System.out.println("Time since last photo report download = " + timeSinceLastPhotoDownload + " ms");
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -482,18 +538,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             case R.id.menu_item_all_reports:
                 startActivity(new Intent(this, AllReportsView.class));
                 return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
-                return true;
-            case R.id.menu_item_photo_view:
-                startActivity(new Intent(this, PhotoView.class));
-                return true;
             case R.id.menu_item_logout:
                 logout();
-
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
                 return true;
             case R.id.menu_item_cacheTiles:
                 cacheTiles();
@@ -547,9 +593,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     @Override public void onLocationChanged(Location location) {
         UserInfo.setCurrentLatitude(location.getLatitude());
         UserInfo.setCurrentLongitude(location.getLongitude());
-        // NOTE(Torgrim): Disabled setCenter for now,
-        // this should be done with a separate button
-        //mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         updateMyPositionMarker(location);
         updateCoworkersPositionMarker();
         addMyNewPositionToDB();
@@ -561,6 +604,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
      */
     private void addMyNewPositionToDB()
     {
+        long timeSinceLastPositionWasAdded = (System.currentTimeMillis() - timeOfLastNewPositionAdded);
+        timeOfLastNewPositionAdded = System.currentTimeMillis();
+
+        System.out.println("Time since last my position was added to the local database... " + timeSinceLastPositionWasAdded + " ms");
         DAOlocation daOlocation = new DAOlocation(getApplicationContext());
         try
         {
@@ -632,9 +679,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 }
             }
 
-            //TODO(Torgrim): Check to see the difference between localdb doa and server doa...
-            // LocationDoa in local db seems to only take locations from locationReport table, while
-            // locationDoa in server db seems to use both textreport location and locationreport location????
 
             // NOTE(Torgrim): Get all team members text reports
             List<TextReport> coworkersTextReportsList = osmMap.getAllCoworkersTextReports(getApplicationContext());
@@ -682,7 +726,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
             System.out.println("Current number of location report markers: " + coworkersLocationReportsPresent.size());
             System.out.println("Current number of text report markers: " + coworkerTextReportsPresent.size());
-            System.out.println("Current number of photo report markers: " + coworkersPhotoReportMarkers.size());
+            System.out.println("Current number of photo report markers: " + currentPhotoReportsPresent.size());
             System.out.println("Current number of All report markers: " + allCoworkersMarkers.size());
 
 
@@ -697,14 +741,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     public void updatePhotoMarkers()
     {
 
-        List<PhotoReport> photoReports = new OSMmap().getAllCoworkersPhotoReports(getApplicationContext());
-        Bitmap image = null;
-        Bitmap thumbnail = null;
+        List<PhotoReport> photoReports = new OSMmap().getAllPhotoReports(getApplicationContext());
         for(final PhotoReport report : photoReports)
         {
             if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
             {
                 currentPhotoReportsPresent.add(report.getPicId());
+
+
                 final Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
                 marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
@@ -715,51 +759,16 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                     @Override
                     public void onOpen(Object o)
                     {
-                        /*
-                        long startTime = System.currentTimeMillis();
-
-                        File imageFile = new File(report.getPath());
-                        FileInputStream is = null;
-                        try
-                        {
-                            is = new FileInputStream(imageFile);
-                        }
-                        catch (FileNotFoundException e)
-                        {
-                            e.printStackTrace();
-                        }
-                        byte[] bytes = new byte[(int) imageFile.length()];
-                        if (is != null && report != null)
-                        {
-                            try
-                            {
-                                is.read(bytes, 0, (int) imageFile.length());
-                            }
-                            catch (IOException e)
-                            {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (bytes.length != 0)
-                        {
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inSampleSize = 4;
-                            bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options), 256, 256, true);
-                        }
-                        System.out.println("Time it took to decode a image file from path with BitmapFactory " +
-                                (System.currentTimeMillis() - startTime) + " ms with extension " + report.getExtension() );
-                        System.out.println("Size of the created bitmap in memory: " + bitmap.getAllocationByteCount() + " bytes");
-                        */
                         ImageView view = ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content));
                         marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
                         Bitmap pl = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
                         Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);
-                        if (AsyncDrawable.cancelPotentialWork(report, view)) {
+                        if (AsyncDrawable.cancelPotentialWork(report.getPath(), view)) {
                             final BitmapWorkerTask task = new BitmapWorkerTask(view);
                             final AsyncDrawable asyncDrawable =
                                     new AsyncDrawable(getApplicationContext().getResources(), placeHolderBitmap, task);
                             view.setImageDrawable(asyncDrawable);
-                            task.execute(report);
+                            task.execute(report.getPath());
                         }
 
                     }
@@ -782,13 +791,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 info += "-----------------------------------------\n";
                 info += "Title: " + report.getTitle() + "\n";
                 info += "Description: " + report.getDescription() + "\n\n";
-                /*
-                Bitmap image = BitmapFactory.decodeFile(report.getPath());
-                Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
-                ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content)).setImageBitmap(thumbnail);
-                marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
-                System.out.println("======================================= Setting photo bubble thumbnail");
-                */
 
                 ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title)).setText("This is the title of a PhotoReport report");
                 ((TextView)marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
@@ -804,7 +806,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     // NOTE(Torgrim): Added by Torgrim for testing purposes
     // to calculate the marker view status, meaning that
-    // we're trying to calculate whether to cluster or single markers
+    // we're trying to calculate whether to show cluster or a single markers
     private boolean calculateMarkers()
     {
 

@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_span="2"
-            android:text="minimum time interval between location updates, in milliseconds"/>
+            android:text="minimum time interval between location updates, in seconds"/>
     </TableRow>
 
     <TableRow

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,7 +68,7 @@ public class ImageDisplay extends Activity {
      * @param v
      */
     public void btnBackOnClick(View v) {
-        startActivity(new Intent(this, PhotoView.class));
+        //startActivity(new Intent(this, AllReportsView.class));
         finish();
     }
 
@@ -80,7 +81,8 @@ public class ImageDisplay extends Activity {
         //        DAOdb db = new DAOdb(this);
         //        db.deleteImage(photoReport);
         //        db.close();
-        startActivity(new Intent(this, PhotoView.class));
+        //startActivity(new Intent(this, PhotoView.class));
+        Toast.makeText(getApplicationContext(), "This is not implemented yet...", Toast.LENGTH_LONG).show();
         finish();
     }
 
