@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 /**
  * Constant information of android id & user name + current location
- * <p/>
+ * <p>
  * This file is part of Situation Awareness
- * <p/>
+ * <p>
  * Created by GuoJunjun <junjunguo.com> on 20/02/15.
- * <p/>
+ * <p>
  * responsible for this file: GuoJunjun
  */
 public class UserInfo {
@@ -167,6 +167,7 @@ public class UserInfo {
 
     // NOTE(Torgrim):
     // Added to get and set current users full name
+    // TODO(Torgrim): Check for current user name on sent reports
     public static String getName()
     {
         return name;
@@ -175,8 +176,17 @@ public class UserInfo {
     {
         UserInfo.name = name;
     }
-
-    public static int getTotalUnReportedItemsCout() {
+    /**
+     * @return total un-reported item counts
+     */
+    public static int getTotalUnReportedItemsCount() {
         return getUnReportedLocations() + getUnReportedPhotos() + getUnReportedText();
+    }
+
+    /**
+     * @return a string of detailed unreported category counts
+     */
+    public static String getReportDetails() {
+        return "Loc:" + getUnReportedLocations() + "  Pho:" + getUnReportedPhotos() + "  Txt:" + getUnReportedText();
     }
 }

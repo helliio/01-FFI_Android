@@ -18,6 +18,8 @@ import android.widget.Toast;
 import java.util.List;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.StatusListener;
+import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.TextReport;
 
@@ -28,14 +30,15 @@ import ffiandroid.situationawareness.model.TextReport;
  * <p/>
  * Responsible for this file: GuoJunjun
  */
-public class ReportView extends ActionBarActivity {
+public class ReportView extends ActionBarActivity implements StatusListener {
     private DAOtextReport daOtextReport;
+    private String menuStatus;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         setContentView(R.layout.activity_report_view);
+        formatMenuStatus();
     }
 
     @Override protected void onResume() {
@@ -87,15 +90,13 @@ public class ReportView extends ActionBarActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_report_view, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_map_view:
                 startActivity(new Intent(this, MapActivity.class));
@@ -138,9 +139,8 @@ public class ReportView extends ActionBarActivity {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        @Override public void onReceive(Context context, Intent intent) {
+            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };
@@ -148,5 +148,53 @@ public class ReportView extends ActionBarActivity {
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
     }
 }

@@ -25,14 +25,15 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.UserInfo;
-import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.util.AdapterContentHolder;
+import ffiandroid.situationawareness.model.StatusListener;
+import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.util.Coder;
 
-public class PhotoView extends ActionBarActivity {
+public class PhotoView extends ActionBarActivity implements StatusListener{
 
     private ArrayList<PhotoReport> images;
     private ArrayList<AdapterContentHolder> reports;
@@ -42,6 +43,7 @@ public class PhotoView extends ActionBarActivity {
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private String photoPath;
+    private String menuStatus;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,7 @@ public class PhotoView extends ActionBarActivity {
         listView.setAdapter(imageAdapter);
         addItemClickListener(listView);
         initDB();
+        formatMenuStatus();
     }
 
     /**
@@ -362,5 +365,53 @@ public class PhotoView extends ActionBarActivity {
         super.onDestroy();
 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
     }
 }

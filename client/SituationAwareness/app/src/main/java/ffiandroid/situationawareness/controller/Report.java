@@ -14,7 +14,6 @@ import android.location.Location;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
@@ -27,18 +26,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
-import ffiandroid.situationawareness.model.localdb.DAOlocation;
-import ffiandroid.situationawareness.model.localdb.DAOphoto;
+import ffiandroid.situationawareness.model.StatusListener;
+
 import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.util.AsyncDrawable;
 import ffiandroid.situationawareness.model.util.BitmapWorkerTask;
-import ffiandroid.situationawareness.model.util.Coder;
 
 /**
  * This Report Class is part of project: Situation Awareness
@@ -47,10 +42,11 @@ import ffiandroid.situationawareness.model.util.Coder;
  * <p/>
  * responsible for this file: GuoJunjun
  */
-public class Report extends ActionBarActivity {
+public class Report extends ActionBarActivity implements StatusListener{
     private EditText textReport;
     private TextView textLocation;
     private Location location;
+    private String menuStatus;
 
     private Uri mCapturedImageURI;
     private static final int RESULT_LOAD_IMAGE = 1;
@@ -67,6 +63,7 @@ public class Report extends ActionBarActivity {
         location = MapActivity.newReportLocation;
         textLocation = (TextView) findViewById(R.id.coordinates);
         textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
+        formatMenuStatus();
     }
     @Override
     protected void onResume()
@@ -347,5 +344,53 @@ public class Report extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Destroyed");
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
     }
 }
