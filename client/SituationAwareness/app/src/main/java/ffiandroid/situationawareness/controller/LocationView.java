@@ -56,15 +56,24 @@ public class LocationView extends ActionBarActivity implements StatusListener{
      * @return String [] list
      */
     public String[] getList() {
-        daOlocation = new DAOlocation(getApplicationContext());
-        //        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
-        List<LocationReport> alist = daOlocation.getAllLocations();
-        //        List<LocationReport> alist = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
-        String[] list = new String[alist.size()];
-        for (int i = 0; i < alist.size(); i++) {
-            list[i] = alist.get(i).toString();
+        String[] list = null;
+        try {
+            daOlocation = new DAOlocation(getApplicationContext());
+            //        List<LocationReport> alist = daOlocation.getCoWorkerLocations(UserInfo.getUserID());
+            List<LocationReport> alist = daOlocation.getAllLocations();
+            //        List<LocationReport> alist = daOlocation.getMyNOTReportedLocations(UserInfo.getUserID());
+            list = new String[alist.size()];
+            for (int i = 0; i < alist.size(); i++) {
+                list[i] = alist.get(i).toString();
+            }
         }
-        daOlocation.close();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOlocation.close();
+        }
         return list;
     }
 

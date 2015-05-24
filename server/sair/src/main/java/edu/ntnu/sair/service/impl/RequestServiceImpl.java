@@ -124,6 +124,7 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("longitude", location.getLongitude());
                 array.put(obj);
             }
+            System.out.println("Number of LocationReports sent: " + array.length());
             return new Result("getPeriodTeamLocations", "success", "JSONArray", array.toString()).toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,8 +154,11 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("name", location.getMember().getName());
                 obj.put("teamId", location.getMember().getTeamId());
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
+
+
                 obj.put("id", textReport.getId());
                 obj.put("content", textReport.getContent());
                 array.put(obj);
@@ -165,6 +169,7 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
+    // NOTE(Torgrim): added timeoflastrequest param here for testing
     @Transactional
     @Override
     public String getLatestTeamTextReports(String username, String uuid, String sendingTime) {
@@ -187,8 +192,10 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("name", location.getMember().getName());
                 obj.put("teamId", location.getMember().getTeamId());
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
+
                 obj.put("id", textReport.getId());
                 obj.put("content", textReport.getContent());
                 array.put(obj);
@@ -221,8 +228,10 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("name", location.getMember().getName());
                 obj.put("teamId", location.getMember().getTeamId());
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
+
                 obj.put("id", textReport.getId());
                 obj.put("content", textReport.getContent());
                 array.put(obj);
@@ -255,8 +264,10 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("name", location.getMember().getName());
                 obj.put("teamId", location.getMember().getTeamId());
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
+
                 obj.put("id", photoReport.getId());
                 obj.put("description", photoReport.getDescription());
                 obj.put("direction", photoReport.getDirection());
@@ -292,8 +303,10 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("name", location.getMember().getName());
                 obj.put("teamId", location.getMember().getTeamId());
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
+
                 obj.put("id", photoReport.getId());
                 obj.put("description", photoReport.getDescription());
                 obj.put("direction", photoReport.getDirection());
@@ -329,8 +342,10 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("name", location.getMember().getName());
                 obj.put("teamId", location.getMember().getTeamId());
                 obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
+
                 obj.put("id", photoReport.getId());
 
                 // NOTE(Torgrim): Added title..
@@ -341,6 +356,7 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("direction", photoReport.getDirection());
                 obj.put("filename", photoReport.getName());
                 obj.put("extension", photoReport.getExtension());
+                System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>    Sending photo report with extension " + photoReport.getExtension());
                 array.put(obj);
             }
             return new Result("getPeriodTeamPhotoReports", "success", "JSONArray", array.toString()).toString();
@@ -406,10 +422,7 @@ public class RequestServiceImpl implements RequestService {
         PhotoReport photoReport = this.photoReportDao.getById(Long.valueOf(picId));
         String photoPath = Constant.PHOTO_PATH + photoReport.getName() + "." + photoReport.getExtension();
         File photo = new File(photoPath);
-
-        // NOTE(Torgrim): added for testing purposes
-        String photoInBase64 = Coder.encryptBASE64(photo);
-
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>    Sending the actual photo....");
         return new Result("getPhoto", "success", "file", Coder.encryptBASE64(photo)).toString();
     }
 

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +43,10 @@ public class DAOlocation {
      * @param locationReport
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
-    public long addLocation(LocationReport locationReport) {
-        System.out.println("Added location to DB with user ID " + locationReport.getUserid());
+    public long addLocation(LocationReport locationReport)  {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
+        cv.put(DBtables.LocationTB.COLUMN_NAME, locationReport.getName());
         cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
         cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
         cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
@@ -73,19 +74,7 @@ public class DAOlocation {
         UserInfo.setUnReportedLocations(getMyNOTReportedItemCount(UserInfo.getUserID()));
     }
 
-    // NOTE(Torgrim): Created a update location in database so
-    // that your own location will only be on report
-    // instead of getting the path of the user..
-    public long updateLocation(LocationReport locationReport) {
-        ContentValues cv = new ContentValues();
-        cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
-        cv.put(DBtables.LocationTB.COLUMN_ISREPORTED, locationReport.isIsreported());
-        cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
-        cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
-        cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
-        String where = DBtables.LocationTB.COLUMN_USER_ID + "=?";
-        return database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid()});
-    }
+
 
     /**
      * update given location reports isReported value to true
@@ -140,7 +129,6 @@ public class DAOlocation {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 LocationReport locationReport = cursorToTextReport(cursor);
-                System.out.println("Current user id: " + Coder.encryptMD5(myUserID) + " LocationReport userid: " + locationReport.getUserid());
                 locationReports.add(locationReport);
                 cursor.moveToNext();
             }
@@ -236,6 +224,25 @@ public class DAOlocation {
         return count;
     }
 
+
+    // NOTE(Torgrim): Added to make sure only not already downloaded location reports are downloaded
+    public long getLastDownloadedLocationReportTime(String myUserID) {
+        long lastTime;
+        Cursor cursor = database.query(DBtables.LocationTB.TABLE_NAME, DBtables.LocationTB.ALL_COLUMNS,
+                DBtables.LocationTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+
+            lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_DATETIME));
+        } else {
+            lastTime = 0;
+        }
+        cursor.close();
+        return lastTime;
+    }
+
+
     /**
      * *
      *
@@ -245,6 +252,7 @@ public class DAOlocation {
     private LocationReport cursorToTextReport(Cursor cursor) {
         LocationReport lr = new LocationReport();
         lr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_USER_ID)));
+        lr.setName(cursor.getString(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_NAME)));
         lr.setDatetime(cursor.getLong(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_DATETIME)));
         lr.setLongitude(cursor.getDouble(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_LONGITUDE)));
         lr.setLatitude(cursor.getDouble(cursor.getColumnIndex(DBtables.LocationTB.COLUMN_LATITUDE)));

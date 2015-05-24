@@ -18,6 +18,7 @@ public class Member {
     private Calendar validTime;
     private String teamId;
 
+
     @Id
     @GeneratedValue
     public long getId() {
@@ -78,4 +79,6 @@ public class Member {
     public void setTeamId(String teamId) {
         this.teamId = teamId;
     }
+
+
 }

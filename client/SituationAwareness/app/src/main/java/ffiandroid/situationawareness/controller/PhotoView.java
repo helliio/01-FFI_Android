@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -29,15 +27,16 @@ import java.util.ArrayList;
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.util.AdapterContentHolder;
 import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOphoto;
-import ffiandroid.situationawareness.model.util.BitmapAndDescriptionHolder;
 import ffiandroid.situationawareness.model.util.Coder;
 
 public class PhotoView extends ActionBarActivity implements StatusListener{
 
-    private ArrayList<BitmapAndDescriptionHolder> images;
+    private ArrayList<PhotoReport> images;
+    private ArrayList<AdapterContentHolder> reports;
     private ImageAdapter imageAdapter;
     private ListView listView;
     private Uri mCapturedImageURI;
@@ -52,8 +51,9 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         // Construct the data source
         images = new ArrayList();
+        reports = new ArrayList<>();
         // Create the adapter to convert the array to views
-        imageAdapter = new ImageAdapter(this, images);
+        imageAdapter = new ImageAdapter(this, reports);
         // Attach the adapter to a ListView
         listView = (ListView) findViewById(R.id.photoReportListView);
         listView.setAdapter(imageAdapter);
@@ -78,25 +78,26 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
      * refresh image list
      */
     private void refreshImageList() {
-        DAOphoto daOphoto = new DAOphoto(this);
-        BitmapAndDescriptionHolder bitmapAndDescriptionHolder;
-        images.clear();
-        //                add images from database to images ArrayList
-        // NOTE(Torgrim): trying to decode and scale images in a batch rather than individually
-        for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
-            Bitmap bitmap = null;
-            if(photoReport.getPath() != null)
+        DAOphoto daOphoto = null;
+        try {
+
+            daOphoto = new DAOphoto(this);
+            for(PhotoReport report : daOphoto.getAllPhotos())
             {
-                bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(photoReport.getPath()), 64, 64, true);
+                images.add(report);
+                reports.add(new AdapterContentHolder(report, null));
             }
-            String description = photoReport.toString();
-            bitmapAndDescriptionHolder = new BitmapAndDescriptionHolder(bitmap, description, photoReport);
-            // NOTE(Torgrim): Testing new method..
-            images.add(bitmapAndDescriptionHolder);
-            // NOTE(Torgrim): Old method
-            //images.add(photoReport);
         }
-        daOphoto.close();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
+
+
+
     }
 
     public void btnNewPhotoReportOnClick(View view) {
@@ -110,7 +111,8 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
             }
         });
         dialog.findViewById(R.id.btnChoosePath).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 activeGallery();
                 dialog.dismiss();
             }
@@ -175,6 +177,7 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
         }
     }
 
+
     private void activePhotoReport() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.custom_dialog_box_des);
@@ -184,12 +187,14 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
         final EditText desP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_description);
 
         dialog.findViewById(R.id.customDialogDesbtnBack).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(false, dialog, titleP, desP);
             }
         });
         dialog.findViewById(R.id.customDialogDesbtnSave).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(true, dialog, titleP, desP);
             }
         });
@@ -206,12 +211,21 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
             photoReport.setTitle("Photo Report");
             photoReport.setDescription("Photo Report Observation");
         }
-        DAOphoto daOphoto = new DAOphoto(this);
-        photoReport.setDatetime(System.currentTimeMillis());
-        photoReport.setPath(photoPath);
-        photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
-        daOphoto.addPhoto(photoReport);
-        daOphoto.close();
+        DAOphoto daOphoto = null;
+        try {
+            daOphoto = new DAOphoto(this);
+            photoReport.setDatetime(System.currentTimeMillis());
+            photoReport.setPath(photoPath);
+            photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
+            daOphoto.addPhoto(photoReport);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
         refreshImageList();
         dialog.dismiss();
     }
@@ -225,11 +239,11 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                BitmapAndDescriptionHolder image = (BitmapAndDescriptionHolder) listView.getItemAtPosition(position);
+                PhotoReport image = (PhotoReport)listView.getItemAtPosition(position);
                 try {
                     if (image.getPath().contains(".")) {
                         Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                        intent.putExtra("IMAGE", (new Gson()).toJson(image.report));
+                        intent.putExtra("IMAGE", (new Gson()).toJson(image));
                         startActivity(intent);
                     }
                 } catch (Exception e) {
@@ -314,9 +328,43 @@ public class PhotoView extends ActionBarActivity implements StatusListener{
         }
     };
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Resumed");
+    }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Paused");
+    }
+
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Restarted");
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Stopped");
+    }
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
+    }
+
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
     }
 
     @Override public boolean onPrepareOptionsMenu(Menu menu) {

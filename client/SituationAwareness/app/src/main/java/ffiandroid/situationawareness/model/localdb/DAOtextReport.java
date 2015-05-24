@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -44,10 +45,11 @@ public class DAOtextReport {
      * @param textReport
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
-    public long addReport(TextReport textReport) {
+    public long addReport(TextReport textReport) throws SQLiteException{
         System.out.println("Added Text report to DB with user ID " + textReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.TextReportTB.COLUMN_USER_ID, textReport.getUserid());
+        cv.put(DBtables.TextReportTB.COLUMN_NAME, textReport.getName());
         cv.put(DBtables.TextReportTB.COLUMN_REPORT, textReport.getReport());
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
@@ -164,6 +166,23 @@ public class DAOtextReport {
         return count;
     }
 
+    // NOTE(Torgrim): Added to make sure only not already downloaded text reports are downloaded
+    public long getLastDownloadedTextReportTime(String myUserID) {
+        long lastTime;
+        Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
+                DBtables.TextReportTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.TextReportTB.COLUMN_DATETIME + " DESC");
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+
+            lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME));
+        } else {
+            lastTime = 0;
+        }
+        cursor.close();
+        return lastTime;
+    }
+
     /**
      * *
      *
@@ -173,6 +192,7 @@ public class DAOtextReport {
     private TextReport cursorToTextReport(Cursor cursor) {
         TextReport tr = new TextReport();
         tr.setUserid(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_USER_ID)));
+        tr.setName(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_NAME)));
         tr.setReport(cursor.getString(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_REPORT)));
         tr.setDatetime(cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME)));
         tr.setLongitude(cursor.getDouble(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_LONGITUDE)));

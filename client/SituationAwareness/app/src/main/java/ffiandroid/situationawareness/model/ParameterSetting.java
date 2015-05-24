@@ -12,7 +12,7 @@ public class ParameterSetting {
      * <p/>
      * minimum time interval between GPS location updates, in seconds
      */
-    private static int locationUpdateTime = 20000;
+    private static long locationUpdateTime = 20000;
 
     /**
      * minimum distance between location updates, in meters
@@ -39,7 +39,7 @@ public class ParameterSetting {
      *
      * @return Value of <p> minimum time interval between GPS location updates, in milliseconds.
      */
-    public static int getLocationUpdateTime() { return locationUpdateTime; }
+    public static long getLocationUpdateTime() { return locationUpdateTime; }
 
     /**
      * Gets minimum distance between location updates, in meters.

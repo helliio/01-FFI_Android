@@ -10,13 +10,11 @@ public class Constant {
     public static final String AES_KEY = "01FFIAndroid2015";
 
     // URL of the server
-    // Real url(Torgrim): "http://sair.chun.no"
-    //public static final String SERVICE_URL = "http://sair.chun.no";
     // Public Server
-    public static final String SERVICE_URL = "http://sair.chun.no";
+    //public static final String SERVICE_URL = "http://sair.chun.no";
 
     // Local server ip
-//    public static final String SERVICE_URL = "http://78.91.75.62:8080/";
+    public static final String SERVICE_URL = "http://192.168.1.23:8080/";
 
 
     // Timezone for time

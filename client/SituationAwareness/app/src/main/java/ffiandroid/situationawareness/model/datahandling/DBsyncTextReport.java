@@ -25,6 +25,8 @@ public class DBsyncTextReport extends DBsync {
 
     private List<TextReport> reports;
 
+
+
     public DBsyncTextReport(Context context) {
         super(context);
     }
@@ -47,9 +49,12 @@ public class DBsyncTextReport extends DBsync {
                         .sendTextReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
                                 getWaitingList(reports));
                 Message msg = handlerUploadLocation.obtainMessage();
-                JSONObject jsonObject = new JSONObject(message);
-                msg.obj = jsonObject.get("desc");
-                handlerUploadLocation.sendMessage(msg);
+                if(msg != null && message != null) {
+                    JSONObject jsonObject = new JSONObject(message);
+                    msg.obj = jsonObject.get("desc");
+                    handlerUploadLocation.sendMessage(msg);
+                    MapActivity.getTimeSinceLastTextUpload();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -109,6 +114,9 @@ public class DBsyncTextReport extends DBsync {
                     activity.logout();
                 }
             }
+
+
+
         }
     };
 
@@ -119,13 +127,24 @@ public class DBsyncTextReport extends DBsync {
      */
     private void myReportStatusIssent(List<TextReport> textReports) {
         if (textReports.size() > 0) {
-            DAOtextReport daOtextReport = new DAOtextReport(context);
-            for (TextReport textReport : textReports) {
-                daOtextReport.updateIsReported(textReport);
-                System.out.println("update text report status number of rows affected: " +
-                        daOtextReport.updateIsReported(textReport));
+            DAOtextReport daOtextReport = null;
+            try {
+                daOtextReport = new DAOtextReport(context);
+                for (TextReport textReport : textReports) {
+                    daOtextReport.updateIsReported(textReport);
+                    System.out.println("update text report status number of rows affected: " +
+                            daOtextReport.updateIsReported(textReport));
+                }
+            }catch (Exception e)
+            {
+                e.printStackTrace();
             }
-            daOtextReport.close();
+            finally {
+                if(daOtextReport != null)
+                {
+                    daOtextReport.close();
+                }
+            }
         }
     }
 
@@ -138,13 +157,26 @@ public class DBsyncTextReport extends DBsync {
 
     Runnable downloadThread = new Runnable() {
         @Override public void run() {
+            DAOtextReport daOtextReport = null;
             try {
-                String message = requestService.getAllTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID());
-                // NOTE(Torgrim): Testing....
+                daOtextReport = new DAOtextReport(context);
+                String message = requestService.getPeriodTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID())),
+                        String.valueOf(System.currentTimeMillis()));
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);
+
+
+                MapActivity.getTimeSinceLastTextDownload();
             } catch (Exception e) {
                 System.out.println("This is message from download >>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +e.getMessage());
+            }
+            finally
+            {
+                if(daOtextReport != null)
+                {
+                    daOtextReport.close();
+                }
             }
         }
     };
@@ -163,6 +195,7 @@ public class DBsyncTextReport extends DBsync {
                     TextReport textReport = new TextReport();
                     textReport.setIsreported(true);
                     textReport.setUserid(job.getString("username"));
+                    textReport.setName(job.getString("name"));
                     textReport.setReport(job.getString("content"));
                     textReport.setDatetime(job.getLong("timestamp"));
                     textReport.setLatitude(job.getDouble("latitude"));

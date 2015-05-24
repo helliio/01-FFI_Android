@@ -4,6 +4,7 @@ package ffiandroid.situationawareness.controller;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,8 +35,8 @@ import android.widget.Toast;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.bonuspack.cachemanager.CacheManager;
-import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
+import org.osmdroid.bonuspack.overlays.MapEventsOverlay;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
 import org.osmdroid.events.MapListener;
@@ -58,6 +59,8 @@ import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.util.AsyncDrawable;
+import ffiandroid.situationawareness.model.util.BitmapWorkerTask;
 import ffiandroid.situationawareness.model.datahandling.PerformBackgroundTask;
 import ffiandroid.situationawareness.model.datahandling.StartSync;
 import ffiandroid.situationawareness.model.localdb.DAOlocation;
@@ -106,6 +109,23 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private ActionBarDrawerToggle mDrawerToggle;
     private String[] optionsList;
     */
+
+    private static long timeSinceLastLocationUpload = 0;
+    private static long timeSinceLastLocationDownload = 0;
+    private static long timeOfLastLocationUpload = 0;
+    private static long timeOfLastLocationDownload = 0;
+
+    private static long timeSinceLastTextUpload = 0;
+    private static long timeSinceLastTextDownload = 0;
+    private static long timeOfLastTextDownload = 0;
+    private static long timeOfLastTextUpload = 0;
+
+    private static long timeSinceLastPhotoUpload = 0;
+    private static long timeSinceLastPhotoDownload = 0;
+    private static long timeOfLastPhotoUpload = 0;
+    private static long timeOfLastPhotoDownload = 0;
+
+    private long timeOfLastNewPositionAdded = 0;
 
 
     ArrayList<Marker> clusterMarkers = new ArrayList<>();
@@ -320,6 +340,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapController = (MapController) mMapView.getController();
         mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        updatePhotoMarkers();
         updateLocation();
         mMapController.setCenter(new GeoPoint(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
 
@@ -429,6 +450,63 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         //TODO Add timer to not flood app if pressed many times in a row
     }
 
+    // NOTE(Torgrim): Helper method to help with timeing of events..
+
+
+    public static void getTimeSinceLastLocationDownload()
+    {
+        timeSinceLastLocationDownload = (System.currentTimeMillis() - timeOfLastLocationDownload);
+        timeOfLastLocationDownload = System.currentTimeMillis();
+
+        System.out.println("Time since last location Download = " + timeSinceLastLocationDownload + " ms");
+    }
+
+    public static void getTimeSinceLastLocationUpload()
+    {
+
+        timeSinceLastLocationUpload = (System.currentTimeMillis() - timeOfLastLocationUpload);
+        timeOfLastLocationUpload = System.currentTimeMillis();
+
+        System.out.println("Time since last location Upload = " + timeSinceLastLocationUpload + " ms");
+    }
+
+    public static void getTimeSinceLastTextUpload()
+    {
+
+        timeSinceLastTextUpload = (System.currentTimeMillis() - timeOfLastTextUpload);
+        timeOfLastTextUpload = System.currentTimeMillis();
+
+        System.out.println("Time since last text report upload = " + timeSinceLastTextUpload + " ms");
+    }
+
+    public static void getTimeSinceLastTextDownload()
+    {
+
+        timeSinceLastTextDownload = (System.currentTimeMillis() - timeOfLastTextDownload);
+        timeOfLastTextDownload = System.currentTimeMillis();
+
+        System.out.println("Time since last text report download = " + timeSinceLastTextDownload + " ms");
+    }
+
+    public static void getTimeSinceLastPhotoUpload()
+    {
+
+        timeSinceLastPhotoUpload = (System.currentTimeMillis() - timeOfLastPhotoUpload);
+        timeOfLastPhotoUpload = System.currentTimeMillis();
+
+        System.out.println("Time since last photo report upload = " + timeSinceLastPhotoUpload + " ms");
+    }
+
+    public static void getTimeSinceLastPhotoDownload()
+    {
+
+        timeSinceLastPhotoDownload = (System.currentTimeMillis() - timeOfLastPhotoDownload);
+        timeOfLastPhotoDownload = System.currentTimeMillis();
+
+        System.out.println("Time since last photo report download = " + timeSinceLastPhotoDownload + " ms");
+    }
+
+
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -448,18 +526,11 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
             case R.id.menu_item_status:
                 startActivity(new Intent(this, Status.class));
                 return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
-                return true;
-            case R.id.menu_item_photo_view:
-                startActivity(new Intent(this, PhotoView.class));
+            case R.id.menu_item_all_reports:
+                startActivity(new Intent(this, AllReportsView.class));
                 return true;
             case R.id.menu_item_logout:
                 logout();
-
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
                 return true;
             case R.id.menu_item_cacheTiles:
                 cacheTiles();
@@ -510,9 +581,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     @Override public void onLocationChanged(Location location) {
         UserInfo.setCurrentLatitude(location.getLatitude());
         UserInfo.setCurrentLongitude(location.getLongitude());
-        // NOTE(Torgrim): Disabled setCenter for now,
-        // this should be done with a separate button
-        //mMapController.setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
         updateMyPositionMarker(location);
         updateCoworkersPositionMarker();
         addMyNewPositionToDB();
@@ -523,7 +591,18 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
      * add my new position to local database
      */
     private void addMyNewPositionToDB() {
-        new DAOlocation(getApplicationContext()).addLocation(new LocationReport(true));
+        long timeSinceLastPositionWasAdded = (System.currentTimeMillis() - timeOfLastNewPositionAdded);
+        timeOfLastNewPositionAdded = System.currentTimeMillis();
+
+        System.out.println("Time since last my position was added to the local database... " + timeSinceLastPositionWasAdded + " ms");
+        DAOlocation daOlocation = new DAOlocation(getApplicationContext());
+        try {
+            daOlocation.addLocation(new LocationReport(true));
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            daOlocation.close();
+        }
     }
 
     /**
@@ -562,7 +641,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                                     "==================== Info window should be closed now!! ========================");
                         }
                     });
-                    String info = "User: " + report.getUserid() + "\n";
+                    String info = "User: " + report.getName() + "\n";
                     info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
                     info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
                     ((TextView) coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
@@ -582,9 +661,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 }
             }
 
-            //TODO(Torgrim): Check to see the difference between localdb doa and server doa...
-            // LocationDoa in local db seems to only take locations from locationReport table, while
-            // locationDoa in server db seems to use both textreport location and locationreport location????
 
             // NOTE(Torgrim): Get all team members text reports
             List<TextReport> coworkersTextReportsList = osmMap.getAllCoworkersTextReports(getApplicationContext());
@@ -608,7 +684,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                                             "=====================");
                         }
                     });
-                    String info = "User: " + report.getUserid() + "\n";
+                    String info = "User: " + report.getName() + "\n";
                     info += "Latitude: " + report.getLatitude() + "\n";
                     info += "Longitude:" + report.getLongitude() + "\n";
                     info += "-----------------------------------------\n";
@@ -634,7 +710,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
             System.out.println("Current number of location report markers: " + coworkersLocationReportsPresent.size());
             System.out.println("Current number of text report markers: " + coworkerTextReportsPresent.size());
-            System.out.println("Current number of photo report markers: " + coworkersPhotoReportMarkers.size());
+            System.out.println("Current number of photo report markers: " + currentPhotoReportsPresent.size());
             System.out.println("Current number of All report markers: " + allCoworkersMarkers.size());
 
 
@@ -649,78 +725,54 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     // TODO(Torgrim): Check and clean up this method
     public void updatePhotoMarkers() {
 
-        List<PhotoReport> photoReports = new OSMmap().getAllCoworkersPhotoReports(getApplicationContext());
-        Bitmap image = null;
-        Bitmap thumbnail = null;
-        for (final PhotoReport report : photoReports) {
-            if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId())) {
+        List<PhotoReport> photoReports = new OSMmap().getAllPhotoReports(getApplicationContext());
+        for(final PhotoReport report : photoReports)
+        {
+            if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
+            {
                 currentPhotoReportsPresent.add(report.getPicId());
+
                 final Marker marker = new Marker(mMapView);
                 marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
                 marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
                 marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView) {
 
-                    Bitmap image =
-                            Bitmap.createScaledBitmap(BitmapFactory.decodeFile(report.getPath()), 128, 128, true);
-                    ;
-                    Bitmap thumbnail = null;
-                    //Drawable drawable = Drawable.createFromPath(report.getPath());
-
-                    @Override public void onOpen(Object o) {
-                        System.out.println(
-                                "========================PhotoReport Info window should now be open " +
-                                        "======================");
-                        long startTime = System.currentTimeMillis();
-                        //drawable.setVisible(true, false);
-                        //image = BitmapFactory.decodeFile(report.getPath());
-                        //image = Bitmap.createScaledBitmap(image, 200, 200, true);
-                        //drawable = Drawable.createFromPath(report.getPath());
-                        //                        System.out.println("Allocation count by bytes of the image: " +
-                        // image.getAllocationByteCount());
-                        //                        System.out.println("Image byte count: " + image.getByteCount());
-                        //thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
-                        //System.out.println("Allocation count by bytes of the thumbnail: " + thumbnail
-                        // .getAllocationByteCount());
-                        //System.out.println("Thumbnail byte count: " + thumbnail.getByteCount());
-                        ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content))
-                                .setImageBitmap(image);
+                    Bitmap bitmap = null;
+                    @Override
+                    public void onOpen(Object o)
+                    {
+                        ImageView view = ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content));
                         marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
-                        System.out.println("Time it took to create a infoWindow bitmap for photo Report " +
-                                (System.currentTimeMillis() - startTime) + " ms");
-                        System.out.println("======================================= Setting photo bubble thumbnail");
+                        Bitmap pl = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
+                        Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);
+                        if (AsyncDrawable.cancelPotentialWork(report.getPath(), view)) {
+                            final BitmapWorkerTask task = new BitmapWorkerTask(view);
+                            final AsyncDrawable asyncDrawable =
+                                    new AsyncDrawable(getApplicationContext().getResources(), placeHolderBitmap, task);
+                            view.setImageDrawable(asyncDrawable);
+                            task.execute(report.getPath());
+                        }
+
                     }
 
-                    @Override public void onClose() {
-                        /*
-                        if(image != null)
-                        {
-                            image.recycle();
-                        }
-                        */
-                        if (thumbnail != null) {
-                            thumbnail.recycle();
-                        }
-                        //drawable.setVisible(false, false);
+                    @Override
+                    public void onClose()
+                    {
 
-                        System.out.println(
-                                "======================== PhotoReport Info Window should now be closed " +
-                                        "=====================");
+                        if(bitmap != null)
+                        {
+                            bitmap.recycle();
+                        }
+
+                        System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
-                String info = "User: " + report.getUserid() + "\n";
+                String info = "User: " + report.getName() + "\n";
                 info += "Latitude: " + report.getLatitude() + "\n";
                 info += "Longitude:" + report.getLongitude() + "\n";
                 info += "-----------------------------------------\n";
                 info += "Title: " + report.getTitle() + "\n";
                 info += "Description: " + report.getDescription() + "\n\n";
-                /*
-                Bitmap image = BitmapFactory.decodeFile(report.getPath());
-                Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, image.getWidth(), image.getHeight());
-                ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content))
-                .setImageBitmap(thumbnail);
-                marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
-                System.out.println("======================================= Setting photo bubble thumbnail");
-                */
 
                 ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
                         .setText("This is the title of a PhotoReport report");
@@ -1213,6 +1265,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+
         super.onDestroy();
     }
 
