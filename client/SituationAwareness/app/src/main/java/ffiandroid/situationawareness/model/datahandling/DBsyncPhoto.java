@@ -70,7 +70,6 @@ public class DBsyncPhoto extends DBsync {
         } finally {
             daOphoto.close();
         }
-        // TODO(Torgrim): fix async not working, follow the looper....
         Looper.loop();
     }
     //    };
@@ -143,7 +142,6 @@ public class DBsyncPhoto extends DBsync {
             try {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
-                    System.out.println("Photo report list json object >>>>>>>>>>>>>>>  " + job.toString());
                     PhotoReport pr = new PhotoReport();
                     pr.setIsreported(false);
                     pr.setUserid(job.getString("username"));
@@ -180,11 +178,9 @@ public class DBsyncPhoto extends DBsync {
 
     Runnable downloadOnePhotoThread = new Runnable() {
         @Override public void run() {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> Inside download one photo report thread....");
             try {
                 String message =
                         requestService.getPhoto(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportD.getPicId());
-                System.out.println("Message from downloadOnPhotoThread >>>>>>>>> " + message);
                 savePhoto(new JSONObject(message).getString("obj"), photoReportD);
 
             } catch (Exception e) {

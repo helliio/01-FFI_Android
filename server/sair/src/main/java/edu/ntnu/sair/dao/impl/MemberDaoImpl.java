@@ -71,4 +71,11 @@ public class MemberDaoImpl implements MemberDao {
         Query q = this.session.createQuery("from Member where teamid = '" + teamId + "' order by id");
         return q.list();
     }
+
+    //NOTE(Torgrim): Added for sending just one location of each member
+    public List<Member> getTeamByTeamIdAndUsername(String teamId, String username) {
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createQuery("from Member where teamid = '" + teamId + "' and username != '" + username + "'  order by id");
+        return q.list();
+    }
 }

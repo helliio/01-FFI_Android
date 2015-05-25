@@ -53,6 +53,18 @@ public class RequestController {
 
     @Scope("prototype")
     @ResponseBody
+    @RequestMapping(value = "/getDistinctPeriodTeamLocations", method = RequestMethod.POST)
+    public String getDistinctPeriodTeamLocations(
+            @RequestParam("username") String username,
+            @RequestParam("uuid") String uuid,
+            @RequestParam("sendingTime") String sendingTime,
+            @RequestParam("startTime") String startTime,
+            @RequestParam("endTime") String endTime) {
+        return this.requestService.getDistinctPeriodTeamLocations(username, uuid, sendingTime, startTime, endTime);
+    }
+
+    @Scope("prototype")
+    @ResponseBody
     @RequestMapping(value = "/getAllTeamTextReports", method = RequestMethod.POST)
     public String getAllTeamTextReports(
             @RequestParam("username") String username,

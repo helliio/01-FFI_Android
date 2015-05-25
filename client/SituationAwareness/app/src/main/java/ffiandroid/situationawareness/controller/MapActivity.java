@@ -617,9 +617,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         @Override public void run() {
 
             long startTime = System.currentTimeMillis();
-
-            // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
-
             OSMmap osmMap = new OSMmap();
             ArrayList<LocationReport> coworkerLocationReportsList =
                     osmMap.getAllCoworkersLocationReports(getApplicationContext());
@@ -798,7 +795,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         if (allCoworkersMarkers.size() > 0) {
             for (Marker marker : allCoworkersMarkers) {
                 if (mMapView.getBoundingBox().contains(marker.getPosition())) {
-                    if (count <= 100 || mMapView.getZoomLevel() == mMapView.getMaxZoomLevel()) {
+                    if (count <= 1000 || mMapView.getZoomLevel() == mMapView.getMaxZoomLevel()) {
                         marker.setEnabled(true);
                         count++;
                     } else {

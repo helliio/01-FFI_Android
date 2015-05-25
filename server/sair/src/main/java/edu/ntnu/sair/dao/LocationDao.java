@@ -32,4 +32,6 @@ public interface LocationDao {
     public List<Location> getByTeamLatest(String teamId);
 
     public List<Location> getByTeamPeriod(String teamId, long startTime, long endTime);
+
+    public Location getLastLocationForTeamMember(String teamMemberUsername, long startTime, long endTime);
 }

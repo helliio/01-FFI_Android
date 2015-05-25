@@ -22,4 +22,7 @@ public interface MemberDao {
     public Member getByUsername(String username);
 
     public List<Member> getByTeamId(String teamId);
+
+    public List<Member> getTeamByTeamIdAndUsername(String teamId, String username);
+
 }

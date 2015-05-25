@@ -41,7 +41,6 @@ public class DAOphoto {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addPhoto(PhotoReport photoReport) {
-        // TODO(Torgrim): Check to make sure that no row is duplicated....
         System.out.println("Added Photo report to DB with user ID " + photoReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());

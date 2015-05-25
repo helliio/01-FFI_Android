@@ -167,7 +167,7 @@ public class UserInfo {
 
     // NOTE(Torgrim):
     // Added to get and set current users full name
-    // TODO(Torgrim): Check for current user name on sent reports
+    // TODO(Torgrim): Check for current user's name on sent reports
     public static String getName()
     {
         return name;

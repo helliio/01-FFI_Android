@@ -32,6 +32,7 @@ import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.localdb.DAOlocation;
@@ -43,7 +44,7 @@ import ffiandroid.situationawareness.model.util.Coder;
 /**
  * Created by Torgrim on 13/05/2015.
  */
-public class AllReportsView extends ActionBarActivity
+public class AllReportsView extends ActionBarActivity implements StatusListener
 {
     private DAOlocation daOlocation;
 
@@ -55,7 +56,7 @@ public class AllReportsView extends ActionBarActivity
     private ListView listView;
     private Uri mCapturedImageURI;
 
-
+    private String menuStatus;
     private String photoPath;
 
 
@@ -79,8 +80,8 @@ public class AllReportsView extends ActionBarActivity
         listView.setAdapter(imageAdapter);
         addItemClickListener(listView);
 
-        refreshLocationAndTextReportList();
-        refreshImageList();
+        checkFilterCheckboxesAndPopulateListView();
+        formatMenuStatus();
         //initDB();
     }
 
@@ -95,12 +96,15 @@ public class AllReportsView extends ActionBarActivity
         addItemClickListener(listView);
         */
         super.onResume();
-        listContent.clear();
-        refreshLocationAndTextReportList();
-        refreshImageList();
-        imageAdapter.notifyDataSetChanged();
+        checkFilterCheckboxesAndPopulateListView();
 
 
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
     }
 
 
@@ -215,16 +219,6 @@ public class AllReportsView extends ActionBarActivity
                 .putString(Login.PREF_PASSWORD, null).commit();
     }
 
-    /**
-     * receive broadcast for logout
-     */
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
-            finish();
-        }
-    };
 
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
@@ -275,6 +269,12 @@ public class AllReportsView extends ActionBarActivity
     public void onCheckboxClicked(View view) {
 
 
+        checkFilterCheckboxesAndPopulateListView();
+    }
+
+
+    private void checkFilterCheckboxesAndPopulateListView()
+    {
         CheckBox location_report = (CheckBox)findViewById(R.id.location_report_filter);
         CheckBox text_report = (CheckBox)findViewById(R.id.text_report_filter);
         CheckBox photo_report = (CheckBox)findViewById(R.id.photo_report_filter);
@@ -319,7 +319,58 @@ public class AllReportsView extends ActionBarActivity
         imageAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * receive broadcast for logout
+     */
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //            startActivity(new Intent(getBaseContext(), Login.class));
+            finish();
+        }
+    };
 
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
+    }
 
 
 

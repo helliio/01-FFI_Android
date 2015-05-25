@@ -151,14 +151,14 @@ public class DBsyncLocation extends DBsync {
             DAOlocation daOlocation = null;
             try {
                 daOlocation = new DAOlocation(context);
-                String message = requestService.getPeriodTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                String message = requestService.getDistinctPeriodTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                                                 String.valueOf(daOlocation.getLastDownloadedLocationReportTime(UserInfo.getUserID())),
                                                 String.valueOf(System.currentTimeMillis()));
                 saveLocationToLocalDB(stringToJsonArray(message));
 
                 MapActivity.getTimeSinceLastLocationDownload();
 
-
+                System.out.println("Message From Location download>>>>>>>>>>>>>>>>>>>>>>>> " + message);
             } catch (Exception e) {
                 e.printStackTrace();
             }

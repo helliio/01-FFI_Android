@@ -124,4 +124,16 @@ public interface RequestService {
             @WebParam(name = "sendingTime") String sendingTime,
             @WebParam(name = "picId") String picId);
 
+
+
+
+
+    // NOTE(Torgrim): Added for testing distinct location reports
+    public String getDistinctPeriodTeamLocations(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "uuid") String uuid,
+            @WebParam(name = "sendingTime") String sendingTime,
+            @WebParam(name = "startTime") String startTime,
+            @WebParam(name = "endTime") String endTime);
+
 }

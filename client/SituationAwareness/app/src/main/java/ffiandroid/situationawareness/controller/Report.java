@@ -175,7 +175,7 @@ public class Report extends ActionBarActivity implements StatusListener{
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     photoPath = cursor.getString(columnIndex);
                     cursor.close();
-                    checkImageAddress(photoPath);
+                    checkImageAddressAndLoadBitmap(photoPath);
                 }
             case REQUEST_IMAGE_CAPTURE:
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -184,14 +184,14 @@ public class Report extends ActionBarActivity implements StatusListener{
                     int column_index_data = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     cursor.moveToFirst();
                     photoPath = cursor.getString(column_index_data);
-                    checkImageAddress(photoPath);
+                    checkImageAddressAndLoadBitmap(photoPath);
                 }
         }
     }
 
 
 
-    private void checkImageAddress(String photoPath)
+    private void checkImageAddressAndLoadBitmap(String photoPath)
     {
         if(photoPath != null)
         {

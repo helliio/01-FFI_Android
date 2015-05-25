@@ -20,6 +20,7 @@ import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -124,6 +125,53 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("longitude", location.getLongitude());
                 array.put(obj);
             }
+            System.out.println("Json Array: " + array);
+            System.out.println("Number of LocationReports sent: " + array.length());
+            return new Result("getPeriodTeamLocations", "success", "JSONArray", array.toString()).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result("getPeriodTeamLocations", "server error").toString();
+        }
+    }
+
+    @Transactional
+    @Override
+    public String getDistinctPeriodTeamLocations(String username, String uuid, String sendingTime, String startTime, String endTime) {
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+
+        try {
+            Member member = this.memberDao.getByUsername(username);
+            List<Member> teamMembers = this.memberDao.getTeamByTeamIdAndUsername(member.getTeamId(), member.getUsername());
+
+            List<Location> list = new ArrayList<>();
+            for(Member m : teamMembers)
+            {
+                Location teamMemberLocation;
+                teamMemberLocation = locationDao.getLastLocationForTeamMember(m.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
+                if(teamMemberLocation != null)
+                {
+                    list.add(teamMemberLocation);
+                }
+            }
+
+            if (list.size() == 0) {
+                return new Result("getDistinctPeriodTeamLocations", "No result").toString();
+            }
+            JSONArray array = new JSONArray();
+            for (Location location : list) {
+                JSONObject obj = new JSONObject();
+                obj.put("username", location.getMember().getUsername());
+                obj.put("name", location.getMember().getName());
+                obj.put("teamId", location.getMember().getTeamId());
+                obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+                obj.put("latitude", location.getLatitude());
+                obj.put("longitude", location.getLongitude());
+                array.put(obj);
+            }
+            System.out.println("Json Array: " + array);
             System.out.println("Number of LocationReports sent: " + array.length());
             return new Result("getPeriodTeamLocations", "success", "JSONArray", array.toString()).toString();
         } catch (Exception e) {
