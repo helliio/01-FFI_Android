@@ -11,10 +11,10 @@ public class Constant {
 
     // URL of the server
     // Public Server
-    //public static final String SERVICE_URL = "http://sair.chun.no";
+    public static final String DEFAULT_SERVICE_URL = "http://sair.chun.no";
 
     // Local server ip
-    public static final String SERVICE_URL = "http://192.168.1.23:8080/";
+    public static String SERVICE_URL = "http://78.91.67.30:8080/";
 
 
     // Timezone for time

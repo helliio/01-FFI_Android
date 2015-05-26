@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.service.UserService;
 import ffiandroid.situationawareness.model.service.impl.SoapUserService;
+import ffiandroid.situationawareness.model.util.Constant;
 
 /**
  * This file is part of project: Situation Awareness
@@ -61,13 +63,29 @@ public class Login extends ActionBarActivity {
     public void softkeyboardDone() {
         EditText editTextpass = (EditText) findViewById(R.id.editTextLoginPass);
         editTextpass.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     login();
                 }
                 return false;
             }
         });
+    }
+
+    public void onIPCheckClicked(View view)
+    {
+        CheckBox ipCheckBox = ((CheckBox) findViewById(R.id.server_ip_checkbox));
+        EditText ipEditText = ((EditText) findViewById(R.id.server_ip_edit_text));
+        if(ipCheckBox.isChecked())
+        {
+            ipEditText.getText().clear();
+            ipEditText.setEnabled(false);
+        }
+        else
+        {
+            ipEditText.setEnabled(true);
+        }
     }
 
     /**
@@ -113,13 +131,24 @@ public class Login extends ActionBarActivity {
             Looper.prepare();
             String userName = ((EditText) findViewById(R.id.editTextLoginID)).getText().toString();
             String userPass = ((EditText) findViewById(R.id.editTextLoginPass)).getText().toString();
+            EditText ipEditText = ((EditText) findViewById(R.id.server_ip_edit_text));
             if (isOnline()) {
                 try {
+                    if(ipEditText.getText().length() > 0)
+                    {
+                        Constant.SERVICE_URL = "http://" + ipEditText.getText().toString() + ":8080/";
+                    }
+                    else
+                    {
+                        Constant.SERVICE_URL = Constant.DEFAULT_SERVICE_URL;
+                    }
+
                     String message = userService.login(userName, UserInfo.getMyAndroidID(), userPass);
                     JSONObject jsonMessage = new JSONObject(message);
 
                     if (message != null && jsonMessage.get("desc").equals("success")) {
                         String name = new JSONObject(jsonMessage.getString("obj")).getString("name");
+                        System.out.println(Constant.SERVICE_URL);
                         UserInfo.setName(name);
                         UserInfo.setUserID(userName);
                         rememberMe(userName, userPass, name);
