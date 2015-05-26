@@ -33,6 +33,7 @@ public class LocationReport {
             this.longitude = UserInfo.getCurrentLongitude();
             this.latitude = UserInfo.getCurrentLatitude();
             this.userid = Coder.encryptMD5(UserInfo.getUserID());
+            this.name = UserInfo.getName();
             this.isreported = false;
         }
     }
@@ -47,6 +48,7 @@ public class LocationReport {
         this.longitude = longitude;
         this.latitude = latitude;
         this.userid = Coder.encryptMD5(UserInfo.getUserID());
+        this.name = UserInfo.getName();
         this.isreported = false;
     }
 

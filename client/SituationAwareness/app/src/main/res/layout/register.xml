@@ -1,95 +1,94 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/registeractivity_vertical_margin"
-    android:paddingBottom="@dimen/registeractivity_vertical_margin"
-    tools:context="ffiandroid.situationawareness.controller.Register">
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/registeractivity_vertical_margin"
+        android:paddingBottom="@dimen/registeractivity_vertical_margin"
+        tools:context="ffiandroid.situationawareness.controller.Register">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        <EditText
+            android:id="@+id/register_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/full_name"
+            android:maxLength="100"
+            android:width="200dp"
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/full_name"
-        android:id="@+id/register_user_name"
-        android:maxLength="10"
-        android:width="200dp"
-        android:imeOptions="actionNext"
-        android:gravity="center"
-        android:singleLine="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/register_user_id"
-        android:layout_alignStart="@+id/register_user_id" />
+        <EditText
+            android:id="@+id/register_user_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:hint="@string/username"
+            android:maxLength="100"
+            android:width="200dp"
+            android:imeOptions="actionNext"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:singleLine="true" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="@string/username"
-        android:id="@+id/register_user_id"
-        android:maxLength="10"
-        android:width="200dp"
-        android:imeOptions="actionNext"
-        android:gravity="center"
-        android:singleLine="true"
-        android:layout_below="@+id/register_user_name"
-        android:layout_centerHorizontal="true" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:hint="@string/user_password"
+            android:inputType="textPassword"
+            android:id="@+id/register_user_password"
+            android:maxLength="50"
+            android:width="200dp"
+            android:imeOptions="actionNext"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="@string/user_password"
-        android:inputType="textPassword"
-        android:id="@+id/register_user_password"
-        android:maxLength="10"
-        android:width="200dp"
-        android:imeOptions="actionNext"
-        android:gravity="center"
-        android:singleLine="true"
-        android:layout_below="@+id/register_user_id"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="@string/repeat_password"
-        android:inputType="textPassword"
-        android:id="@+id/register_user_password_repeat"
-        android:layout_below="@+id/register_user_password"
-        android:maxLength="10"
-        android:layout_marginBottom="15dp"
-        android:layout_centerInParent="true"
-        android:width="200dp"
-        android:imeOptions="actionDone"
-        android:gravity="center"
-        android:singleLine="true"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:hint="@string/repeat_password"
+            android:inputType="textPassword"
+            android:id="@+id/register_user_password_repeat"
+            android:maxLength="50"
+            android:layout_marginBottom="15dp"
+            android:width="200dp"
+            android:imeOptions="actionDone"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
 
 
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_below="@+id/register_user_password_repeat"
-        android:layout_centerHorizontal="true"
-        android:text="@string/register_user"
-        android:id="@+id/btn_register"
-        android:onClick="registerClicked"
-        android:width="200dp"
-        android:gravity="center"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/register_user"
+            android:id="@+id/btn_register"
+            android:onClick="registerClicked"
+            android:width="200dp"
+            android:gravity="center"
+            android:layout_gravity="center"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_register"
-        android:layout_centerHorizontal="true"
-        android:text="Back to Login Screen"
-        android:onClick="backtoLoginClicked"
-        android:layout_marginTop="10dp"
-        android:width="200dp"
-        android:gravity="center"/>
-
-</RelativeLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back to Login Screen"
+            android:onClick="backtoLoginClicked"
+            android:layout_marginTop="10dp"
+            android:width="200dp"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+        </LinearLayout>
+    </ScrollView>

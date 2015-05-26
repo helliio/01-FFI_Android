@@ -37,10 +37,10 @@ public class DBsyncLocation extends DBsync {
      * upload location from local to server
      */
     public void upload() {
-        new Thread(uplocadLocationThread).start();
+        new Thread(uploadLocationThread).start();
     }
 
-    Runnable uplocadLocationThread = new Runnable() {
+    Runnable uploadLocationThread = new Runnable() {
         @Override
         public void run() {
             DAOlocation daOlocation = new DAOlocation(context);
@@ -70,6 +70,7 @@ public class DBsyncLocation extends DBsync {
     /**
      * handler the message from server
      */
+    // TODO(Torgrim): Check this handler for warnings...
     private Handler handlerUploadLocation = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -103,7 +104,8 @@ public class DBsyncLocation extends DBsync {
                 e.printStackTrace();
             }
             finally {
-                daOlocation.close();
+                // TODO make these properly
+                if(daOlocation != null)daOlocation.close();
             }
         }
     }
@@ -154,16 +156,18 @@ public class DBsyncLocation extends DBsync {
                 String message = requestService.getDistinctPeriodTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                                                 String.valueOf(daOlocation.getLastDownloadedLocationReportTime(UserInfo.getUserID())),
                                                 String.valueOf(System.currentTimeMillis()));
-                saveLocationToLocalDB(stringToJsonArray(message));
-
+                JSONArray jsonArray = stringToJsonArray(message);
+                if(jsonArray != null)
+                {
+                    saveLocationToLocalDB(jsonArray);
+                }
                 MapActivity.getTimeSinceLastLocationDownload();
-
-                System.out.println("Message From Location download>>>>>>>>>>>>>>>>>>>>>>>> " + message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             finally {
-                daOlocation.close();
+                // TODO make these properly
+                if(daOlocation != null)daOlocation.close();
             }
         }
     };
@@ -189,7 +193,17 @@ public class DBsyncLocation extends DBsync {
                         lr.setDatetime(job.getLong("timestamp"));
                         lr.setLatitude(job.getDouble("latitude"));
                         lr.setLongitude(job.getDouble("longitude"));
-                        daOlocation.addLocation(lr);
+                        if(daOlocation.updateLocation(lr) == 0)
+                        {
+                            System.out.println("A new user with a new location was added to the database");
+                            daOlocation.addLocation(lr);
+                        }
+                        else
+                        {
+                            System.out.println("The user already exists in the database, so the location " +
+                            " of this user was updated");
+                        }
+
                     }
                 }
             }

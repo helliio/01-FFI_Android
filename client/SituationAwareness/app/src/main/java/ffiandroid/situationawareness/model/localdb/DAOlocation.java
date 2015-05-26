@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +42,10 @@ public class DAOlocation {
      * @param locationReport
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
+    //TODO(Torgrim): Fix that your own location is always in the database
+    // Maybe only necessary to keep unsent ones..
+    // TODO(Torgrim): Also decide if to separate your own reports from others
+    // and show your own reports in the reports view
     public long addLocation(LocationReport locationReport)  {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());
@@ -66,6 +69,29 @@ public class DAOlocation {
         }
         return result;
     }
+
+
+    public long updateLocation(LocationReport locationReport)
+    {
+        ContentValues cv = new ContentValues();
+        cv.put(DBtables.LocationTB.COLUMN_LONGITUDE, locationReport.getLongitude());
+        cv.put(DBtables.LocationTB.COLUMN_LATITUDE, locationReport.getLatitude());
+
+        if(locationReport.getDatetime() == null)
+        {
+            cv.put(DBtables.LocationTB.COLUMN_DATETIME, System.currentTimeMillis());
+        }
+        else
+        {
+            cv.put(DBtables.LocationTB.COLUMN_DATETIME, locationReport.getDatetimeLong());
+        }
+
+        String where = DBtables.LocationTB.COLUMN_USER_ID + "=?";
+        return  database.update(DBtables.LocationTB.TABLE_NAME, cv, where, new String[]{locationReport.getUserid()});
+
+    }
+
+
 
     /**
      * set new un-reported location number value to UserInfo when it changed

@@ -4,12 +4,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.widget.ImageView;
-
 import java.lang.ref.WeakReference;
 
-import ffiandroid.situationawareness.model.PhotoReport;
 
 /**
  * Created by Torgrim on 13/05/2015.

@@ -101,15 +101,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     private ArrayList<Marker> allCoworkersMarkers = new ArrayList<>();
 
-
-    // NOTE(Torgrim): Added for testing new UI drawer
-    /*
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private String[] optionsList;
-    */
-
     private static long timeSinceLastLocationUpload = 0;
     private static long timeSinceLastLocationDownload = 0;
     private static long timeOfLastLocationUpload = 0;
@@ -271,9 +262,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                 ParameterSetting.getLocationUpdateDistance(), this);
         UserInfo.addListener(this);
         formatMenuStatus();
-        /*test
 
-         */
+
         GeoPoint myLoc = new GeoPoint(myCurrentLocation);
         mMapController.setCenter(myLoc);
         StartSync.getInstance(getApplicationContext()).start();
@@ -303,6 +293,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     @Override protected void onResume() {
 
         super.onResume();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Resumed");
     }
 
 
@@ -572,7 +563,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private void statusAndSendButtonClicked() {
         Toast.makeText(this, "status send button clicked", Toast.LENGTH_SHORT).show();
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 new PerformBackgroundTask(getApplicationContext()).execute();
             }
         });
@@ -764,6 +756,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                         System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                     }
                 });
+
+                // TODO(Torgrim): Fix that only one photo from the current user shows up???
                 String info = "User: " + report.getName() + "\n";
                 info += "Latitude: " + report.getLatitude() + "\n";
                 info += "Longitude:" + report.getLongitude() + "\n";
@@ -1007,27 +1001,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         }
 
-        /*
-        mMapView.getOverlayManager().remove(topLeftMarker);
-        mMapView.getOverlayManager().remove(topLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(topRightMiddleMarker);
-        mMapView.getOverlayManager().remove(topRightMarker);
 
-        mMapView.getOverlayManager().remove(centerTopLeftMarker);
-        mMapView.getOverlayManager().remove(centerTopLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(centerTopRightMiddleMarker);
-        mMapView.getOverlayManager().remove(centerTopRightMarker);
-
-        mMapView.getOverlayManager().remove(centerBottomLeftMarker);
-        mMapView.getOverlayManager().remove(centerBottomLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(centerBottomRightMiddleMarker);
-        mMapView.getOverlayManager().remove(centerBottomRightMarker);
-
-        mMapView.getOverlayManager().remove(bottomLeftMarker);
-        mMapView.getOverlayManager().remove(bottomLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(bottomRightMiddleMarker);
-        mMapView.getOverlayManager().remove(bottomRightMarker);
-        */
         mMapView.getOverlayManager().removeAll(clusterMarkers);
         // First
         if (topLeftCount > 0) {
@@ -1217,17 +1191,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     If user presses long on the map it opens a menu where
     it can go to submit an observation about the particular point
     on the map through the report page
+    // TODO(Torgrim): Fix so that the latitude and longitude always have E6
      */ public boolean longPressHelper(GeoPoint p) {
 
         registerForContextMenu(mMapView);
         newReportLocation = new Location("");
-        newReportLocation.setLatitude(p.getLatitude());
-        newReportLocation.setLongitude(p.getLongitude());
+        newReportLocation.setTime(System.currentTimeMillis());
+        newReportLocation.setLatitude((p.getLatitudeE6() / 1000000.000000f));
+        newReportLocation.setLongitude((p.getLongitudeE6() / 1000000.000000f));
         openContextMenu(mMapView);
 
 
-        Toast.makeText(this, "Long press on (" + p.getLatitude() + "," + p.getLongitude() + ")", Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(this, "Long press on (" + (p.getLatitudeE6() / 1000000.000000f) + "," + (p.getLongitudeE6() / 1000000.000000f) + ")", Toast.LENGTH_SHORT)
+        .show();
         return false;
     }
 
@@ -1260,10 +1236,40 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         }
     };
 
-    @Override protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Paused");
+    }
+
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Restarted");
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Stopped");
+    }
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view started");
+    }
+
+
+
+
+    @Override protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Map Activity Destroyed");
     }
 
     @Override public boolean onPrepareOptionsMenu(Menu menu) {

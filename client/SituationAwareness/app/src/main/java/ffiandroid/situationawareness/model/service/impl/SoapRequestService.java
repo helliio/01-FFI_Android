@@ -58,7 +58,6 @@ public class SoapRequestService implements RequestService {
     }
 
 
-    // TODO(Torgrim): Adding this to test new location method that just gets one location
     // report per team member
     @Override
     public String getDistinctPeriodTeamLocations(String username, String deviceId, String startTime, String endTime) {

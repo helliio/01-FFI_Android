@@ -25,6 +25,5 @@ public interface RequestService {
     public String getPhoto(String username, String deviceId, String picId);
 
 
-    // TODO(Torgrim): Added for testing
     public String getDistinctPeriodTeamLocations(String username, String deviceId, String startTime, String endTime);
 }

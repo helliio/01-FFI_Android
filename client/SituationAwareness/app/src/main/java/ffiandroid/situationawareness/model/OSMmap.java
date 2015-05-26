@@ -2,10 +2,6 @@ package ffiandroid.situationawareness.model;
 
 import android.content.Context;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;

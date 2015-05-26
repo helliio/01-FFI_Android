@@ -8,6 +8,7 @@ import edu.ntnu.sair.util.Constant;
 import org.apache.cxf.annotations.GZIP;
 import org.apache.cxf.interceptor.OutInterceptors;
 import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +63,14 @@ public class UserServiceImpl implements UserService {
         calendar.add(Calendar.HOUR_OF_DAY, Constant.LOGIN_PERIOD);
         member.setValidTime(calendar);
         this.memberDao.update(member);
-        return new Result("login", "success").toString();
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put("name", member.getName());
+            return new Result("login", "success", "JSONObject", obj.toString()).toString();
+        }catch (Exception e)
+        {
+            return new Result("login", "Server Error").toString();
+        }
     }
 
     @Transactional

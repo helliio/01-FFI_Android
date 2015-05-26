@@ -54,6 +54,7 @@ public class DBsyncPhoto extends DBsync {
                         .sendPhotoReport(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportR.getDatetimeLong(),
                                 photoReportR.getLatitude(), photoReportR.getLongitude(), 0, file,
                                 photoReportR.getTitle(), photoReportR.getDescription());
+                System.out.println("ID1 ========================= Time the report was actually sent to the server: " + System.currentTimeMillis());
                 Log.i(this.getClass().getSimpleName(), "--upload one photo -- " + message);
                 if (message != null) {
                     Message msg = handlerUploadPhoto.obtainMessage();
@@ -72,8 +73,7 @@ public class DBsyncPhoto extends DBsync {
         }
         Looper.loop();
     }
-    //    };
-
+    // TODO(Torgrim): check this handler for warnings...
     private Handler handlerUploadPhoto = new Handler() {
         @Override public void handleMessage(Message msg) {
             if (msg.obj.toString().equalsIgnoreCase("success")) {
@@ -117,7 +117,6 @@ public class DBsyncPhoto extends DBsync {
                                 String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
                                 String.valueOf(System.currentTimeMillis()));
                 savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
-
                 MapActivity.getTimeSinceLastPhotoDownload();
 
             } catch (Exception e) {

@@ -100,6 +100,7 @@ public class DBsyncTextReport extends DBsync {
     /**
      * an Handler to handler feedback message from server
      */
+    // TODO(Torgrim): Check this handler for warnings..
     private Handler handlerUploadLocation = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -161,7 +162,7 @@ public class DBsyncTextReport extends DBsync {
             try {
                 daOtextReport = new DAOtextReport(context);
                 String message = requestService.getPeriodTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
-                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime(UserInfo.getUserID())),
+                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime()),
                         String.valueOf(System.currentTimeMillis()));
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);

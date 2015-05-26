@@ -167,14 +167,13 @@ public class DAOtextReport {
     }
 
     // NOTE(Torgrim): Added to make sure only not already downloaded text reports are downloaded
-    public long getLastDownloadedTextReportTime(String myUserID) {
+    public long getLastDownloadedTextReportTime() {
         long lastTime;
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.TextReportTB.COLUMN_ISREPORTED + " = ? ", new String[]{"1"}, null, null,
                 DBtables.TextReportTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
-
             lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME));
         } else {
             lastTime = 0;

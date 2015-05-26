@@ -43,6 +43,7 @@ public class Login extends ActionBarActivity {
     public static final String PREFS_NAME = "MyPrefsFile";
     protected static final String PREF_USERNAME = "username";
     protected static final String PREF_PASSWORD = "password";
+    protected static final String PREF_NAME = "name";
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +76,6 @@ public class Login extends ActionBarActivity {
      * @param view
      */
     public void loginClicked(View view) {
-        //        Toast.makeText(this, "Login ....." + hasinput(), Toast.LENGTH_SHORT).show();
         if (hasinput()) {
             login();
         } else {
@@ -119,13 +119,16 @@ public class Login extends ActionBarActivity {
                     JSONObject jsonMessage = new JSONObject(message);
 
                     if (message != null && jsonMessage.get("desc").equals("success")) {
+                        String name = new JSONObject(jsonMessage.getString("obj")).getString("name");
+                        UserInfo.setName(name);
                         UserInfo.setUserID(userName);
-                        rememberMe(userName, userPass);
+                        rememberMe(userName, userPass, name);
                         toMapWindow();
                     } else {
                         Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 Looper.loop();
             } else {
@@ -141,9 +144,9 @@ public class Login extends ActionBarActivity {
      * @param userName
      * @param userPass
      */
-    private void rememberMe(String userName, String userPass) {
+    private void rememberMe(String userName, String userPass, String name) {
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(PREF_USERNAME, userName)
-                .putString(PREF_PASSWORD, userPass).commit();
+                .putString(PREF_PASSWORD, userPass).putString(PREF_NAME, name).commit();
     }
 
     /**
@@ -152,7 +155,7 @@ public class Login extends ActionBarActivity {
     private void autoLogin() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String username = pref.getString(PREF_USERNAME, null);
-        //        String password = pref.getString(PREF_PASSWORD, null);
+        String name = pref.getString(PREF_NAME, null);
         if (username != null) {
             UserInfo.setUserID(username);
             toMapWindow();

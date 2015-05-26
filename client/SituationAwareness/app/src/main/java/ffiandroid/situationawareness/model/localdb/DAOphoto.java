@@ -172,10 +172,6 @@ public class DAOphoto {
      */
     public PhotoReport getOneNotReportedPhoto(String myUserID) {
         PhotoReport photoReport;
-        //        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null,
-        //                DBtables.PhotoTB.COLUMN_USER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-        //                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-
         // NOTE(Torgrim):  fixing selection of reports not sent to server so it only selects this users unsent
         // reports...
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null,
@@ -183,10 +179,6 @@ public class DAOphoto {
                 new String[]{Coder.encryptMD5(myUserID), "0"}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
 
-        //        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, DBtables.PhotoTB
-        // .COLUMN_ISREPORTED + " =?",
-        //                new String[]{"0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-        String coursorString = cursor.toString();
         cursor.moveToFirst();
 
         if (!cursor.isAfterLast()) {
@@ -209,11 +201,6 @@ public class DAOphoto {
      */
     public PhotoReport getOneNotDownloadedPhoto(String myUserID) {
         PhotoReport photoReport;
-        /*
-        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-                */
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
                 DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
                 new String[]{"0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
@@ -233,13 +220,9 @@ public class DAOphoto {
      */
     public long getLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
-        /*
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ?", new String[]{"1"}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-                */
-        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-               null, null, null, null,DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
 
@@ -302,9 +285,6 @@ public class DAOphoto {
                 new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME);
         int count = cursor.getCount();
         cursor.close();
-//        System.out
-        //                .println(this.getClass().getSimpleName() + "------" + count + " --" +
-        // getOneNotReportedPhoto(myUserID));
         return count;
     }
 

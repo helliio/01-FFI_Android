@@ -45,7 +45,9 @@ public abstract class DBsync {
     public JSONArray stringToJsonArray(String message) {
         try {
             JSONObject job = new JSONObject(message);
-            return new JSONArray(job.getString("obj"));
+            if(job.getString("obj").length() > 0) {
+                return new JSONArray(job.getString("obj"));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
