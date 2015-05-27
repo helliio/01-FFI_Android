@@ -69,6 +69,36 @@
             android:singleLine="true"/>
 
 
+            <EditText
+                android:id="@+id/register_server_ip_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Server IP Address"
+                android:enabled="false"
+                android:gravity="center"
+                android:layout_gravity="center"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/register_default_server_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Use Default Address"/>
+                <CheckBox
+                    android:id="@+id/register_default_server_ip_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:checked="true"
+                    android:onClick="onIPCheckClicked"
+                    android:layout_toRightOf="@+id/register_default_server_ip" />
+            </RelativeLayout>
+
+
 
         <Button
             android:layout_width="wrap_content"

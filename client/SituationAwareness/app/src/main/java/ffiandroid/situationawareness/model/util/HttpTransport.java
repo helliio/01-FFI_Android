@@ -338,6 +338,8 @@ public class HttpTransport extends Transport {
     }
 
     public ServiceConnection getServiceConnection() throws IOException {
-        return new ServiceConnectionSE(proxy, url, timeout);
+        ServiceConnection sc = new ServiceConnectionSE(proxy, url, timeout);
+        System.out.println(sc);
+        return sc;
     }
 }

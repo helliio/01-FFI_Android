@@ -46,6 +46,7 @@ public class Login extends ActionBarActivity {
     protected static final String PREF_USERNAME = "username";
     protected static final String PREF_PASSWORD = "password";
     protected static final String PREF_NAME = "name";
+    protected static final String PREF_SERVERIP = "serverIP";
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +54,12 @@ public class Login extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         UserInfo.setMyAndroidID(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         autoLogin();
+        if(Register.server_ip != Constant.DEFAULT_SERVICE_URL)
+        {
+            ((CheckBox) findViewById(R.id.server_ip_checkbox)).setChecked(false);
+            ((EditText) findViewById(R.id.server_ip_edit_text)).setText(Register.server_ip);
+            findViewById(R.id.server_ip_edit_text).setEnabled(true);
+        }
         softkeyboardDone();
     }
 
@@ -151,7 +158,7 @@ public class Login extends ActionBarActivity {
                         System.out.println(Constant.SERVICE_URL);
                         UserInfo.setName(name);
                         UserInfo.setUserID(userName);
-                        rememberMe(userName, userPass, name);
+                        rememberMe(userName, userPass, name, Constant.SERVICE_URL);
                         toMapWindow();
                     } else {
                         Toast.makeText(getBaseContext(), "Login failed, please try again !", Toast.LENGTH_SHORT).show();
@@ -173,9 +180,9 @@ public class Login extends ActionBarActivity {
      * @param userName
      * @param userPass
      */
-    private void rememberMe(String userName, String userPass, String name) {
+    private void rememberMe(String userName, String userPass, String name, String serverIP) {
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(PREF_USERNAME, userName)
-                .putString(PREF_PASSWORD, userPass).putString(PREF_NAME, name).commit();
+                .putString(PREF_PASSWORD, userPass).putString(PREF_NAME, name).putString(PREF_SERVERIP, serverIP).commit();
     }
 
     /**
@@ -185,8 +192,11 @@ public class Login extends ActionBarActivity {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String username = pref.getString(PREF_USERNAME, null);
         String name = pref.getString(PREF_NAME, null);
-        if (username != null) {
+        String serverIP = pref.getString(PREF_SERVERIP, null);
+        if (username != null && name != null && serverIP != null) {
             UserInfo.setUserID(username);
+            UserInfo.setName(name);
+            Constant.SERVICE_URL = serverIP;
             toMapWindow();
         }
     }

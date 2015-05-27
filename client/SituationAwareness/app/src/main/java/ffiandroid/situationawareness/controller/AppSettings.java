@@ -11,12 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.ParameterSetting;
 import ffiandroid.situationawareness.model.StatusListener;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.util.Constant;
 
 /**
  * This AppSettings Class is part of project: Situation Awareness
@@ -29,6 +31,7 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
     private EditText autoSyncTime;
     private EditText locationUpdateTime;
     private EditText locationUpdateDistance;
+    private EditText serverIPAddress;
     private String menuStatus;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,10 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
         autoSyncTime = (EditText) findViewById(R.id.set_auto_sync_minute);
         locationUpdateTime = (EditText) findViewById(R.id.set_location_update_second);
         locationUpdateDistance = (EditText) findViewById(R.id.set_location_update_distance);
+        serverIPAddress = (EditText) findViewById(R.id.server_ip_settings);
+
+        ((TextView)(findViewById(R.id.current_server_ip))).setText("Current Server IP: " + Constant.SERVICE_URL);
+
         initParameterSettings();
         formatMenuStatus();
     }
@@ -64,6 +71,10 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
                 ParameterSetting.setAutoSyncTime(synctime);
                 ParameterSetting.setLocationUpdateTime(locauptime);
                 ParameterSetting.setLocationUpdateDistance(locaupdis);
+                getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_SERVERIP,
+                        serverIPAddress.getText().toString()).commit();
+                Constant.SERVICE_URL = "http://" + serverIPAddress.getText().toString() + ":8080/";
+                ((TextView)findViewById(R.id.current_server_ip)).setText("Current Server IP: " + Constant.SERVICE_URL);
                 Toast.makeText(this, "settings saved !", Toast.LENGTH_SHORT).show();
                 initParameterSettings();
             }
@@ -94,17 +105,11 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
             case R.id.menu_item_report_view:
                 startActivity(new Intent(this, ReportView.class));
                 return true;
-            case R.id.menu_item_photo_view:
-                startActivity(new Intent(this, PhotoView.class));
-                return true;
             case R.id.menu_item_logout:
                 rememberMeDelete();
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction("ACTION_LOGOUT");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

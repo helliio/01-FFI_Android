@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.util.Coder;
 
@@ -114,7 +116,7 @@ public class DAOphoto {
      */
     public List<PhotoReport> getAllPhotos() {
         List<PhotoReport> photoReports = new ArrayList<>();
-        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, null, null, null, null,
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS, null, null, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -122,6 +124,7 @@ public class DAOphoto {
             photoReports.add(photoReport);
             cursor.moveToNext();
         }
+        System.out.println("Photo Reports to be displayed>>>>>>>>>>>>>>>> " + photoReports);
         cursor.close();
         return photoReports;
     }
