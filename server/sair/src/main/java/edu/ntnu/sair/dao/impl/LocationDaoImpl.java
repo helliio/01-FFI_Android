@@ -95,6 +95,8 @@ public class LocationDaoImpl implements LocationDao {
         return q.list();
     }
 
+
+    // NOTE(Torgrim): Added testing for checkbit here..
     @Override
     public List<Location> getByTeamLatest(String teamId) {
         this.session = this.sessionFactory.getCurrentSession();
@@ -103,9 +105,11 @@ public class LocationDaoImpl implements LocationDao {
                 " order by id asc");
         Query q2 = this.session.createQuery("from Location l" +
                 " where l.member.teamId = '" + teamId + "'" +
+                " and l.checkBit < " + 1  +
                 " order by l.member.id asc, l.clientTimestamp desc");
         List list1 = q1.list();
         Location temp;
+        System.out.println(q2);
         List<Location> list = new ArrayList<>();
         Iterator iterator = q2.list().iterator();
         while (iterator.hasNext()) {
@@ -119,11 +123,13 @@ public class LocationDaoImpl implements LocationDao {
         return list;
     }
 
+    // NOTE(Torgrim): Added testing for checkbit here..
     @Override
     public List<Location> getByTeamPeriod(String teamId, long startTime, long endTime) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from Location l" +
                 " where l.member.teamId = '" + teamId + "'" +
+                " and l.checkBit < " + 1  +
                 " and l.clientTimestamp > :startTime and l.clientTimestamp < :endTime" +
                 " order by l.clientTimestamp desc, l.member.id asc");
         Calendar calendar1 = Calendar.getInstance();

@@ -54,6 +54,10 @@ public class ReportServiceImpl implements ReportService {
         location.setMember(this.memberDao.getByUsername(username));
         location.setLongitude(Double.valueOf(longitude));
         location.setLatitude(Double.valueOf(latitude));
+
+        // NOTE(Torgrim): Testing separating location reports...
+        location.setCheckBit(Constant.FALSE);
+
         Calendar calendar = Calendar.getInstance();
         location.setServerTimestamp(calendar);
         Calendar calendar2 = Calendar.getInstance();
@@ -77,6 +81,10 @@ public class ReportServiceImpl implements ReportService {
                 JSONObject object = array.getJSONObject(i);
                 Location location = new Location();
                 location.setMember(this.memberDao.getByUsername(username));
+
+                // NOTE(Torgrim): Testing separating location reports...
+                location.setCheckBit(Constant.FALSE);
+
                 location.setLongitude((double) object.get("longitude"));
                 location.setLatitude((double) object.get("latitude"));
                 Calendar calendar = Calendar.getInstance();
@@ -105,6 +113,10 @@ public class ReportServiceImpl implements ReportService {
         }
         Location location = new Location();
         location.setMember(this.memberDao.getByUsername(username));
+
+        // NOTE(Torgrim): Testing separating location reports...
+        location.setCheckBit(Constant.TRUE);
+
         location.setLongitude(Double.valueOf(longitude));
         location.setLatitude(Double.valueOf(latitude));
         Calendar calendar = Calendar.getInstance();
@@ -112,9 +124,13 @@ public class ReportServiceImpl implements ReportService {
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTimeInMillis(Long.valueOf(sendingTime));
         location.setClientTimestamp(calendar2);
+
+        // NOTE(Torgrim): Do we want to add a separate row in the location table for each TextReport?
         this.locationDao.add(location);
 
         TextReport textReport = new TextReport();
+
+
         textReport.setLocation(location);
         textReport.setContent(content);
         this.textReportDao.add(textReport);
@@ -135,6 +151,10 @@ public class ReportServiceImpl implements ReportService {
                 JSONObject object = array.getJSONObject(i);
                 Location location = new Location();
                 location.setMember(this.memberDao.getByUsername(username));
+
+                // NOTE(Torgrim): Testing separating location reports...
+                location.setCheckBit(Constant.TRUE);
+
                 location.setLongitude((double) object.get("longitude"));
                 location.setLatitude((double) object.get("latitude"));
                 Calendar calendar = Calendar.getInstance();
@@ -167,6 +187,10 @@ public class ReportServiceImpl implements ReportService {
         }
         Location location = new Location();
         location.setMember(this.memberDao.getByUsername(username));
+
+        // NOTE(Torgrim): Testing separating location reports...
+        location.setCheckBit(Constant.TRUE);
+
         location.setLongitude(Double.valueOf(longitude));
         location.setLatitude(Double.valueOf(latitude));
         Calendar calendar = Calendar.getInstance();
@@ -174,14 +198,14 @@ public class ReportServiceImpl implements ReportService {
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTimeInMillis(Long.valueOf(sendingTime));
         location.setClientTimestamp(calendar2);
+
+        // NOTE(Torgrim): Do we want to add a separate row in the location table for each photoReport??
         this.locationDao.add(location);
 
         PhotoReport photoReport = new PhotoReport();
         photoReport.setLocation(location);
         // NOTE(Torgrim): Set title...
         photoReport.setTitle(title);
-
-
         photoReport.setDirection(Integer.valueOf(direction));
         photoReport.setName(username + location.getClientTimestamp().getTimeInMillis());
         photoReport.setExtension(extension);
@@ -203,12 +227,13 @@ public class ReportServiceImpl implements ReportService {
         String result = "";
         for(Location location : locationReports)
         {
-            result += "User             >>>>    " + location.getMember().getName() + "<br>";
-            result += "ID               >>>>    " + location.getId() + "<br>";
-            result += "Latitude         >>>>    " + location.getLatitude() + "<br>";
-            result += "Longitude        >>>>    " + location.getLongitude() + "<br>";
-            result += "Client timestamp >>>>    " + location.getClientTimestamp().toString() + "<br>";
-            result += "Server timestamp >>>>    " + location.getServerTimestamp().toString() + "<br><br>";
+            result += "User                 >>>>    " + location.getMember().getName() + "<br>";
+            result += "ID                   >>>>    " + location.getId() + "<br>";
+            result += "Latitude             >>>>    " + location.getLatitude() + "<br>";
+            result += "Longitude            >>>>    " + location.getLongitude() + "<br>";
+            result += "Client timestamp     >>>>    " + location.getClientTimestamp().getTimeInMillis() + "<br>";
+            result += "Server timestamp     >>>>    " + location.getServerTimestamp().getTimeInMillis() + "<br>";
+            result += "Check bit            >>>>    " + location.getCheckBit() + "<br>";
 
         }
 
@@ -217,11 +242,12 @@ public class ReportServiceImpl implements ReportService {
         List<TextReport> textReports = textReportDao.getAll();
         for (TextReport textReport : textReports)
         {
-            result += "User         >>>>    " +textReport.getLocation().getMember().getName() + "<br>";
-            result += "ID           >>>>    " + textReport.getId() + "<br>";
-            result += "Content      >>>>    " + textReport.getContent() + "<br>";
-            result += "Latitude     >>>>    " +textReport.getLocation().getLatitude() + "<br>";
-            result += "Longitude    >>>>    " + textReport.getLocation().getLongitude() + "<br><br>";
+            result += "User                 >>>>    " +textReport.getLocation().getMember().getName() + "<br>";
+            result += "ID                   >>>>    " + textReport.getId() + "<br>";
+            result += "Content              >>>>    " + textReport.getContent() + "<br>";
+            result += "Latitude             >>>>    " +textReport.getLocation().getLatitude() + "<br>";
+            result += "Longitude            >>>>    " + textReport.getLocation().getLongitude() + "<br>";
+            result += "Check bit            >>>>    " + textReport.getLocation().getCheckBit() + "<br>";
         }
 
         result += "============================== End of text Reports ============================================";
@@ -230,16 +256,17 @@ public class ReportServiceImpl implements ReportService {
         List<PhotoReport> photoReports = photoReportDao.getAll();
         for (PhotoReport photoReport : photoReports)
         {
-            result += "User         >>>>    " + photoReport.getLocation().getMember().getName() + "<br>";
-            result += "ID           >>>>    " + photoReport.getId() + "<br>";
-            result += "Name         >>>>    " + photoReport.getName() + "<br>";
-            result += "Title        >>>>    " + photoReport.getTitle() + "<br>";
-            result += "Description  >>>>    " + photoReport.getDescription() + "<br>";
-            result += "Path         >>>>    " + photoReport.getPath() + "<br>";
-            result += "Extension    >>>>    " + photoReport.getExtension() + "<br>";
-            result += "Direction    >>>>    " + photoReport.getDirection() + "<br>";
-            result += "Latitude     >>>>    " + photoReport.getLocation().getLatitude() + "<br>";
-            result += "Longitude    >>>>    " + photoReport.getLocation().getLongitude() + "<br><br>";
+            result += "User                 >>>>    " + photoReport.getLocation().getMember().getName() + "<br>";
+            result += "ID                   >>>>    " + photoReport.getId() + "<br>";
+            result += "Name                 >>>>    " + photoReport.getName() + "<br>";
+            result += "Title                >>>>    " + photoReport.getTitle() + "<br>";
+            result += "Description          >>>>    " + photoReport.getDescription() + "<br>";
+            result += "Path                 >>>>    " + photoReport.getPath() + "<br>";
+            result += "Extension            >>>>    " + photoReport.getExtension() + "<br>";
+            result += "Direction            >>>>    " + photoReport.getDirection() + "<br>";
+            result += "Latitude             >>>>    " + photoReport.getLocation().getLatitude() + "<br>";
+            result += "Longitude            >>>>    " + photoReport.getLocation().getLongitude() + "<br>";
+            result += "Check bit            >>>>    " + photoReport.getLocation().getCheckBit() + "<br>";
         }
 
         result += "============================== End of photo Reports ============================================";

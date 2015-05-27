@@ -95,6 +95,7 @@ public class TextReportDaoImpl implements TextReportDao {
         return q.list();
     }
 
+    // NOTE(Torgrim): Added timeoflastrequest here for testing..
     @Override
     public List<TextReport> getByTeamLatest(String teamId) {
         this.session = this.sessionFactory.getCurrentSession();
@@ -107,6 +108,7 @@ public class TextReportDaoImpl implements TextReportDao {
         List list1 = q1.list();
         TextReport temp;
         List<TextReport> list = new ArrayList<>();
+        System.out.println("List 2: " + q2);
         Iterator iterator = q2.list().iterator();
         while (iterator.hasNext()) {
             temp = (TextReport) iterator.next();

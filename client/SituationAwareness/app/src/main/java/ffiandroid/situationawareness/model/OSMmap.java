@@ -22,23 +22,7 @@ import ffiandroid.situationawareness.model.localdb.DAOtextReport;
  * Responsible for this file: GuoJunjun
  */
 public class OSMmap {
-    /**
-     * @param context
-     * @return a markers Overlay Item Array with my coworkers location
-     */
-    public ArrayList<OverlayItem> getCoworkerMarkersOverlay(Context context) {
-        ArrayList<OverlayItem> markersOverlayItemArray = new ArrayList();
-        DAOlocation daOlocation = new DAOlocation(context);
-        List<LocationReport> locationReports = daOlocation.getLatestCoWorkerLocations(UserInfo.getUserID());
-        for (LocationReport lr : locationReports) {
-            markersOverlayItemArray.add(new OverlayItem(lr.getUserid(), lr.getUserid(),
-                    new GeoPoint(lr.getLatitude(), lr.getLongitude())));
-            System.out.println("id: " + lr.getUserid() + ".  Lat:  " + lr.getLatitude() + "  Long:  " + lr.getLongitude());
-        }
-        System.out.println( "size " + locationReports.size());
-        daOlocation.close();
-        return markersOverlayItemArray;
-    }
+
 
 
     /*
@@ -48,9 +32,21 @@ public class OSMmap {
 
     public ArrayList<LocationReport> getAllCoworkersLocationReports(Context context)
     {
-        DAOlocation daoLocation = new DAOlocation(context);
-        ArrayList<LocationReport> locationReports = (ArrayList)daoLocation.getCoWorkerLocations(UserInfo.getUserID());
-        daoLocation.close();
+        DAOlocation daoLocation = null;
+        ArrayList<LocationReport> locationReports = null;
+        try
+        {
+            daoLocation = new DAOlocation(context);
+            locationReports = (ArrayList)daoLocation.getCoWorkerLocations(UserInfo.getUserID());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            daoLocation.close();
+        }
         return locationReports;
 
     }
@@ -59,9 +55,20 @@ public class OSMmap {
     // gets all coworkersTextReports
     public List<TextReport> getAllCoworkersTextReports(Context context)
     {
-        DAOtextReport doaTextReport = new DAOtextReport(context);
-        List<TextReport> textReports =  doaTextReport.getAllTextReports();
-        doaTextReport.close();
+        DAOtextReport doaTextReport = null;
+        List<TextReport> textReports = null;
+        try
+        {
+            doaTextReport = new DAOtextReport(context);
+            textReports = doaTextReport.getAllTextReports();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            doaTextReport.close();
+        }
         return textReports;
 
     }
@@ -69,9 +76,39 @@ public class OSMmap {
 
     public List<PhotoReport> getAllCoworkersPhotoReports(Context context)
     {
-        DAOphoto daoPhoto = new DAOphoto(context);
-        List<PhotoReport> photoReports = daoPhoto.getCoWorkerPhotos(UserInfo.getUserID());
-        daoPhoto.close();
+        DAOphoto daoPhoto = null;
+        List<PhotoReport> photoReports = null;
+        try
+        {
+            daoPhoto = new DAOphoto(context);
+            photoReports = daoPhoto.getCoWorkerPhotos(UserInfo.getUserID());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daoPhoto.close();
+        }
+        return photoReports;
+    }
+
+    public List<PhotoReport> getAllPhotoReports(Context context)
+    {
+        DAOphoto daoPhoto = null;
+        List<PhotoReport> photoReports = null;
+        try
+        {
+            daoPhoto = new DAOphoto(context);
+            photoReports = daoPhoto.getAllPhotos();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daoPhoto.close();
+        }
         return photoReports;
     }
 

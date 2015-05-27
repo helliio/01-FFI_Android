@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.ParameterSetting;
+import ffiandroid.situationawareness.model.StatusListener;
+import ffiandroid.situationawareness.model.UserInfo;
 
 /**
  * This AppSettings Class is part of project: Situation Awareness
@@ -23,13 +25,13 @@ import ffiandroid.situationawareness.model.ParameterSetting;
  * <p/>
  * responsible for this file: GuoJunjun & Simen
  */
-public class AppSettings extends ActionBarActivity {
+public class AppSettings extends ActionBarActivity implements StatusListener {
     private EditText autoSyncTime;
     private EditText locationUpdateTime;
     private EditText locationUpdateDistance;
+    private String menuStatus;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_settings);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
@@ -37,6 +39,7 @@ public class AppSettings extends ActionBarActivity {
         locationUpdateTime = (EditText) findViewById(R.id.set_location_update_second);
         locationUpdateDistance = (EditText) findViewById(R.id.set_location_update_distance);
         initParameterSettings();
+        formatMenuStatus();
     }
 
     private void initParameterSettings() {
@@ -71,15 +74,13 @@ public class AppSettings extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_app_settings, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_report:
                 startActivity(new Intent(this, Report.class));
@@ -122,9 +123,8 @@ public class AppSettings extends ActionBarActivity {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        @Override public void onReceive(Context context, Intent intent) {
+            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };
@@ -133,4 +133,53 @@ public class AppSettings extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
+    }
+
 }

@@ -96,12 +96,12 @@ public class UserServiceImpl implements UserService {
         String result = "";
         for(Member member : members)
         {
-            result += "Name         >>>>    " +  member.getName() + "<br>";
-            result += "Username     >>>>    " + member.getUsername() + "<br>";
-            result += "ID           >>>>    " + member.getId() + "<br>";
-            result += "UUID         >>>>    " + member.getUuid() + "<br>";
-            result += "Team ID      >>>>    " + member.getTeamId() + "<br>";
-            result += "Valid time   >>>>    " + member.getValidTime() + "<br><br><br>";
+            result += "Name                             >>>>    " +  member.getName() + "<br>";
+            result += "Username                         >>>>    " + member.getUsername() + "<br>";
+            result += "ID                               >>>>    " + member.getId() + "<br>";
+            result += "UUID                             >>>>    " + member.getUuid() + "<br>";
+            result += "Team ID                          >>>>    " + member.getTeamId() + "<br>";
+            result += "Valid time                       >>>>    " + member.getValidTime() + "<br><br><br>";
         }
 
         return result;

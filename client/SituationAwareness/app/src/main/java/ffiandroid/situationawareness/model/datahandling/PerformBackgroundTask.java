@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import java.net.URL;
 
@@ -20,7 +21,7 @@ import ffiandroid.situationawareness.model.localdb.DAOtextReport;
  * <p/>
  * Responsible for this file: GuoJunjun
  */
-public class PerformBackgroundTask extends AsyncTask {
+public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
     private Context context;
     private DBsyncPhoto photo;
     private DBsync report;
@@ -33,7 +34,7 @@ public class PerformBackgroundTask extends AsyncTask {
         location = new DBsyncLocation(context);
     }
 
-    @Override protected Object doInBackground(Object[] params) {
+    protected String doInBackground(Void... params) {
         if (isOnline()) {
             report.upload();
             location.upload();
@@ -43,32 +44,44 @@ public class PerformBackgroundTask extends AsyncTask {
             downloadPhotoHandling();
         }
         updateReportStatus();
-        return null;
+        return "test";
     }
 
     /**
      * update report status
      */
     private void updateReportStatus() {
-        DAOlocation daOlocation = new DAOlocation(context);
-        DAOphoto daOphoto = new DAOphoto(context);
-        DAOtextReport daOtextReport = new DAOtextReport(context);
+        DAOlocation daOlocation = null;
+        DAOphoto daOphoto = null;
+        DAOtextReport daOtextReport = null;
+        try {
 
-        int locationCount = daOlocation.getMyNOTReportedItemCount(UserInfo.getUserID());
-        if (locationCount != UserInfo.getUnReportedLocations()) {
-            UserInfo.setUnReportedLocations(locationCount);
+            daOlocation = new DAOlocation(context);
+            daOphoto = new DAOphoto(context);
+            daOtextReport = new DAOtextReport(context);
+
+            int locationCount = daOlocation.getMyNOTReportedItemCount(UserInfo.getUserID());
+            if (locationCount != UserInfo.getUnReportedLocations()) {
+                UserInfo.setUnReportedLocations(locationCount);
+            }
+            int textCount = daOtextReport.getMyNOTReportedItemCount(UserInfo.getUserID());
+            if (textCount != UserInfo.getUnReportedText()) {
+                UserInfo.setUnReportedText(textCount);
+            }
+            int photoCount = daOphoto.getMyNOTReportedItemCount(UserInfo.getUserID());
+            if (photoCount != UserInfo.getUnReportedPhotos()) {
+                UserInfo.setUnReportedPhotos(photoCount);
+            }
         }
-        int textCount = daOtextReport.getMyNOTReportedItemCount(UserInfo.getUserID());
-        if (textCount != UserInfo.getUnReportedText()) {
-            UserInfo.setUnReportedText(textCount);
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
-        int photoCount = daOphoto.getMyNOTReportedItemCount(UserInfo.getUserID());
-        if (photoCount != UserInfo.getUnReportedPhotos()) {
-            UserInfo.setUnReportedPhotos(photoCount);
+        finally {
+            daOlocation.close();
+            daOphoto.close();
+            daOtextReport.close();
         }
-        daOlocation.close();
-        daOphoto.close();
-        daOtextReport.close();
     }
 
     /**
@@ -84,11 +97,21 @@ public class PerformBackgroundTask extends AsyncTask {
      * check if there is network connection and un-send photos, if true send one
      */
     public void reportUnsendPhotos() {
-        DAOphoto daOphoto = new DAOphoto(context);
-        while (isOnline() && daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
-            photo.upload();
+        DAOphoto daOphoto = null;
+        try {
+            daOphoto = new DAOphoto(context);
+            while (isOnline() && daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                photo.upload();
+            }
         }
-        daOphoto.close();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+
+            daOphoto.close();
+        }
     }
 
     /**
@@ -98,7 +121,10 @@ public class PerformBackgroundTask extends AsyncTask {
     private void downloadPhotoHandling() {
         // NOTE(Torgrim): Added for debugging
         photo.download();
-        new DownloadFilesTask().doInBackground();
+        if(Build.VERSION.SDK_INT >= 11)
+            new DownloadFilesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        else
+            new DownloadFilesTask().doInBackground();
     }
 
     /**
@@ -111,29 +137,49 @@ public class PerformBackgroundTask extends AsyncTask {
      * connection</li>
      */
     private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
-        protected Long doInBackground(URL... urls) {
-            DAOphoto daOphoto = new DAOphoto(context);
-            PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
-            if (isOnline()) {
-                if (photoReport != null) {
-                    photo.downloadOnePhoto(photoReport);
-                } else if (daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
-                    photo.upload();
+        @Override protected Long doInBackground(URL... urls) {
+            DAOphoto daOphoto = null;
+            try {
+                daOphoto = new DAOphoto(context);
+                PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+                if (isOnline()) {
+                    if (photoReport != null) {
+                        photo.downloadOnePhoto(photoReport);
+                    }
+                    else if (daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                        photo.upload();
+                    }
                 }
             }
-            daOphoto.close();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally {
+                daOphoto.close();
+            }
             return null;
         }
 
         protected void onPostExecute(Long result) {
-            DAOphoto daOphoto = new DAOphoto(context);
-            PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
-            if (isOnline()) {
-                if (photoReport != null || daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
-                    doInBackground();
+            DAOphoto daOphoto = null;
+            try {
+                daOphoto = new DAOphoto(context);
+                PhotoReport photoReport = daOphoto.getOneNotDownloadedPhoto(UserInfo.getUserID());
+                if (isOnline()) {
+                    if (photoReport != null || daOphoto.getOneNotReportedPhoto(UserInfo.getUserID()) != null) {
+                        //doInBackground();
+                        System.out.println("This is where we would send a request for a second photo...");
+                    }
                 }
             }
-            daOphoto.close();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally {
+                daOphoto.close();
+            }
         }
     }
 

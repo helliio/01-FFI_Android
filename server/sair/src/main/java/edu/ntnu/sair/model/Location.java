@@ -17,6 +17,17 @@ public class Location {
     private Calendar clientTimestamp;
     private Calendar serverTimestamp;
 
+    private Integer checkBit = 0;
+
+    @Column(name = "checkbit")
+    public Integer getCheckBit() {
+        return checkBit;
+    }
+
+    public void setCheckBit(Integer checkBit) {
+        this.checkBit = checkBit;
+    }
+
     @Id
     @GeneratedValue
     public long getId() {
@@ -66,6 +77,7 @@ public class Location {
     public Calendar getServerTimestamp() {
         return serverTimestamp;
     }
+
 
     public void setServerTimestamp(Calendar serverTimestamp) {
         this.serverTimestamp = serverTimestamp;

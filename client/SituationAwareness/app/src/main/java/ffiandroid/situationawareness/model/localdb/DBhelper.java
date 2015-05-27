@@ -22,6 +22,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TEXTREPORT_TABLE = "CREATE TABLE " + DBtables.TextReportTB.TABLE_NAME + " (" +
             DBtables.TextReportTB.COLUMN_USER_ID + TEXT_TYPE + COMMA_SEP +
+            DBtables.TextReportTB.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
             DBtables.TextReportTB.COLUMN_REPORT + TEXT_TYPE + COMMA_SEP +
             DBtables.TextReportTB.COLUMN_DATETIME + NUMERIC_TYPE + COMMA_SEP +
             DBtables.TextReportTB.COLUMN_ISREPORTED + NUMERIC_TYPE + COMMA_SEP +
@@ -32,6 +33,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private static final String CREATE_LOCATION_TABLE = "CREATE TABLE " + DBtables.LocationTB.TABLE_NAME + "(" +
             DBtables.LocationTB.COLUMN_USER_ID + TEXT_TYPE + COMMA_SEP +
+            DBtables.LocationTB.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
             DBtables.LocationTB.COLUMN_DATETIME + NUMERIC_TYPE + COMMA_SEP +
             DBtables.LocationTB.COLUMN_ISREPORTED + NUMERIC_TYPE + COMMA_SEP +
             DBtables.LocationTB.COLUMN_LONGITUDE + REAL_TYPE + COMMA_SEP +
@@ -41,6 +43,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     private static final String CREATE_PHOTO_TABLE = "CREATE TABLE " + DBtables.PhotoTB.TABLE_NAME + " (" +
             DBtables.PhotoTB.COLUMN_USER_ID + TEXT_TYPE + COMMA_SEP +
+            DBtables.PhotoTB.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_DATETIME + NUMERIC_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_ISREPORTED + NUMERIC_TYPE + COMMA_SEP +
             DBtables.PhotoTB.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +

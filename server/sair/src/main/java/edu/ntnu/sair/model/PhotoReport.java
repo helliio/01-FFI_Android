@@ -19,6 +19,7 @@ public class PhotoReport {
     private String description;
     private int direction;
 
+
     @Id
     @GeneratedValue
     public long getId() {
@@ -29,6 +30,7 @@ public class PhotoReport {
         this.id = id;
     }
 
+
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "locationid")
     public Location getLocation() {
@@ -38,6 +40,7 @@ public class PhotoReport {
     public void setLocation(Location location) {
         this.location = location;
     }
+
 
     public String getName() {
         return name;

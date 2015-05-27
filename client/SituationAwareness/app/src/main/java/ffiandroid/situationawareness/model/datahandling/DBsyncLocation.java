@@ -1,6 +1,7 @@
 package ffiandroid.situationawareness.model.datahandling;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,9 +12,11 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import ffiandroid.situationawareness.controller.MapActivity;
 import ffiandroid.situationawareness.model.localdb.DAOlocation;
 import ffiandroid.situationawareness.model.LocationReport;
 import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.util.Coder;
 
 /**
  * This file is part of SituationAwareness
@@ -21,6 +24,9 @@ import ffiandroid.situationawareness.model.UserInfo;
  * Created by GuoJunjun <junjunguo.com> on March 15, 2015.
  */
 public class DBsyncLocation extends DBsync {
+
+
+
     public DBsyncLocation(Context context) {
         super(context);
     }
@@ -44,9 +50,14 @@ public class DBsyncLocation extends DBsync {
                 String message = reportService.sendLocationReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
                         System.currentTimeMillis(), getWaitingLocations(locationReports));
                 Message msg = handlerUploadLocation.obtainMessage();
-                JSONObject jsonObject = new JSONObject(message);
-                msg.obj = jsonObject.get("desc");
-                handlerUploadLocation.sendMessage(msg);
+                if(msg != null && message != null) {
+                    JSONObject jsonObject = new JSONObject(message);
+                    msg.obj = jsonObject.get("desc");
+                    handlerUploadLocation.sendMessage(msg);
+
+                    MapActivity.getTimeSinceLastLocationUpload();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -78,13 +89,22 @@ public class DBsyncLocation extends DBsync {
      */
     private void myLocationStatusIsReported(List<LocationReport> locationReports) {
         if (locationReports.size() > 0) {
-            DAOlocation daOlocation = new DAOlocation(context);
-            for (LocationReport locationReport : locationReports) {
-                daOlocation.updateIsReported(locationReport);
-                System.out.println("update location report status number of rows affected: " +
-                        daOlocation.updateIsReported(locationReport));
+            DAOlocation daOlocation = null;
+            try {
+                daOlocation = new DAOlocation(context);
+                for (LocationReport locationReport : locationReports) {
+                    daOlocation.updateIsReported(locationReport);
+                    System.out.println("update location report status number of rows affected: " +
+                            daOlocation.updateIsReported(locationReport));
+                }
             }
-            daOlocation.close();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally {
+                daOlocation.close();
+            }
         }
     }
 
@@ -127,11 +147,23 @@ public class DBsyncLocation extends DBsync {
 
     Runnable downloadLocationThread = new Runnable() {
         @Override public void run() {
+
+            DAOlocation daOlocation = null;
             try {
-                String message = requestService.getLatestTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID());
+                daOlocation = new DAOlocation(context);
+                String message = requestService.getPeriodTeamLocations(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                                                String.valueOf(daOlocation.getLastDownloadedLocationReportTime(UserInfo.getUserID())),
+                                                String.valueOf(System.currentTimeMillis()));
                 saveLocationToLocalDB(stringToJsonArray(message));
+
+                MapActivity.getTimeSinceLastLocationDownload();
+
+
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            finally {
+                daOlocation.close();
             }
         }
     };
@@ -143,22 +175,38 @@ public class DBsyncLocation extends DBsync {
      */
     private void saveLocationToLocalDB(JSONArray jsonArray) {
         if (jsonArray != null) {
-            DAOlocation daOlocation = new DAOlocation(context);
+            DAOlocation daOlocation = null;
             try {
+                daOlocation = new DAOlocation(context);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
-                    LocationReport lr = new LocationReport();
-                    lr.setIsreported(true);
-                    lr.setUserid(job.getString("username"));
-                    lr.setDatetime(job.getLong("timestamp"));
-                    lr.setLatitude(job.getDouble("latitude"));
-                    lr.setLongitude(job.getDouble("longitude"));
-                    daOlocation.addLocation(lr);
+                    if(!Coder.encryptMD5(UserInfo.getUserID()).equals(job.getString("username")))
+                    {
+                        LocationReport lr = new LocationReport();
+                        lr.setIsreported(true);
+                        lr.setUserid(job.getString("username"));
+                        lr.setName(job.getString("name"));
+                        lr.setDatetime(job.getLong("timestamp"));
+                        lr.setLatitude(job.getDouble("latitude"));
+                        lr.setLongitude(job.getDouble("longitude"));
+                        daOlocation.addLocation(lr);
+                    }
                 }
-            } catch (JSONException e) {
+            }
+            catch (JSONException e)
+            {
                 e.printStackTrace();
-            } finally {
-                daOlocation.close();
+            }
+            catch (SQLiteException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if(daOlocation != null)
+                {
+                    daOlocation.close();
+                }
             }
         }
     }

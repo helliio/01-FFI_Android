@@ -13,7 +13,10 @@ public class TextReport {
     private Location location;
     private String content;
 
+
+
     @Id
+
     @GeneratedValue
     public long getId() {
         return id;
@@ -22,6 +25,7 @@ public class TextReport {
     public void setId(long id) {
         this.id = id;
     }
+
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "locationid")
@@ -32,6 +36,7 @@ public class TextReport {
     public void setLocation(Location location) {
         this.location = location;
     }
+
 
     public String getContent() {
         return content;

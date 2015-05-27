@@ -25,36 +25,41 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 import ffiandroid.situationawareness.R;
-import ffiandroid.situationawareness.model.UserInfo;
-import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.ImageAdapter;
 import ffiandroid.situationawareness.model.PhotoReport;
+import ffiandroid.situationawareness.model.util.AdapterContentHolder;
+import ffiandroid.situationawareness.model.StatusListener;
+import ffiandroid.situationawareness.model.UserInfo;
+import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.util.Coder;
 
-public class PhotoView extends ActionBarActivity {
+public class PhotoView extends ActionBarActivity implements StatusListener{
 
     private ArrayList<PhotoReport> images;
+    private ArrayList<AdapterContentHolder> reports;
     private ImageAdapter imageAdapter;
     private ListView listView;
     private Uri mCapturedImageURI;
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private String photoPath;
+    private String menuStatus;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         // Construct the data source
         images = new ArrayList();
+        reports = new ArrayList<>();
         // Create the adapter to convert the array to views
-        imageAdapter = new ImageAdapter(this, images);
+        imageAdapter = new ImageAdapter(this, reports);
         // Attach the adapter to a ListView
         listView = (ListView) findViewById(R.id.photoReportListView);
         listView.setAdapter(imageAdapter);
         addItemClickListener(listView);
         initDB();
+        formatMenuStatus();
     }
 
     /**
@@ -62,7 +67,8 @@ public class PhotoView extends ActionBarActivity {
      */
     private void initDB() {
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 refreshImageList();
             }
         });
@@ -72,13 +78,26 @@ public class PhotoView extends ActionBarActivity {
      * refresh image list
      */
     private void refreshImageList() {
-        DAOphoto daOphoto = new DAOphoto(this);
-        images.clear();
-        //                add images from database to images ArrayList
-        for (PhotoReport photoReport : daOphoto.getAllPhotos()) {
-            images.add(photoReport);
+        DAOphoto daOphoto = null;
+        try {
+
+            daOphoto = new DAOphoto(this);
+            for(PhotoReport report : daOphoto.getAllPhotos())
+            {
+                images.add(report);
+                reports.add(new AdapterContentHolder(report, null));
+            }
         }
-        daOphoto.close();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
+
+
+
     }
 
     public void btnNewPhotoReportOnClick(View view) {
@@ -92,7 +111,8 @@ public class PhotoView extends ActionBarActivity {
             }
         });
         dialog.findViewById(R.id.btnChoosePath).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 activeGallery();
                 dialog.dismiss();
             }
@@ -157,6 +177,7 @@ public class PhotoView extends ActionBarActivity {
         }
     }
 
+
     private void activePhotoReport() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.custom_dialog_box_des);
@@ -166,12 +187,14 @@ public class PhotoView extends ActionBarActivity {
         final EditText desP = (EditText) dialog.findViewById(R.id.custom_dialog_box_des_description);
 
         dialog.findViewById(R.id.customDialogDesbtnBack).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(false, dialog, titleP, desP);
             }
         });
         dialog.findViewById(R.id.customDialogDesbtnSave).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 getPhotoInfor(true, dialog, titleP, desP);
             }
         });
@@ -188,12 +211,21 @@ public class PhotoView extends ActionBarActivity {
             photoReport.setTitle("Photo Report");
             photoReport.setDescription("Photo Report Observation");
         }
-        DAOphoto daOphoto = new DAOphoto(this);
-        photoReport.setDatetime(System.currentTimeMillis());
-        photoReport.setPath(photoPath);
-        photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
-        daOphoto.addPhoto(photoReport);
-        daOphoto.close();
+        DAOphoto daOphoto = null;
+        try {
+            daOphoto = new DAOphoto(this);
+            photoReport.setDatetime(System.currentTimeMillis());
+            photoReport.setPath(photoPath);
+            photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
+            daOphoto.addPhoto(photoReport);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            daOphoto.close();
+        }
         refreshImageList();
         dialog.dismiss();
     }
@@ -207,11 +239,15 @@ public class PhotoView extends ActionBarActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                PhotoReport image = (PhotoReport) listView.getItemAtPosition(position);
-                if (image.getPath().contains(".")) {
-                    Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
-                    intent.putExtra("IMAGE", (new Gson()).toJson(image));
-                    startActivity(intent);
+                PhotoReport image = (PhotoReport)listView.getItemAtPosition(position);
+                try {
+                    if (image.getPath().contains(".")) {
+                        Intent intent = new Intent(getBaseContext(), ImageDisplay.class);
+                        intent.putExtra("IMAGE", (new Gson()).toJson(image));
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+
                 }
             }
         });
@@ -237,15 +273,13 @@ public class PhotoView extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_photo_view, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_map_view:
                 startActivity(new Intent(this, MapActivity.class));
@@ -288,15 +322,96 @@ public class PhotoView extends ActionBarActivity {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            startActivity(new Intent(getBaseContext(), Login.class));
+        @Override public void onReceive(Context context, Intent intent) {
+            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Resumed");
+    }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Paused");
+    }
+
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Restarted");
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Stopped");
+    }
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
+    }
+
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
+    /**
+     * menu status changed
+     */
+    @Override public void menuStatusChanged() {
+        formatMenuStatus();
+    }
+
+    /**
+     * location status changed
+     */
+    @Override public void locationStatusChanged() {
+
+    }
+
+    /**
+     * text status changed
+     */
+    @Override public void textStatusChanged() {
+
+    }
+
+    /**
+     * photo status changed
+     */
+    @Override public void photoStatusChanged() {
+
+    }
+
+    /**
+     * last time report succeed or not
+     */
+    @Override public void lastReportStatusChanged() {
+
     }
 }

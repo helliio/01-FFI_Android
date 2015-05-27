@@ -25,9 +25,9 @@ import ffiandroid.situationawareness.model.UserInfo;
 public class Status extends ActionBarActivity implements StatusListener {
     private TextView userId, lastSync, unReportedPhotos, unReportedText, unReportedLocations, currentLocationLatitude,
             currentLocationLongitude;
+    private String menuStatus;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         setContentView(R.layout.status);
@@ -39,6 +39,7 @@ public class Status extends ActionBarActivity implements StatusListener {
         currentLocationLatitude = (TextView) findViewById(R.id.status_current_location_latitude);
         currentLocationLongitude = (TextView) findViewById(R.id.status_current_location_longitude);
         UserInfo.addListener(this);
+        formatMenuStatus();
     }
 
     @Override protected void onResume() {
@@ -60,39 +61,31 @@ public class Status extends ActionBarActivity implements StatusListener {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_status, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_app_settings:
-                startActivity(new Intent(this, AppSettings.class));
+            case R.id.menu_item_map_view:
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
+            case R.id.menu_item_all_reports:
+                startActivity(new Intent(this, AllReportsView.class));
                 return true;
             case R.id.menu_item_report:
                 startActivity(new Intent(this, Report.class));
                 return true;
-            case R.id.menu_item_map_view:
-                startActivity(new Intent(this, MapActivity.class));
-                return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
-                return true;
-            case R.id.menu_item_photo_view:
-                startActivity(new Intent(this, PhotoView.class));
+            case R.id.menu_item_app_settings:
+                startActivity(new Intent(this, AppSettings.class));
                 return true;
             case R.id.menu_item_logout:
                 rememberMeDelete();
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction("ACTION_LOGOUT");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
-                return true;
-            case R.id.menu_item_location_view:
-                startActivity(new Intent(this, LocationView.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -111,8 +104,7 @@ public class Status extends ActionBarActivity implements StatusListener {
      * receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+        @Override public void onReceive(Context context, Intent intent) {
             //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
@@ -123,11 +115,24 @@ public class Status extends ActionBarActivity implements StatusListener {
         super.onDestroy();
     }
 
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
+        menuItem.setTitle(String.valueOf(menuStatus));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * get value form UserInfo and assign it to menu status
+     */
+    private void formatMenuStatus() {
+        menuStatus = UserInfo.getReportDetails();
+    }
+
     /**
      * menu status changed
      */
     @Override public void menuStatusChanged() {
-
+        formatMenuStatus();
     }
 
     /**
@@ -159,4 +164,6 @@ public class Status extends ActionBarActivity implements StatusListener {
     @Override public void lastReportStatusChanged() {
         lastSync.setText((UserInfo.isLastSyncSucceed() ? "SUCCEED" : "NOT SUCCEED"));
     }
+
+
 }
