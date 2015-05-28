@@ -139,6 +139,7 @@ public class DBsyncPhoto extends DBsync {
     private void savePhotoListToLocalDB(DAOphoto daoPhoto, JSONArray jsonArray) {
         if (jsonArray != null) {
             try {
+                long highestPicId = daoPhoto.getHighestPicID();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
                     PhotoReport pr = new PhotoReport();
@@ -151,9 +152,10 @@ public class DBsyncPhoto extends DBsync {
 
                     pr.setExtension(job.getString("extension"));
 
-                    // NOTE(Torgrim): added title and id...
+                    // NOTE(Torgrim): added title, islocalmade and id...
                     pr.setTitle(job.getString("title"));
-                    pr.setPicId(job.getString("id"));
+                    pr.setPicId(Long.parseLong(job.getString("id")));
+                    pr.setIsLocalMade(false);
 
 
                     pr.setDescription(job.getString("description"));
@@ -162,6 +164,8 @@ public class DBsyncPhoto extends DBsync {
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
+                System.out.println(daoPhoto.getAllPicIds());
+                System.out.println(daoPhoto.getHighestPicID());
                 daoPhoto.close();
             }
         }

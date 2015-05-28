@@ -201,6 +201,8 @@ public class DBsyncTextReport extends DBsync {
                     textReport.setDatetime(job.getLong("timestamp"));
                     textReport.setLatitude(job.getDouble("latitude"));
                     textReport.setLongitude(job.getDouble("longitude"));
+
+                    textReport.setIsLocalMade(false);
                     daOtextReport.addReport(textReport);
                 }
             } catch (JSONException e) {

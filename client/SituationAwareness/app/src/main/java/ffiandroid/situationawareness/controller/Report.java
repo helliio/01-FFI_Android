@@ -268,7 +268,7 @@ public class Report extends ActionBarActivity implements StatusListener{
         try
         {
             daOtextReport = new DAOtextReport(getApplicationContext());
-            daOtextReport.addReport(new TextReport(report, System.currentTimeMillis(), location.getLatitude(), location.getLongitude()));
+            daOtextReport.addReport(new TextReport(report, System.currentTimeMillis(), location.getLatitude(), location.getLongitude(), true));
             Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
             ((ImageView)findViewById(R.id.attached_image)).setImageBitmap(null);
             ((Button)findViewById(R.id.btn_photo)).setText("Attach Photo");
@@ -314,6 +314,8 @@ public class Report extends ActionBarActivity implements StatusListener{
             }
             photoReport.setDatetime(System.currentTimeMillis());
             photoReport.setName(UserInfo.getName());
+            System.out.println("Highest picture id current in the locale database: " + daoPhotoReport.getHighestPicID());
+            System.out.print(daoPhotoReport.getAllPicIds().toString());
             photoReport.setLatitude(location.getLatitude());
             photoReport.setLongitude(location.getLongitude());
             String extension = photoPath.substring(photoPath.indexOf("."), photoPath.length());
@@ -322,7 +324,8 @@ public class Report extends ActionBarActivity implements StatusListener{
             System.out.println("New photo report extension::::: " + extension);
             photoReport.setPath(photoPath);
             photoReport.setIsreported(false);
-
+            photoReport.setIsLocalMade(true);
+            photoReport.setPicId(System.nanoTime());
             daoPhotoReport.addPhoto(photoReport);
             Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
 

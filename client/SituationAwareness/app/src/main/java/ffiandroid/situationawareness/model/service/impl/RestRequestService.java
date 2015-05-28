@@ -165,7 +165,7 @@ public class RestRequestService implements RequestService {
 
 
     @Override
-    public String getPhoto(String username, String deviceId, String picId) {
+    public String getPhoto(String username, String deviceId, long picId) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));

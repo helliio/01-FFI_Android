@@ -142,7 +142,8 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
                             intent.putExtra("IMAGE", (new Gson()).toJson(contentHolder.photoReport));
                             startActivity(intent);
                         }
-                    } catch (Exception e) {
+                    } catch (NullPointerException e) {
+                        Toast.makeText(getApplicationContext(), "Image is still being downloaded", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 }

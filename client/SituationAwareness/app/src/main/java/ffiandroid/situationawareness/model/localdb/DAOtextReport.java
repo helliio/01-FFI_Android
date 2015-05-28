@@ -54,6 +54,7 @@ public class DAOtextReport {
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
         cv.put(DBtables.TextReportTB.COLUMN_LATITUDE, textReport.getLatitude());
+        cv.put(DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE, textReport.isLocalMade());
         if(textReport.getDatetime() == null)
         {
             cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
@@ -129,8 +130,9 @@ public class DAOtextReport {
         List<TextReport> textReports = new ArrayList<>();
 
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =? AND " +
+                DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE + " = ?",
+                new String[]{Coder.encryptMD5(myUserID), "0", "1"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -159,8 +161,9 @@ public class DAOtextReport {
      */
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =? AND " +
+                DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE + " = ?",
+                new String[]{Coder.encryptMD5(myUserID), "0", "1"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         int count = cursor.getCount();
         cursor.close();
         return count;
@@ -170,7 +173,8 @@ public class DAOtextReport {
     public long getLastDownloadedTextReportTime() {
         long lastTime;
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_ISREPORTED + " = ? ", new String[]{"1"}, null, null,
+                DBtables.TextReportTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE +
+                " = ?", new String[]{"1", "0"}, null, null,
                 DBtables.TextReportTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {

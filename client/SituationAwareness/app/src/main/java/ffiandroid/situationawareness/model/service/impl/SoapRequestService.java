@@ -164,7 +164,7 @@ public class SoapRequestService implements RequestService {
 
 
     @Override
-    public String getPhoto(String username, String deviceId, String picId) {
+    public String getPhoto(String username, String deviceId, long picId) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getPhoto");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));

@@ -22,7 +22,7 @@ public interface RequestService {
 
     public String getPeriodTeamPhotoReports(String username, String deviceId, String startTime, String endTime);
 
-    public String getPhoto(String username, String deviceId, String picId);
+    public String getPhoto(String username, String deviceId, long picId);
 
 
     public String getDistinctPeriodTeamLocations(String username, String deviceId, String startTime, String endTime);

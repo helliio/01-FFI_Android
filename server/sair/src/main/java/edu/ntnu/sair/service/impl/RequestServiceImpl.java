@@ -394,6 +394,9 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
 
+
+                // This should really be a independent number from the
+                // id that is related with the photoReport in the database...
                 obj.put("id", photoReport.getId());
 
                 // NOTE(Torgrim): Added title..

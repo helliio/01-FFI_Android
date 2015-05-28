@@ -65,7 +65,7 @@ public class Register extends ActionBarActivity {
      */
     public void registerClicked(View view) {
         if (validateInput()) {
-            Toast.makeText(getBaseContext(), "connecting database ... ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "connecting server ... ", Toast.LENGTH_LONG).show();
             new Thread(registerThread).start();
         }
     }
@@ -87,7 +87,7 @@ public class Register extends ActionBarActivity {
             this.userpass = editTextUserpassword.getText().toString();
             return true;
         } else {
-            Toast.makeText(this, "Make user you enter the same password !", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "The passwords do not match!", Toast.LENGTH_LONG).show();
         }
         return false;
     }
@@ -97,7 +97,6 @@ public class Register extends ActionBarActivity {
         public void run() {
             Looper.prepare();
             try {
-                String message = userService.register(userid, userpass, username, "1");
                 EditText ipEditText = ((EditText) findViewById(R.id.register_server_ip_edit_text));
 
                 if(ipEditText.getText().length() > 0)
@@ -109,6 +108,7 @@ public class Register extends ActionBarActivity {
                 {
                     Constant.SERVICE_URL = Constant.DEFAULT_SERVICE_URL;
                 }
+                String message = userService.register(userid, userpass, username, "1");
                 JSONObject jsonMessage = new JSONObject(message);
                 if (message != null && jsonMessage.get("desc").equals("success")) {
                     Toast.makeText(getBaseContext(), "register succeed, move to Login screen.", Toast.LENGTH_SHORT)
