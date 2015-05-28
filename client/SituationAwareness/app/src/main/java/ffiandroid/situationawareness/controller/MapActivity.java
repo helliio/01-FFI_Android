@@ -543,9 +543,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     @Override public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
-            case R.id.contextmenu_item_add_marker:
-                Toast.makeText(this, "Marker added", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.contextmenu_item_report_observation:
                 startActivity(new Intent(this, Report.class));
                 return true;

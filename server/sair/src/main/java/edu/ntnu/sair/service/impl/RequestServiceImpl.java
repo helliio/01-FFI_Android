@@ -416,6 +416,7 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
+
     @Override
     public String getAllSelfLocations(String username, String uuid, String sendingTime) {
         return null;
@@ -458,7 +459,49 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public String getPeriodSelfPhotoReports(String username, String uuid, String sendingTime, String startTime, String endTime) {
-        return null;
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+
+        try {
+            Member member = this.memberDao.getByUsername(username);
+            List<PhotoReport> list = this.photoReportDao.getByUsernamePeriod(member.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
+            if (list == null) {
+                return new Result("getPeriodSelfPhotoReports", "No result").toString();
+            }
+            JSONArray array = new JSONArray();
+            for (PhotoReport photoReport : list) {
+                JSONObject obj = new JSONObject();
+                Location location = photoReport.getLocation();
+                obj.put("username", location.getMember().getUsername());
+                obj.put("name", location.getMember().getName());
+                obj.put("teamId", location.getMember().getTeamId());
+                obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
+                obj.put("latitude", location.getLatitude());
+                obj.put("longitude", location.getLongitude());
+
+
+                // This should really be a independent number from the
+                // id that is related with the photoReport in the database...
+                obj.put("id", photoReport.getId());
+
+                // NOTE(Torgrim): Added title..
+                obj.put("title", photoReport.getTitle());
+
+
+                obj.put("description", photoReport.getDescription());
+                obj.put("direction", photoReport.getDirection());
+                obj.put("filename", photoReport.getName());
+                obj.put("extension", photoReport.getExtension());
+                System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>    Sending photo report with extension " + photoReport.getExtension());
+                array.put(obj);
+            }
+            return new Result("getPeriodSelfPhotoReports", "success", "JSONArray", array.toString()).toString();
+        } catch (Exception e) {
+            return new Result("getPeriodSelfPhotoReports", "server error").toString();
+        }
     }
 
 

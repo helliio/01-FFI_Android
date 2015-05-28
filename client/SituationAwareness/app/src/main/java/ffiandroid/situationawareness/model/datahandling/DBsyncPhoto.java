@@ -114,9 +114,17 @@ public class DBsyncPhoto extends DBsync {
                 daoPhoto = new DAOphoto(context);
                 String message = requestService
                         .getPeriodTeamPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
-                                String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
+                                String.valueOf(daoPhoto.getTeammatesLastDownloadedPhotoReportTime(UserInfo.getUserID())),
                                 String.valueOf(System.currentTimeMillis()));
                 savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
+
+                message = requestService
+                        .getPeriodSelfPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                                String.valueOf(daoPhoto.getMyLastDownloadedPhotoReportTime(UserInfo.getUserID())),
+                                String.valueOf(System.currentTimeMillis()));
+                System.out.println("MESSAGE FROM PERIOD SELF METHOD: " + message);
+                savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
+
                 MapActivity.getTimeSinceLastPhotoDownload();
 
             } catch (Exception e) {

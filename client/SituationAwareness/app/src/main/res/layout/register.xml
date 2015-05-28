@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
                 <TextView
-                    android:id="@+id/register_default_server_ip"
+                    android:id="@+id/register_default_server_ip_checkbox_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -95,8 +95,14 @@
                     android:gravity="right"
                     android:checked="true"
                     android:onClick="onIPCheckClicked"
-                    android:layout_toRightOf="@+id/register_default_server_ip" />
+                    android:layout_toRightOf="@+id/register_default_server_ip_checkbox_text" />
             </RelativeLayout>
+            <TextView
+                android:id="@+id/register_default_server_ip_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This is the Default IP"
+                android:layout_gravity="center"/>
 
 
 

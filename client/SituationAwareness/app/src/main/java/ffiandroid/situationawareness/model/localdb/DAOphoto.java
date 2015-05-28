@@ -252,12 +252,35 @@ public class DAOphoto {
      * @param myUserID
      * @return latest downloaded photo report item time as long; return 0 if there is none;
      */
-    public long getLastDownloadedPhotoReportTime(String myUserID) {
+    public long getTeammatesLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.PhotoTB.COLUMN_IS_LOCAL_MADE +
-                " = ?",
-                new String[]{"0", "0"}, null, null,
+                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.PhotoTB.COLUMN_USER_ID +
+                " != ?",
+                new String[]{"0", Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+
+            lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_DATETIME));
+        } else {
+            lastTime = 0;
+        }
+        cursor.close();
+        return lastTime;
+    }
+
+
+    /**
+     * @param myUserID
+     * @return latest downloaded photo report item time as long; return 0 if there is none;
+     */
+    public long getMyLastDownloadedPhotoReportTime(String myUserID) {
+        long lastTime;
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
+                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.PhotoTB.COLUMN_USER_ID +
+                        " = ?",
+                new String[]{"0", Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {

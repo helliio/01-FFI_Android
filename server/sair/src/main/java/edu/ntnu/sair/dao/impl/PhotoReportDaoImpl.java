@@ -129,4 +129,27 @@ public class PhotoReportDaoImpl implements PhotoReportDao {
         return list;
     }
 
+
+
+    @Override
+    public List<PhotoReport> getByUsernamePeriod(String username, long startTime, long endTime) {
+        this.session = this.sessionFactory.getCurrentSession();
+        Query q = this.session.createQuery("from PhotoReport o" +
+                " where o.location.member.username = '" + username + "'" +
+                " and o.location.clientTimestamp > :startTime and o.location.clientTimestamp < :endTime" +
+                " order by o.location.clientTimestamp desc");
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        calendar1.setTimeInMillis(startTime);
+        calendar2.setTimeInMillis(endTime);
+        q.setCalendar("startTime", calendar1);
+        q.setCalendar("endTime", calendar2);
+        List<PhotoReport> list = new ArrayList<>();
+        Iterator iterator = q.list().iterator();
+        while (iterator.hasNext()) {
+            list.add((PhotoReport) iterator.next());
+        }
+        return list;
+    }
+
 }

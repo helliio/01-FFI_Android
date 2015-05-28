@@ -29,4 +29,6 @@ public interface PhotoReportDao {
     public List<PhotoReport> getByTeamLatest(String teamId);
 
     public List<PhotoReport> getByTeamPeriod(String teamId, long startTime, long endTime);
+
+    public List<PhotoReport> getByUsernamePeriod(String username, long startTime, long endTime);
 }
