@@ -85,6 +85,8 @@ public class RequestController {
      * @param username    username for the user
      * @param uuid        unique id for the user together with device id
      * @param sendingTime timestamp when sent from client
+     * @param startTime   start of the period
+     * @param endTime     end of the period
      * @return result with string type as a json or a xml format
      */
     @Scope("prototype")
