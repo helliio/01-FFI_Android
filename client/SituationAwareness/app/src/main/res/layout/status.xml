@@ -102,9 +102,9 @@
             android:textSize="16dp"
             android:layout_span="1"
             android:gravity="center_vertical"
-            android:paddingLeft="10dp"
+            android:paddingLeft="2dp"
             android:height="40dp"
-            android:text="succeed"
+            android:text="Failed"
             android:id="@+id/status_last_sync_to_server"
             />
     </TableRow>

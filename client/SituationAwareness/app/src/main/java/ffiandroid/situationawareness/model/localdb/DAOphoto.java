@@ -41,7 +41,6 @@ public class DAOphoto {
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
     public long addPhoto(PhotoReport photoReport) {
-        // TODO(Torgrim): Check to make sure that no row is duplicated....
         System.out.println("Added Photo report to DB with user ID " + photoReport.getUserid());
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_DESCRIPTION, photoReport.getDescription());
@@ -54,6 +53,9 @@ public class DAOphoto {
         cv.put(DBtables.PhotoTB.COLUMN_USER_ID, photoReport.getUserid());
         cv.put(DBtables.PhotoTB.COLUMN_TITLE, photoReport.getTitle());
         cv.put(DBtables.PhotoTB.COLUMN_PIC_ID, photoReport.getPicId());
+
+        cv.put(DBtables.PhotoTB.COLUMN_IS_LOCAL_MADE, photoReport.isLocalMade());
+
         cv.put(DBtables.PhotoTB.COLUMN_PATH, photoReport.getPath());
         long result = database.insert(DBtables.PhotoTB.TABLE_NAME, null, cv);
 
@@ -72,10 +74,7 @@ public class DAOphoto {
     public long updateIsReported(PhotoReport photoReport) {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_ISREPORTED, true);
-        /*
-        String where = DBtables.PhotoTB.COLUMN_USER_ID + "=?" + " AND " +
-                DBtables.PhotoTB.COLUMN_DATETIME + "=?";
-                */
+
         String where = DBtables.PhotoTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.PhotoTB.COLUMN_DATETIME + "=?";
         long result = database.update(DBtables.PhotoTB.TABLE_NAME, cv, where,
@@ -86,6 +85,7 @@ public class DAOphoto {
         }
         return result;
     }
+
 
     /**
      * set new un-reported photo value to UserInfo when it changed
@@ -115,7 +115,7 @@ public class DAOphoto {
      */
     public List<PhotoReport> getAllPhotos() {
         List<PhotoReport> photoReports = new ArrayList<>();
-        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, null, null, null, null,
+        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS, null, null, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -173,21 +173,14 @@ public class DAOphoto {
      */
     public PhotoReport getOneNotReportedPhoto(String myUserID) {
         PhotoReport photoReport;
-        //        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null,
-        //                DBtables.PhotoTB.COLUMN_USER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-        //                new String[]{myUserID, "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-
         // NOTE(Torgrim):  fixing selection of reports not sent to server so it only selects this users unsent
         // reports...
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null,
-                DBtables.PhotoTB.COLUMN_USER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " = ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =? AND " +
+                DBtables.PhotoTB.COLUMN_IS_LOCAL_MADE + "= ?",
+                new String[]{Coder.encryptMD5(myUserID), "0", "1"}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
 
-        //        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, null, DBtables.PhotoTB
-        // .COLUMN_ISREPORTED + " =?",
-        //                new String[]{"0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-        String coursorString = cursor.toString();
         cursor.moveToFirst();
 
         if (!cursor.isAfterLast()) {
@@ -210,14 +203,10 @@ public class DAOphoto {
      */
     public PhotoReport getOneNotDownloadedPhoto(String myUserID) {
         PhotoReport photoReport;
-        /*
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ? AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-                */
-        Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{"0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.PhotoTB.COLUMN_IS_LOCAL_MADE +
+                 " = ?",
+                new String[]{"0", "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
             photoReport = cursorToPhotoReport(cursor);
@@ -232,15 +221,34 @@ public class DAOphoto {
      * @param myUserID
      * @return latest downloaded photo report item time as long; return 0 if there is none;
      */
-    public long getLastDownloadedPhotoReportTime(String myUserID) {
+    public long getTeammatesLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
-        /*
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " != ?",
+                new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
-                */
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
+
+            lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_DATETIME));
+        } else {
+            lastTime = 0;
+        }
+        cursor.close();
+        return lastTime;
+    }
+
+
+    /**
+     * @param myUserID
+     * @return latest downloaded photo report item time as long; return 0 if there is none;
+     */
+    public long getMyLastDownloadedPhotoReportTime(String myUserID) {
+        long lastTime;
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-               null, null, null, null,DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
+                DBtables.PhotoTB.COLUMN_USER_ID + " = ?",
+                new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
 
@@ -299,13 +307,11 @@ public class DAOphoto {
      */
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME);
+                DBtables.PhotoTB.COLUMN_USER_ID + " = ?" + " AND " + DBtables.PhotoTB.COLUMN_ISREPORTED + " =? AND " +
+                DBtables.PhotoTB.COLUMN_IS_LOCAL_MADE + " = ?",
+                new String[]{Coder.encryptMD5(myUserID), "0", "0"}, null, null, DBtables.PhotoTB.COLUMN_DATETIME);
         int count = cursor.getCount();
         cursor.close();
-//        System.out
-        //                .println(this.getClass().getSimpleName() + "------" + count + " --" +
-        // getOneNotReportedPhoto(myUserID));
         return count;
     }
 
@@ -324,7 +330,7 @@ public class DAOphoto {
         photoReport.setLatitude(cursor.getDouble(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_LATITUDE)));
         photoReport.setIsreported(cursor.getInt(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_ISREPORTED)) > 0);
         photoReport.setTitle(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_TITLE)));
-        photoReport.setPicId(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_PIC_ID)));
+        photoReport.setPicId(cursor.getLong(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_PIC_ID)));
         photoReport.setDescription(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_DESCRIPTION)));
         photoReport.setPath(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_PATH)));
         photoReport.setExtension(cursor.getString(cursor.getColumnIndex(DBtables.PhotoTB.COLUMN_EXTENSION)));

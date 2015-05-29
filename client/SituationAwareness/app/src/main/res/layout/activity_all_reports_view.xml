@@ -9,8 +9,7 @@
         android:id="@+id/table_row"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:weightSum="2"
-        android:layout_alignParentBottom="true">
+        android:weightSum="2">
 
         <CheckBox
             android:id="@+id/location_report_filter"

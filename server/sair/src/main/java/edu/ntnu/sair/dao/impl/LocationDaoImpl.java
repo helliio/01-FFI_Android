@@ -127,7 +127,8 @@ public class LocationDaoImpl implements LocationDao {
     @Override
     public List<Location> getByTeamPeriod(String teamId, long startTime, long endTime) {
         this.session = this.sessionFactory.getCurrentSession();
-        Query q = this.session.createQuery("from Location l" +
+        // "select DISTINCT l.member.id, member, longitude, latitude, clientTimestamp, serverTimestamp, checkBit " +
+        Query q = this.session.createQuery(" from Location l" +
                 " where l.member.teamId = '" + teamId + "'" +
                 " and l.checkBit < " + 1  +
                 " and l.clientTimestamp > :startTime and l.clientTimestamp < :endTime" +
@@ -144,6 +145,35 @@ public class LocationDaoImpl implements LocationDao {
             list.add((Location) iterator.next());
         }
         return list;
+    }
+
+
+    @Override
+    public Location getLastLocationForTeamMember(String teamMemberUsername, long startTime, long endTime) {
+        this.session = this.sessionFactory.getCurrentSession();
+        // "select DISTINCT l.member.id, member, longitude, latitude, clientTimestamp, serverTimestamp, checkBit " +
+        Query q = this.session.createQuery(" from Location l" +
+                " where l.member.username = '" + teamMemberUsername + "'" +
+                " and l.checkBit < " + 1  +
+                " and l.clientTimestamp > :startTime and l.clientTimestamp < :endTime" +
+                " order by l.clientTimestamp desc, l.member.id asc");
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        calendar1.setTimeInMillis(startTime);
+        calendar2.setTimeInMillis(endTime);
+        q.setCalendar("startTime", calendar1);
+        q.setCalendar("endTime", calendar2);
+        List<Location> list = new ArrayList<>();
+        Iterator iterator = q.list().iterator();
+        if (iterator.hasNext()) {
+            list.add((Location) iterator.next());
+        }
+        Location lastLocation = null;
+        if(list.size() > 0)
+        {
+            lastLocation = list.get(0);
+        }
+        return lastLocation;
     }
 
 }

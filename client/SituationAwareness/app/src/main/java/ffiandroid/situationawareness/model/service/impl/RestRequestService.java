@@ -58,6 +58,25 @@ public class RestRequestService implements RequestService {
         return Sender.sendRESTRequest(requestData, "request/getPeriodTeamLocations");
     }
 
+
+
+    @Override
+    public String getDistinctPeriodTeamLocations(String username, String deviceId, String startTime, String endTime) {
+        MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
+        // arg0: username
+        requestData.add("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        requestData.add("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: sendingTime
+        requestData.add("sendingTime", String.valueOf(Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis()));
+        // arg3: startTime
+        requestData.add("startTime", startTime);
+        // arg4: endTime
+        requestData.add("endTime", endTime);
+
+        return Sender.sendRESTRequest(requestData, "request/getDistinctPeriodTeamLocations");
+    }
+
     @Override
     public String getAllTeamTextReports(String username, String deviceId) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
@@ -99,6 +118,23 @@ public class RestRequestService implements RequestService {
         requestData.add("endTime", endTime);
 
         return Sender.sendRESTRequest(requestData, "request/getPeriodTeamTextReports");
+    }
+
+    @Override
+    public String getPeriodSelfTextReports(String username, String deviceId, String startTime, String endTime) {
+        MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
+        // arg0: username
+        requestData.add("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        requestData.add("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: sendingTime
+        requestData.add("sendingTime", String.valueOf(Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis()));
+        // arg3: startTime
+        requestData.add("startTime", startTime);
+        // arg4: endTime
+        requestData.add("endTime", endTime);
+
+        return Sender.sendRESTRequest(requestData, "request/getPeriodSelfTextReports");
     }
 
     @Override
@@ -146,7 +182,25 @@ public class RestRequestService implements RequestService {
 
 
     @Override
-    public String getPhoto(String username, String deviceId, String picId) {
+    public String getPeriodSelfPhotoReports(String username, String deviceId, String startTime, String endTime) {
+        MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
+        // arg0: username
+        requestData.add("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        requestData.add("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: sendingTime
+        requestData.add("sendingTime", String.valueOf(Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis()));
+        // arg3: startTime
+        requestData.add("startTime", startTime);
+        // arg4: endTime
+        requestData.add("endTime", endTime);
+
+        return Sender.sendRESTRequest(requestData, "request/getPeriodSelfPhotoReports");
+    }
+
+
+    @Override
+    public String getPhoto(String username, String deviceId, long picId) {
         MultiValueMap requestData = new LinkedMultiValueMap<String, Object>();
         // arg0: username
         requestData.add("username", Coder.encryptMD5(username));

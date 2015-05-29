@@ -16,11 +16,18 @@ public interface RequestService {
 
     public String getPeriodTeamTextReports(String username, String deviceId, String startTime, String endTime);
 
+    public String getPeriodSelfTextReports(String username, String deviceId, String startTime, String endTime);
+
     public String getAllTeamPhotoReports(String username, String deviceId);
 
     public String getLatestTeamPhotoReports(String username, String deviceId);
 
     public String getPeriodTeamPhotoReports(String username, String deviceId, String startTime, String endTime);
 
-    public String getPhoto(String username, String deviceId, String picId);
+    public String getPeriodSelfPhotoReports(String username, String deviceId, String startTime, String endTime);
+
+    public String getPhoto(String username, String deviceId, long picId);
+
+
+    public String getDistinctPeriodTeamLocations(String username, String deviceId, String startTime, String endTime);
 }

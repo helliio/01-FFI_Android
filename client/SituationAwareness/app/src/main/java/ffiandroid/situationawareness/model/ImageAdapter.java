@@ -1,10 +1,8 @@
 package ffiandroid.situationawareness.model;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +63,6 @@ public class ImageAdapter extends ArrayAdapter<AdapterContentHolder> {
             viewHolder.description.setText(photoReport.toString());
 
 
-            // TODO(Torgrim): Work on improving the efficiency when creating a bitmap
             if (photoReport.getPath() != null) {
                 Bitmap pl = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_launcher);
                 Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);

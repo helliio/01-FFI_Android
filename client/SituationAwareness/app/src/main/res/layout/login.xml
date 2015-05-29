@@ -1,70 +1,102 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:windowSoftInputMode="stateVisible|adjustResize"
     tools:context=".Login">
-
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <TextView
-        android:text="@string/app_name_sair"
-        android:gravity="center"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:text="@string/app_name_sair"
         android:textSize="20dp"
         android:width="200dp"
-        android:id="@+id/textView"
-        android:layout_alignLeft="@+id/editTextLoginID"
-        android:layout_alignStart="@+id/editTextLoginID"
-        android:layout_alignParentTop="true"
-        />
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"/>
     <EditText
+        android:id="@+id/editTextLoginID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/editTextLoginID"
-        android:maxLength="20"
+        android:maxLength="100"
         android:singleLine="true"
         android:imeOptions="actionNext"
-        android:layout_gravity="bottom"
-        android:gravity="center"
         android:width="200dp"
         android:hint="@string/username"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView" />
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"/>
 
 
     <EditText
+        android:id="@+id/editTextLoginPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:inputType="textPassword"
         android:singleLine="true"
-        android:maxLength="20"
-        android:id="@+id/editTextLoginPass"
+        android:maxLength="50"
         android:hint="@string/user_password"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
         android:width="200dp"
-        android:layout_below="@id/editTextLoginID"/>
+        android:gravity="center"
+        android:layout_gravity="center"/>
 
-    <Button
+    <EditText
+        android:id="@+id/server_ip_edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextLoginPass"
+        android:hint="Server IP Address"
+        android:enabled="false"
+        android:gravity="center"
+        android:layout_gravity="center"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/server_ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Use Default Address"/>
+        <CheckBox
+            android:id="@+id/server_ip_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:checked="true"
+            android:onClick="onIPCheckClicked"
+            android:layout_toRightOf="@+id/server_ip" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Default IP: http://chun.sair.no"
+        android:layout_gravity="center"/>
+
+    <Button
         android:id="@+id/btn_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:width="200dp"
         android:text="Login"
         android:onClick="loginClicked"
-        android:layout_centerHorizontal="true"/>
+        android:gravity="center"
+        android:layout_gravity="center"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_login"
         android:width="200dp"
         android:text="Register"
         android:onClick="registerClicked"
-        android:layout_centerHorizontal="true"/>
+        android:gravity="center"
+        android:layout_gravity="center"/>
 
-</RelativeLayout>
+</LinearLayout>
+</ScrollView>

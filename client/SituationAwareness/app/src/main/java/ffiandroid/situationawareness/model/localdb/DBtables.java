@@ -23,12 +23,15 @@ public class DBtables {
         public  static final String COLUMN_NAME = "name";
         public static final String COLUMN_REPORT = "report";
         public static final String COLUMN_ISREPORTED = "isreported";
+
+        public static final String COLUMN_IS_LOCAL_MADE = "islocalmade";
+
         public static final String COLUMN_DATETIME = "datetime";
         public static final String COLUMN_LATITUDE = "latitude";
         public static final String COLUMN_LONGITUDE = "longitude";
         public static final String PRIMARY_KEY = "PRIMARY KEY (" + COLUMN_USER_ID + "," + COLUMN_DATETIME + ")";
         public static final String[] ALL_COLUMNS =
-                {COLUMN_USER_ID, COLUMN_NAME, COLUMN_REPORT, COLUMN_ISREPORTED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
+                {COLUMN_USER_ID, COLUMN_NAME, COLUMN_REPORT, COLUMN_ISREPORTED, COLUMN_IS_LOCAL_MADE, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE};
     }
     public static abstract class LocationTB implements BaseColumns {
 
@@ -38,6 +41,7 @@ public class DBtables {
         // Remember to add these changes to the report
         public  static final String COLUMN_NAME = "name";
         public static final String COLUMN_ISREPORTED = "isreported";
+
         public static final String COLUMN_DATETIME = "datetime";
         public static final String COLUMN_LATITUDE = "latitude";
         public static final String COLUMN_LONGITUDE = "longitude";
@@ -52,6 +56,7 @@ public class DBtables {
 
         // NOTE(Torgrim): Added picture id string for debugging and testing purposes..
         public static final String COLUMN_PIC_ID = "picId";
+        public static final String COLUMN_IS_LOCAL_MADE = "islocalmade";
 
         // NOTE(Torgrim): Adding name to show with reports
         // Remember to add these changes to the report
@@ -67,7 +72,7 @@ public class DBtables {
         public static final String COLUMN_EXTENSION = "extension";
         public static final String PRIMARY_KEY = "PRIMARY KEY (" + COLUMN_USER_ID + "," + COLUMN_DATETIME + ")";
         public static final String[] ALL_COLUMNS =
-                {COLUMN_USER_ID, COLUMN_NAME, COLUMN_ISREPORTED, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE,
+                {COLUMN_USER_ID, COLUMN_NAME, COLUMN_ISREPORTED, COLUMN_IS_LOCAL_MADE, COLUMN_DATETIME, COLUMN_LATITUDE, COLUMN_LONGITUDE,
                         COLUMN_DESCRIPTION, COLUMN_PIC_ID, COLUMN_TITLE, COLUMN_PATH, COLUMN_EXTENSION};
     }
 }

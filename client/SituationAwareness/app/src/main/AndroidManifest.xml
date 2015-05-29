@@ -63,27 +63,14 @@
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
-            android:name=".controller.ReportView"
-            android:label="@string/title_activity_report_view"
-            android:noHistory="true" >
-        </activity>
-        <activity
-            android:name=".controller.LocationView"
-            android:label="@string/title_activity_location_view" >
-        </activity>
-        <activity
             android:name=".controller.ImageDisplay"
             android:label="@string/title_activity_image_display"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 
         </activity>
         <activity
-            android:name=".controller.PhotoView"
-            android:label="@string/title_activity_photo_view" >
-        </activity>
-        <activity
             android:name=".controller.AllReportsView"
-            android:label="@string/title_activity_app_settings" >
+            android:label="@string/title_activity_report_view" >
         </activity>
     </application>
 

@@ -19,6 +19,13 @@ public class LocationReport {
     protected Calendar datetime;
     protected long datetimeLong;
     protected double latitude, longitude;
+
+    // Used to check if the report is from this device
+    // or downloaded from server
+    // specially used in PhotoReportDao and TextReportDao
+    protected boolean isLocalMade;
+
+
     protected SimpleDateFormat df = new SimpleDateFormat("MMMM d, yy  h:mm");
 
     /**
@@ -33,6 +40,7 @@ public class LocationReport {
             this.longitude = UserInfo.getCurrentLongitude();
             this.latitude = UserInfo.getCurrentLatitude();
             this.userid = Coder.encryptMD5(UserInfo.getUserID());
+            this.name = UserInfo.getName();
             this.isreported = false;
         }
     }
@@ -47,6 +55,7 @@ public class LocationReport {
         this.longitude = longitude;
         this.latitude = latitude;
         this.userid = Coder.encryptMD5(UserInfo.getUserID());
+        this.name = UserInfo.getName();
         this.isreported = false;
     }
 
@@ -145,6 +154,17 @@ public class LocationReport {
     {
         return name;
     }
+
+
+
+    public boolean isLocalMade() {
+        return isLocalMade;
+    }
+
+    public void setIsLocalMade(boolean isLocalMade) {
+        this.isLocalMade = isLocalMade;
+    }
+
 
     /**
      * Sets new isreported.

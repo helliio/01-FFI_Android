@@ -54,6 +54,7 @@ public class DAOtextReport {
         cv.put(DBtables.TextReportTB.COLUMN_ISREPORTED, textReport.isIsreported());
         cv.put(DBtables.TextReportTB.COLUMN_LONGITUDE, textReport.getLongitude());
         cv.put(DBtables.TextReportTB.COLUMN_LATITUDE, textReport.getLatitude());
+        cv.put(DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE, textReport.isLocalMade());
         if(textReport.getDatetime() == null)
         {
             cv.put(DBtables.TextReportTB.COLUMN_DATETIME, System.currentTimeMillis());
@@ -129,8 +130,9 @@ public class DAOtextReport {
         List<TextReport> textReports = new ArrayList<>();
 
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =? AND " +
+                DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE + " = ?",
+                new String[]{Coder.encryptMD5(myUserID), "0", "1"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -139,7 +141,9 @@ public class DAOtextReport {
                 cursor.moveToNext();
             }
         }
-        cursor.close();
+        if(cursor != null) {
+            cursor.close();
+        }
         return textReports;
     }
 
@@ -159,22 +163,38 @@ public class DAOtextReport {
      */
     public int getMyNOTReportedItemCount(String myUserID) {
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =?",
-                new String[]{Coder.encryptMD5(myUserID), "0"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? AND " + DBtables.TextReportTB.COLUMN_ISREPORTED + " =? AND " +
+                        DBtables.TextReportTB.COLUMN_IS_LOCAL_MADE + " = ?",
+                new String[]{Coder.encryptMD5(myUserID), "0", "1"}, null, null, DBtables.LocationTB.COLUMN_DATETIME + " DESC");
         int count = cursor.getCount();
         cursor.close();
         return count;
     }
 
     // NOTE(Torgrim): Added to make sure only not already downloaded text reports are downloaded
-    public long getLastDownloadedTextReportTime(String myUserID) {
+    public long getTeammatesLastDownloadedTextReportTime(String username) {
         long lastTime;
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
-                DBtables.TextReportTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.TextReportTB.COLUMN_USER_ID + " != ?", new String[]{Coder.encryptMD5(username)}, null, null,
                 DBtables.TextReportTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
+            lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME));
+        } else {
+            lastTime = 0;
+        }
+        cursor.close();
+        return lastTime;
+    }
 
+
+    public long getMyLastDownloadedTextReportTime(String username) {
+        long lastTime;
+        Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
+                DBtables.TextReportTB.COLUMN_USER_ID + " = ? ", new String[]{Coder.encryptMD5(username)}, null, null,
+                DBtables.TextReportTB.COLUMN_DATETIME + " DESC");
+        cursor.moveToFirst();
+        if (!cursor.isAfterLast()) {
             lastTime = cursor.getLong(cursor.getColumnIndex(DBtables.TextReportTB.COLUMN_DATETIME));
         } else {
             lastTime = 0;

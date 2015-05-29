@@ -97,4 +97,14 @@ public interface LocationDao {
      * @return list the target location list to be returned
      */
     List<Location> getByTeamPeriod(String teamId, long startTime, long endTime);
+
+    /**
+     * Fetch the latest location by team member in a period of time from the database
+     *
+     * @param teamMemberUsername the username of the team member
+     * @param startTime          start of the period
+     * @param endTime            end of the period
+     * @return list the target location list to be returned
+     */
+    Location getLastLocationForTeamMember(String teamMemberUsername, long startTime, long endTime);
 }

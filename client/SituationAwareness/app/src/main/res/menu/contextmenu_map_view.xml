@@ -2,11 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ffiandroid.situationawareness.MapActivity">
-    <item
-        android:id="@+id/contextmenu_item_add_marker"
-        android:title="@string/add_marker"
-        android:orderInCategory="1"
-        app:showAsAction="always"/>
 
     <item
         android:id="@+id/contextmenu_item_report_observation"

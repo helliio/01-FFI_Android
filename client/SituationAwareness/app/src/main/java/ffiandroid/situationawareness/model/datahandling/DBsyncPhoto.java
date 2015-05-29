@@ -39,14 +39,10 @@ public class DBsyncPhoto extends DBsync {
      * upload photo from local to server
      */
     @Override public void upload() {
-        //        new Thread(uploadThread).start();
-        //    }
-        //
-        //    Runnable uploadThread = new Runnable() {
-        //        @Override public void run() {
-        DAOphoto daOphoto = new DAOphoto(context);
+        DAOphoto daOphoto = null;
         Looper.prepare();
         try {
+            daOphoto = new DAOphoto(context);
             photoReportR = daOphoto.getOneNotReportedPhoto(UserInfo.getUserID());
             if(photoReportR != null && photoReportR.getPath() != null) {
                 File file = new File(photoReportR.getPath());
@@ -68,13 +64,13 @@ public class DBsyncPhoto extends DBsync {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            daOphoto.close();
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
         }
-        // TODO(Torgrim): fix async not working, follow the looper....
         Looper.loop();
     }
-    //    };
-
+    // TODO(Torgrim): check this handler for warnings...
     private Handler handlerUploadPhoto = new Handler() {
         @Override public void handleMessage(Message msg) {
             if (msg.obj.toString().equalsIgnoreCase("success")) {
@@ -91,7 +87,9 @@ public class DBsyncPhoto extends DBsync {
                     e.printStackTrace();
                 }
                 finally {
-                    daOphoto.close();
+                    if(daOphoto != null) {
+                        daOphoto.close();
+                    }
                 }
             } else {
                 UserInfo.setLastSyncSucceed(false);
@@ -115,9 +113,16 @@ public class DBsyncPhoto extends DBsync {
                 daoPhoto = new DAOphoto(context);
                 String message = requestService
                         .getPeriodTeamPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
-                                String.valueOf(daoPhoto.getLastDownloadedPhotoReportTime(UserInfo.getUserID())),
+                                String.valueOf(daoPhoto.getTeammatesLastDownloadedPhotoReportTime(UserInfo.getUserID())),
                                 String.valueOf(System.currentTimeMillis()));
-                savePhotoListToLocalDB(daoPhoto, stringToJsonArray(message));
+                savePhotoListToLocalDB(stringToJsonArray(message));
+
+
+                message = requestService
+                        .getPeriodSelfPhotoReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                                String.valueOf(daoPhoto.getMyLastDownloadedPhotoReportTime(UserInfo.getUserID())),
+                                String.valueOf(System.currentTimeMillis()));
+                savePhotoListToLocalDB(stringToJsonArray(message));
 
                 MapActivity.getTimeSinceLastPhotoDownload();
 
@@ -126,8 +131,9 @@ public class DBsyncPhoto extends DBsync {
             }
             finally
             {
-                    // NOTE(Torgrim): Is this necessary, added for testing..
-                   daoPhoto.close();
+                if(daoPhoto != null) {
+                    daoPhoto.close();
+                }
             }
         }
     };
@@ -135,15 +141,15 @@ public class DBsyncPhoto extends DBsync {
     /**
      * Save downloaded photo list and save them as items in local database
      *
-     * @param daoPhoto
      * @param jsonArray
      */
-    private void savePhotoListToLocalDB(DAOphoto daoPhoto, JSONArray jsonArray) {
+    private void savePhotoListToLocalDB(JSONArray jsonArray) {
         if (jsonArray != null) {
+            DAOphoto daoPhoto = null;
             try {
+                daoPhoto = new DAOphoto(context);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
-                    System.out.println("Photo report list json object >>>>>>>>>>>>>>>  " + job.toString());
                     PhotoReport pr = new PhotoReport();
                     pr.setIsreported(false);
                     pr.setUserid(job.getString("username"));
@@ -154,18 +160,21 @@ public class DBsyncPhoto extends DBsync {
 
                     pr.setExtension(job.getString("extension"));
 
-                    // NOTE(Torgrim): added title and id...
+                    // NOTE(Torgrim): added title, islocalmade and id...
                     pr.setTitle(job.getString("title"));
-                    pr.setPicId(job.getString("id"));
+                    pr.setPicId(Long.parseLong(job.getString("id")));
+                    pr.setIsLocalMade(false);
 
 
                     pr.setDescription(job.getString("description"));
                     daoPhoto.addPhoto(pr);
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                daoPhoto.close();
+                if(daoPhoto != null) {
+                    daoPhoto.close();
+                }
             }
         }
     }
@@ -180,11 +189,9 @@ public class DBsyncPhoto extends DBsync {
 
     Runnable downloadOnePhotoThread = new Runnable() {
         @Override public void run() {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> Inside download one photo report thread....");
             try {
                 String message =
                         requestService.getPhoto(UserInfo.getUserID(), UserInfo.getMyAndroidID(), photoReportD.getPicId());
-                System.out.println("Message from downloadOnPhotoThread >>>>>>>>> " + message);
                 savePhoto(new JSONObject(message).getString("obj"), photoReportD);
 
             } catch (Exception e) {
@@ -214,15 +221,15 @@ public class DBsyncPhoto extends DBsync {
                 daOphoto = new DAOphoto(context);
                 daOphoto.updatePhotoPath(photoReport);
                 daOphoto.updateIsReported(photoReport);
-                daOphoto.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         finally
         {
-            // NOTE(Torgrim): Added for testing fix of leaked database
-            daOphoto.close();
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
         }
     }
 

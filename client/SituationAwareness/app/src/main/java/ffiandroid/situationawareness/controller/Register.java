@@ -11,7 +11,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 import ffiandroid.situationawareness.R;
 import ffiandroid.situationawareness.model.service.UserService;
 import ffiandroid.situationawareness.model.service.impl.SoapUserService;
+import ffiandroid.situationawareness.model.util.Constant;
 
 /**
  * This file is part of project: Situation Awareness
@@ -30,6 +33,7 @@ import ffiandroid.situationawareness.model.service.impl.SoapUserService;
 public class Register extends ActionBarActivity {
     private String userid, username, userpass;
     private UserService userService = new SoapUserService();
+    protected static String server_ip = Constant.DEFAULT_SERVICE_URL;
 
 
     @Override
@@ -37,7 +41,24 @@ public class Register extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
+        ((TextView)findViewById(R.id.register_default_server_ip_text)).setText("Default IP:" + Constant.DEFAULT_SERVICE_URL);
     }
+
+    public void onIPCheckClicked(View view)
+    {
+        CheckBox ipCheckBox = ((CheckBox) findViewById(R.id.register_default_server_ip_checkbox));
+        EditText ipEditText = ((EditText) findViewById(R.id.register_server_ip_edit_text));
+        if(ipCheckBox.isChecked())
+        {
+            ipEditText.getText().clear();
+            ipEditText.setEnabled(false);
+        }
+        else
+        {
+            ipEditText.setEnabled(true);
+        }
+    }
+
 
     /**
      * handle user register
@@ -46,7 +67,7 @@ public class Register extends ActionBarActivity {
      */
     public void registerClicked(View view) {
         if (validateInput()) {
-            Toast.makeText(getBaseContext(), "connecting database ... ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "connecting server ... ", Toast.LENGTH_LONG).show();
             new Thread(registerThread).start();
         }
     }
@@ -68,7 +89,7 @@ public class Register extends ActionBarActivity {
             this.userpass = editTextUserpassword.getText().toString();
             return true;
         } else {
-            Toast.makeText(this, "Make user you enter the same password !", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "The passwords do not match!", Toast.LENGTH_LONG).show();
         }
         return false;
     }
@@ -78,6 +99,17 @@ public class Register extends ActionBarActivity {
         public void run() {
             Looper.prepare();
             try {
+                EditText ipEditText = ((EditText) findViewById(R.id.register_server_ip_edit_text));
+
+                if(ipEditText.getText().length() > 0)
+                {
+                    Constant.SERVICE_URL = "http://" + ipEditText.getText().toString() + ":8080/";
+                    server_ip = ipEditText.getText().toString();
+                }
+                else
+                {
+                    Constant.SERVICE_URL = Constant.DEFAULT_SERVICE_URL;
+                }
                 String message = userService.register(userid, userpass, username, "1");
                 JSONObject jsonMessage = new JSONObject(message);
                 if (message != null && jsonMessage.get("desc").equals("success")) {

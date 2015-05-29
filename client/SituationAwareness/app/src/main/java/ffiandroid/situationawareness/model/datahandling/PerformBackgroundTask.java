@@ -38,7 +38,7 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
         if (isOnline()) {
             report.upload();
             location.upload();
-            reportUnsendPhotos();
+            reportUnsentPhotos();
             report.download();
             location.download();
             downloadPhotoHandling();
@@ -78,9 +78,15 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         finally {
-            daOlocation.close();
-            daOphoto.close();
-            daOtextReport.close();
+            if(daOlocation != null) {
+                daOlocation.close();
+            }
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
+            if(daOtextReport != null) {
+                daOtextReport.close();
+            }
         }
     }
 
@@ -94,9 +100,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
     }
 
     /**
-     * check if there is network connection and un-send photos, if true send one
+     * check if there is network connection and un-sent photos, if true send one
      */
-    public void reportUnsendPhotos() {
+    public void reportUnsentPhotos() {
         DAOphoto daOphoto = null;
         try {
             daOphoto = new DAOphoto(context);
@@ -109,8 +115,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         finally {
-
-            daOphoto.close();
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
         }
     }
 
@@ -156,7 +163,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
             }
             finally {
-                daOphoto.close();
+                if(daOphoto != null) {
+                    daOphoto.close();
+                }
             }
             return null;
         }
@@ -178,7 +187,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
             }
             finally {
-                daOphoto.close();
+                if(daOphoto != null) {
+                    daOphoto.close();
+                }
             }
         }
     }

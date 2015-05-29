@@ -2,10 +2,6 @@ package ffiandroid.situationawareness.model;
 
 import android.content.Context;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,25 +70,6 @@ public class OSMmap {
     }
 
 
-    public List<PhotoReport> getAllCoworkersPhotoReports(Context context)
-    {
-        DAOphoto daoPhoto = null;
-        List<PhotoReport> photoReports = null;
-        try
-        {
-            daoPhoto = new DAOphoto(context);
-            photoReports = daoPhoto.getCoWorkerPhotos(UserInfo.getUserID());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally {
-            daoPhoto.close();
-        }
-        return photoReports;
-    }
-
     public List<PhotoReport> getAllPhotoReports(Context context)
     {
         DAOphoto daoPhoto = null;
@@ -107,7 +84,9 @@ public class OSMmap {
             e.printStackTrace();
         }
         finally {
-            daoPhoto.close();
+            if(daoPhoto != null) {
+                daoPhoto.close();
+            }
         }
         return photoReports;
     }

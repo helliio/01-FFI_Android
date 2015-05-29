@@ -1,10 +1,13 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="wrap_content"
              android:layout_height="match_parent"
              android:layout_gravity="center_horizontal"
              tools:context="ffiandroid.situationawareness.controller.AppSettings">
-
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
     <TableRow
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -124,6 +127,35 @@
             android:text="minimum distance between location updates, in meters"/>
     </TableRow>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/server_ip_settings_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Server IP Address"/>
+
+            <CheckBox
+                android:id="@+id/setting_ip_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Use Default Address"
+                android:onClick="onIPSettingsCheckBoxClicked"/>
+            <TextView
+                android:id="@+id/server_ip_settings_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/settings_current_server_ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="This is The Current IP Address"/>
+        </LinearLayout>
+
     <TableRow
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -140,4 +172,5 @@
             android:text="@string/text_save"
             android:onClick="parameterSettingClicked"/>
     </TableRow>
-</TableLayout>
+    </TableLayout>
+</ScrollView>

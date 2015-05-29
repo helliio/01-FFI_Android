@@ -1,5 +1,7 @@
 package ffiandroid.situationawareness.model.util;
 
+import android.widget.Toast;
+
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -14,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ffiandroid.situationawareness.controller.MapActivity;
 
 /**
  * Created by chun on 3/4/15.

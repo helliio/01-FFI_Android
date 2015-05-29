@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,18 +98,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     private ArrayList<Marker> coworkersPhotoReportMarkers = new ArrayList<>();
     private ArrayList<PhotoReport> coworkersPhotoReportsPresent = new ArrayList<>();
-    private ArrayList<String> currentPhotoReportsPresent = new ArrayList<>();
+    private ArrayList<Long> currentPhotoReportsPresent = new ArrayList<>();
 
     private ArrayList<Marker> allCoworkersMarkers = new ArrayList<>();
-
-
-    // NOTE(Torgrim): Added for testing new UI drawer
-    /*
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private String[] optionsList;
-    */
 
     private static long timeSinceLastLocationUpload = 0;
     private static long timeSinceLastLocationDownload = 0;
@@ -266,26 +258,24 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         activeOpenStreetMap();
         checkGpsAvailability();
-        System.out.println("Size of mmapView overlay array on created: " + mMapView.getOverlays().size());
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
                 ParameterSetting.getLocationUpdateDistance(), this);
         UserInfo.addListener(this);
         formatMenuStatus();
-        /*test
 
-         */
-        GeoPoint myLoc = new GeoPoint(myCurrentLocation);
-        mMapController.setCenter(myLoc);
+
         StartSync.getInstance(getApplicationContext()).start();
 
         // NOTE(Torgrim): Added for tesing, might need to change this.
         mMapView.setMapListener(new MapListener() {
-            @Override public boolean onScroll(ScrollEvent scrollEvent) {
+            @Override
+            public boolean onScroll(ScrollEvent scrollEvent) {
                 calculateMarkers();
                 return true;
             }
 
-            @Override public boolean onZoom(ZoomEvent zoomEvent) {
+            @Override
+            public boolean onZoom(ZoomEvent zoomEvent) {
                 calculateMarkers();
                 return true;
             }
@@ -297,12 +287,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         //Used for creating menu from long click event
         mapEventsOverlay = new MapEventsOverlay(this, this);
         mMapView.getOverlays().add(0, mapEventsOverlay);
+        mMapView.setActivated(true);
+        if(mMapView.isActivated())
+        {
+            mMapView.getController().setCenter(startMarker.getPosition());
+        }
+
 
     }
 
     @Override protected void onResume() {
 
         super.onResume();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Resumed");
     }
 
 
@@ -338,12 +335,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapView.setUseDataConnection(true);
 
         mMapController = (MapController) mMapView.getController();
-        mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         updatePhotoMarkers();
         updateLocation();
-        mMapController.setCenter(new GeoPoint(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
-
+        mMapController.setZoom(32);
     }
 
 
@@ -552,9 +547,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     @Override public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
-            case R.id.contextmenu_item_add_marker:
-                Toast.makeText(this, "Marker added", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.contextmenu_item_report_observation:
                 startActivity(new Intent(this, Report.class));
                 return true;
@@ -572,7 +564,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private void statusAndSendButtonClicked() {
         Toast.makeText(this, "status send button clicked", Toast.LENGTH_SHORT).show();
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 new PerformBackgroundTask(getApplicationContext()).execute();
             }
         });
@@ -617,94 +610,99 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         @Override public void run() {
 
             long startTime = System.currentTimeMillis();
-
-            // TODO(Torgrim): Fix the issue that the same reports get added multiple times....
-
             OSMmap osmMap = new OSMmap();
             ArrayList<LocationReport> coworkerLocationReportsList =
                     osmMap.getAllCoworkersLocationReports(getApplicationContext());
-            for (LocationReport report : coworkerLocationReportsList) {
-                String reportID = (report.getDatetimeLong() + report.getUserid());
-                if (!coworkersLocationReportsIDPresent.contains(reportID)) {
-                    Marker coworkerMarker = new Marker(mMapView);
-                    coworkerMarker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
-                    coworkerMarker.setIcon(getResources().getDrawable(R.drawable.teammembericon));
+            if(coworkerLocationReportsList != null) {
+                for (LocationReport report : coworkerLocationReportsList) {
+                    String reportID = (report.getDatetimeLong() + report.getUserid());
+                    if (!coworkersLocationReportsIDPresent.contains(reportID)) {
+                        Marker coworkerMarker = new Marker(mMapView);
+                        coworkerMarker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
+                        coworkerMarker.setIcon(getResources().getDrawable(R.drawable.teammembericon));
 
-                    coworkerMarker.setInfoWindow(new MarkerInfoWindow(R.layout.bonuspack_bubble_black, mMapView) {
-                        @Override public void onOpen(Object o) {
-                            System.out.println(
-                                    "==================== Info window should be open now!! ========================");
-                        }
+                        coworkerMarker.setInfoWindow(new MarkerInfoWindow(R.layout.bonuspack_bubble_black, mMapView) {
+                            @Override
+                            public void onOpen(Object o) {
+                                System.out.println(
+                                        "==================== Info window should be open now!! ========================");
+                            }
 
-                        @Override public void onClose() {
-                            System.out.println(
-                                    "==================== Info window should be closed now!! ========================");
-                        }
-                    });
-                    String info = "User: " + report.getName() + "\n";
-                    info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
-                    info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
-                    ((TextView) coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
-                            .setText("This is the title of a location report");
-                    ((TextView) coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_description))
-                            .setText(info);
-                    allCoworkersMarkers.add(coworkerMarker);
-                    coworkersLocationReportsPresent.add(report);
-                    coworkersLocationReportsIDPresent.add(reportID);
-                    mMapView.getOverlays().add(coworkerMarker);
+                            @Override
+                            public void onClose() {
+                                System.out.println(
+                                        "==================== Info window should be closed now!! ========================");
+                            }
+                        });
+                        String info = "User: " + report.getName() + "\n";
+                        info += "Latitude: " + coworkerMarker.getPosition().getLatitude() + "\n";
+                        info += "Longitude:" + coworkerMarker.getPosition().getLongitude() + "\n";
+                        ((TextView) coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
+                                .setText("This is the title of a location report");
+                        ((TextView) coworkerMarker.getInfoWindow().getView().findViewById(R.id.black_bubble_description))
+                                .setText(info);
+                        allCoworkersMarkers.add(coworkerMarker);
+                        coworkersLocationReportsPresent.add(report);
+                        coworkersLocationReportsIDPresent.add(reportID);
+                        mMapView.getOverlays().add(coworkerMarker);
 
 
-                } else {
-                    System.out.println(
-                            " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This location report has already been " +
-                                    "added<<<<<<<<<<<<<<<<");
+                    } else {
+                        System.out.println(
+                                " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This location report has already been " +
+                                        "added<<<<<<<<<<<<<<<<");
+                    }
                 }
             }
 
 
             // NOTE(Torgrim): Get all team members text reports
             List<TextReport> coworkersTextReportsList = osmMap.getAllCoworkersTextReports(getApplicationContext());
-            for (TextReport report : coworkersTextReportsList) {
-                String reportID = (report.getDatetimeLong() + report.getUserid());
-                if (!coworkersTextReportsIDPresent.contains(reportID)) {
+            if(coworkersTextReportsList != null) {
+                for (TextReport report : coworkersTextReportsList) {
+                    String reportID = (report.getDatetimeLong() + report.getUserid());
+                    if (!coworkersTextReportsIDPresent.contains(reportID)) {
 
-                    Marker marker = new Marker(mMapView);
-                    marker.setIcon(getResources().getDrawable(R.drawable.observationicon));
-                    marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
-                    marker.setInfoWindow(new MarkerInfoWindow(R.layout.bonuspack_bubble_black, mMapView) {
-                        @Override public void onOpen(Object o) {
-                            System.out.println(
-                                    "========================TextReport Info window should now be open " +
-                                            "======================");
-                        }
+                        Marker marker = new Marker(mMapView);
+                        marker.setIcon(getResources().getDrawable(R.drawable.observationicon));
+                        marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
+                        marker.setInfoWindow(new MarkerInfoWindow(R.layout.bonuspack_bubble_black, mMapView) {
+                            @Override
+                            public void onOpen(Object o) {
+                                System.out.println(
+                                        "========================TextReport Info window should now be open " +
+                                                "======================");
+                            }
 
-                        @Override public void onClose() {
-                            System.out.println(
-                                    "======================== TextReport Info Window should now be closed " +
-                                            "=====================");
-                        }
-                    });
-                    String info = "User: " + report.getName() + "\n";
-                    info += "Latitude: " + report.getLatitude() + "\n";
-                    info += "Longitude:" + report.getLongitude() + "\n";
-                    info += "-----------------------------------------\n";
-                    info += "Acutal report: " + report.getReport();
-                    ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
-                            .setText("This is the title of a Text report");
-                    ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description))
-                            .setText(info);
+                            @Override
+                            public void onClose() {
+                                System.out.println(
+                                        "======================== TextReport Info Window should now be closed " +
+                                                "=====================");
+                            }
+                        });
+                        String info = "User: " + report.getName() + "\n";
+                        info += "Latitude: " + report.getLatitude() + "\n";
+                        info += "Longitude:" + report.getLongitude() + "\n";
+                        info += "-----------------------------------------\n";
+                        info += "Acutal report: " + report.getReport();
+                        ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
+                                .setText("This is the title of a Text report");
+                        ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description))
+                                .setText(info);
 
-                    coworkerTextReportsPresent.add(report);
-                    coworkersTextReportsIDPresent.add(reportID);
-                    allCoworkersMarkers.add(marker);
-                    mMapView.getOverlays().add(marker);
-                } else {
-                    System.out.println(
-                            ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This text report is already " +
-                                    "present<<<<<<<<<<<<<<<<<<<<<<<<<");
+                        coworkerTextReportsPresent.add(report);
+                        coworkersTextReportsIDPresent.add(reportID);
+                        allCoworkersMarkers.add(marker);
+                        mMapView.getOverlays().add(marker);
+                    } else {
+                        System.out.println(
+                                ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>This text report is already " +
+                                        "present<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    }
+
+
                 }
-
-
             }
 
 
@@ -726,63 +724,63 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     public void updatePhotoMarkers() {
 
         List<PhotoReport> photoReports = new OSMmap().getAllPhotoReports(getApplicationContext());
-        for(final PhotoReport report : photoReports)
-        {
-            if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId()))
-            {
-                currentPhotoReportsPresent.add(report.getPicId());
+        if(photoReports != null) {
+            for (final PhotoReport report : photoReports) {
+                if (report.getPath() != null && !currentPhotoReportsPresent.contains(report.getPicId())) {
+                    currentPhotoReportsPresent.add(report.getPicId());
 
-                final Marker marker = new Marker(mMapView);
-                marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
-                marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
-                marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView) {
+                    final Marker marker = new Marker(mMapView);
+                    marker.setIcon(getResources().getDrawable(R.drawable.teampositionicon));
+                    marker.setPosition(new GeoPoint(report.getLatitude(), report.getLongitude()));
+                    marker.setInfoWindow(new MarkerInfoWindow(R.layout.black_bubble_photo_report, mMapView) {
 
-                    Bitmap bitmap = null;
-                    @Override
-                    public void onOpen(Object o)
-                    {
-                        ImageView view = ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content));
-                        marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
-                        Bitmap pl = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
-                        Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);
-                        if (AsyncDrawable.cancelPotentialWork(report.getPath(), view)) {
-                            final BitmapWorkerTask task = new BitmapWorkerTask(view);
-                            final AsyncDrawable asyncDrawable =
-                                    new AsyncDrawable(getApplicationContext().getResources(), placeHolderBitmap, task);
-                            view.setImageDrawable(asyncDrawable);
-                            task.execute(report.getPath());
+                        Bitmap bitmap = null;
+
+                        @Override
+                        public void onOpen(Object o) {
+                            ImageView view = ((ImageView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content));
+                            marker.getInfoWindow().getView().findViewById(R.id.black_bubble_photo_content).setEnabled(true);
+                            Bitmap pl = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
+                            Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);
+                            if (AsyncDrawable.cancelPotentialWork(report.getPath(), view)) {
+                                final BitmapWorkerTask task = new BitmapWorkerTask(view);
+                                final AsyncDrawable asyncDrawable =
+                                        new AsyncDrawable(getApplicationContext().getResources(), placeHolderBitmap, task);
+                                view.setImageDrawable(asyncDrawable);
+                                task.execute(report.getPath());
+                            }
+
                         }
 
-                    }
+                        @Override
+                        public void onClose() {
 
-                    @Override
-                    public void onClose()
-                    {
+                            if (bitmap != null) {
+                                bitmap.recycle();
+                            }
 
-                        if(bitmap != null)
-                        {
-                            bitmap.recycle();
+                            System.out.println("======================== PhotoReport Info Window should now be closed =====================");
                         }
+                    });
 
-                        System.out.println("======================== PhotoReport Info Window should now be closed =====================");
-                    }
-                });
-                String info = "User: " + report.getName() + "\n";
-                info += "Latitude: " + report.getLatitude() + "\n";
-                info += "Longitude:" + report.getLongitude() + "\n";
-                info += "-----------------------------------------\n";
-                info += "Title: " + report.getTitle() + "\n";
-                info += "Description: " + report.getDescription() + "\n\n";
+                    String info = "User: " + report.getName() + "\n";
+                    info += "Latitude: " + report.getLatitude() + "\n";
+                    info += "Longitude:" + report.getLongitude() + "\n";
+                    info += "-----------------------------------------\n";
+                    info += "Title: " + report.getTitle() + "\n";
+                    info += "Description: " + report.getDescription() + "\n\n";
 
-                ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
-                        .setText("This is the title of a PhotoReport report");
-                ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
-                marker.setRelatedObject(report);
-                coworkersPhotoReportsPresent.add(report);
-                allCoworkersMarkers.add(marker);
-                coworkersPhotoReportMarkers.add(marker);
-                mMapView.getOverlays().add(marker);
+                    ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_title))
+                            .setText("This is the title of a PhotoReport report");
+                    ((TextView) marker.getInfoWindow().getView().findViewById(R.id.black_bubble_description)).setText(info);
+                    marker.setRelatedObject(report);
+                    coworkersPhotoReportsPresent.add(report);
+                    allCoworkersMarkers.add(marker);
+                    coworkersPhotoReportMarkers.add(marker);
+                    mMapView.getOverlays().add(marker);
+                }
             }
+
         }
 
     }
@@ -798,7 +796,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         if (allCoworkersMarkers.size() > 0) {
             for (Marker marker : allCoworkersMarkers) {
                 if (mMapView.getBoundingBox().contains(marker.getPosition())) {
-                    if (count <= 100 || mMapView.getZoomLevel() == mMapView.getMaxZoomLevel()) {
+                    if (count <= 1000 || mMapView.getZoomLevel() == mMapView.getMaxZoomLevel()) {
                         marker.setEnabled(true);
                         count++;
                     } else {
@@ -856,14 +854,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     private void setAllMarkersToEnabled() {
-        // TODO(Torgrim): Remember to change the list so that all markers are taken into account
         for (Marker marker : coworkersLocationMarkers) {
             marker.setEnabled(true);
         }
     }
 
     private void setAllMarkersToDisabled() {
-        // TODO(Torgrim): Remember to change the list so that all markers are taken into account
         for (Marker marker : coworkersLocationMarkers) {
             marker.setEnabled(false);
         }
@@ -1010,27 +1006,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         }
 
-        /*
-        mMapView.getOverlayManager().remove(topLeftMarker);
-        mMapView.getOverlayManager().remove(topLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(topRightMiddleMarker);
-        mMapView.getOverlayManager().remove(topRightMarker);
 
-        mMapView.getOverlayManager().remove(centerTopLeftMarker);
-        mMapView.getOverlayManager().remove(centerTopLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(centerTopRightMiddleMarker);
-        mMapView.getOverlayManager().remove(centerTopRightMarker);
-
-        mMapView.getOverlayManager().remove(centerBottomLeftMarker);
-        mMapView.getOverlayManager().remove(centerBottomLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(centerBottomRightMiddleMarker);
-        mMapView.getOverlayManager().remove(centerBottomRightMarker);
-
-        mMapView.getOverlayManager().remove(bottomLeftMarker);
-        mMapView.getOverlayManager().remove(bottomLeftMiddleMarker);
-        mMapView.getOverlayManager().remove(bottomRightMiddleMarker);
-        mMapView.getOverlayManager().remove(bottomRightMarker);
-        */
         mMapView.getOverlayManager().removeAll(clusterMarkers);
         // First
         if (topLeftCount > 0) {
@@ -1220,17 +1196,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     If user presses long on the map it opens a menu where
     it can go to submit an observation about the particular point
     on the map through the report page
+    // TODO(Torgrim): Fix so that the latitude and longitude always have E6
      */ public boolean longPressHelper(GeoPoint p) {
 
         registerForContextMenu(mMapView);
         newReportLocation = new Location("");
-        newReportLocation.setLatitude(p.getLatitude());
-        newReportLocation.setLongitude(p.getLongitude());
+        newReportLocation.setTime(System.currentTimeMillis());
+        newReportLocation.setLatitude((p.getLatitudeE6() / 1000000.000000f));
+        newReportLocation.setLongitude((p.getLongitudeE6() / 1000000.000000f));
         openContextMenu(mMapView);
 
 
-        Toast.makeText(this, "Long press on (" + p.getLatitude() + "," + p.getLongitude() + ")", Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(this, "Long press on (" + (p.getLatitudeE6() / 1000000.000000f) + "," + (p.getLongitudeE6() / 1000000.000000f) + ")", Toast.LENGTH_SHORT)
+        .show();
         return false;
     }
 
@@ -1263,10 +1241,40 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         }
     };
 
-    @Override protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Paused");
+    }
+
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        updatePhotoMarkers();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Restarted");
+    }
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Stopped");
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view started");
+    }
+
+
+
+
+    @Override protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Map Activity Destroyed");
     }
 
     @Override public boolean onPrepareOptionsMenu(Menu menu) {

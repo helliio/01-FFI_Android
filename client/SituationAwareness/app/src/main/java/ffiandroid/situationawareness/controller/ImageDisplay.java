@@ -78,10 +78,6 @@ public class ImageDisplay extends Activity {
      * @param v
      */
     public void btnDeleteOnClick(View v) {
-        //        DAOdb db = new DAOdb(this);
-        //        db.deleteImage(photoReport);
-        //        db.close();
-        //startActivity(new Intent(this, PhotoView.class));
         Toast.makeText(getApplicationContext(), "This is not implemented yet...", Toast.LENGTH_LONG).show();
         finish();
     }

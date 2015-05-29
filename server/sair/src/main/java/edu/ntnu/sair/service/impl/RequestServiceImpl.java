@@ -20,6 +20,7 @@ import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -124,6 +125,53 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("longitude", location.getLongitude());
                 array.put(obj);
             }
+            System.out.println("Json Array: " + array);
+            System.out.println("Number of LocationReports sent: " + array.length());
+            return new Result("getPeriodTeamLocations", "success", "JSONArray", array.toString()).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result("getPeriodTeamLocations", "server error").toString();
+        }
+    }
+
+    @Transactional
+    @Override
+    public String getDistinctPeriodTeamLocations(String username, String uuid, String sendingTime, String startTime, String endTime) {
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+
+        try {
+            Member member = this.memberDao.getByUsername(username);
+            List<Member> teamMembers = this.memberDao.getTeamByTeamIdAndUsername(member.getTeamId(), member.getUsername());
+
+            List<Location> list = new ArrayList<>();
+            for(Member m : teamMembers)
+            {
+                Location teamMemberLocation;
+                teamMemberLocation = locationDao.getLastLocationForTeamMember(m.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
+                if(teamMemberLocation != null)
+                {
+                    list.add(teamMemberLocation);
+                }
+            }
+
+            if (list.size() == 0) {
+                return new Result("getDistinctPeriodTeamLocations", "No result").toString();
+            }
+            JSONArray array = new JSONArray();
+            for (Location location : list) {
+                JSONObject obj = new JSONObject();
+                obj.put("username", location.getMember().getUsername());
+                obj.put("name", location.getMember().getName());
+                obj.put("teamId", location.getMember().getTeamId());
+                obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+                obj.put("latitude", location.getLatitude());
+                obj.put("longitude", location.getLongitude());
+                array.put(obj);
+            }
+            System.out.println("Json Array: " + array);
             System.out.println("Number of LocationReports sent: " + array.length());
             return new Result("getPeriodTeamLocations", "success", "JSONArray", array.toString()).toString();
         } catch (Exception e) {
@@ -216,7 +264,7 @@ public class RequestServiceImpl implements RequestService {
 
         try {
             Member member = this.memberDao.getByUsername(username);
-            List<TextReport> list = this.textReportDao.getByTeamPeriod(member.getTeamId(), Long.valueOf(startTime), Long.valueOf(endTime));
+            List<TextReport> list = this.textReportDao.getByTeamPeriod(member.getTeamId(), member.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
             if (list == null) {
                 return new Result("getPeriodTeamTextReports", "No result").toString();
             }
@@ -330,7 +378,7 @@ public class RequestServiceImpl implements RequestService {
 
         try {
             Member member = this.memberDao.getByUsername(username);
-            List<PhotoReport> list = this.photoReportDao.getByTeamPeriod(member.getTeamId(), Long.valueOf(startTime), Long.valueOf(endTime));
+            List<PhotoReport> list = this.photoReportDao.getByTeamPeriod(member.getTeamId(), member.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
             if (list == null) {
                 return new Result("getPeriodTeamPhotoReports", "No result").toString();
             }
@@ -346,6 +394,9 @@ public class RequestServiceImpl implements RequestService {
                 obj.put("latitude", location.getLatitude());
                 obj.put("longitude", location.getLongitude());
 
+
+                // This should really be a independent number from the
+                // id that is related with the photoReport in the database...
                 obj.put("id", photoReport.getId());
 
                 // NOTE(Torgrim): Added title..
@@ -361,9 +412,11 @@ public class RequestServiceImpl implements RequestService {
             }
             return new Result("getPeriodTeamPhotoReports", "success", "JSONArray", array.toString()).toString();
         } catch (Exception e) {
+            e.printStackTrace();
             return new Result("getPeriodTeamPhotoReports", "server error").toString();
         }
     }
+
 
     @Override
     public String getAllSelfLocations(String username, String uuid, String sendingTime) {
@@ -392,7 +445,37 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public String getPeriodSelfTextReports(String username, String uuid, String sendingTime, String startTime, String endTime) {
-        return null;
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+
+        try {
+            Member member = this.memberDao.getByUsername(username);
+            List<TextReport> list = this.textReportDao.getByUsernamePeriod(member.getTeamId(), member.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
+            if (list == null) {
+                return new Result("getPeriodSelfTextReports", "No result").toString();
+            }
+            JSONArray array = new JSONArray();
+            for (TextReport textReport : list) {
+                JSONObject obj = new JSONObject();
+                Location location = textReport.getLocation();
+                obj.put("username", location.getMember().getUsername());
+                obj.put("name", location.getMember().getName());
+                obj.put("teamId", location.getMember().getTeamId());
+                obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
+                obj.put("latitude", location.getLatitude());
+                obj.put("longitude", location.getLongitude());
+
+                obj.put("id", textReport.getId());
+                obj.put("content", textReport.getContent());
+                array.put(obj);
+            }
+            return new Result("getPeriodSelfTextReports", "success", "JSONArray", array.toString()).toString();
+        } catch (Exception e) {
+            return new Result("getPeriodSelfTextReports", "server error").toString();
+        }
     }
 
     @Override
@@ -405,9 +488,53 @@ public class RequestServiceImpl implements RequestService {
         return null;
     }
 
+    @Transactional
     @Override
     public String getPeriodSelfPhotoReports(String username, String uuid, String sendingTime, String startTime, String endTime) {
-        return null;
+        String checkLogin = this.userService.checkLogin(username, uuid);
+        if (!checkLogin.equals("success")) {
+            return checkLogin;
+        }
+
+        try {
+            Member member = this.memberDao.getByUsername(username);
+            List<PhotoReport> list = this.photoReportDao.getByUsernamePeriod(member.getUsername(), Long.valueOf(startTime), Long.valueOf(endTime));
+            if (list == null) {
+                return new Result("getPeriodSelfPhotoReports", "No result").toString();
+            }
+            JSONArray array = new JSONArray();
+            for (PhotoReport photoReport : list) {
+                JSONObject obj = new JSONObject();
+                Location location = photoReport.getLocation();
+                obj.put("username", location.getMember().getUsername());
+                obj.put("name", location.getMember().getName());
+                obj.put("teamId", location.getMember().getTeamId());
+                obj.put("timestamp", location.getClientTimestamp().getTimeInMillis());
+
+                obj.put("latitude", location.getLatitude());
+                obj.put("longitude", location.getLongitude());
+
+
+                // This should really be a independent number from the
+                // id that is related with the photoReport in the database...
+                obj.put("id", photoReport.getId());
+
+                // NOTE(Torgrim): Added title..
+                obj.put("title", photoReport.getTitle());
+
+
+                obj.put("description", photoReport.getDescription());
+                obj.put("direction", photoReport.getDirection());
+                obj.put("filename", photoReport.getName());
+                obj.put("extension", photoReport.getExtension());
+                System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>    Sending photo report with extension " + photoReport.getExtension());
+                array.put(obj);
+            }
+            return new Result("getPeriodSelfPhotoReports", "success", "JSONArray", array.toString()).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result("getPeriodSelfPhotoReports", "server error").toString();
+        }
     }
 
 

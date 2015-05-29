@@ -89,4 +89,14 @@ public interface PhotoReportDao {
      * @return the target photo report list to be returned
      */
     List<PhotoReport> getByTeamPeriod(String teamId, long startTime, long endTime);
+
+    /**
+     * Fetch the photo reports by member in a period of time from the database
+     *
+     * @param username    username of the member
+     * @param startTime start of the period
+     * @param endTime   end of the period
+     * @return the target photo report list to be returned
+     */
+    List<PhotoReport> getByUsernamePeriod(String username, long startTime, long endTime);
 }

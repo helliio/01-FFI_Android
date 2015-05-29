@@ -4,17 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import ffiandroid.situationawareness.model.PhotoReport;
 
 /**
  * Created by Torgrim on 08/05/2015.
@@ -29,7 +24,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>
 
     public BitmapWorkerTask(ImageView imageView)
     {
-        imageViewReference = new WeakReference<ImageView>(imageView);
+        imageViewReference = new WeakReference<>(imageView);
     }
 
     // Decode image in background.

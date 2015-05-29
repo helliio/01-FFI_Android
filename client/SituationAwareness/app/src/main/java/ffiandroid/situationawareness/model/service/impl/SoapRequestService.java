@@ -57,6 +57,25 @@ public class SoapRequestService implements RequestService {
         return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
+
+    // report per team member
+    @Override
+    public String getDistinctPeriodTeamLocations(String username, String deviceId, String startTime, String endTime) {
+        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getDistinctPeriodTeamLocations");
+        // arg0: username
+        soapObject.addProperty("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: sendingTime
+        soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+        // arg3: startTime
+        soapObject.addProperty("startTime", startTime);
+        // arg4: endTime
+        soapObject.addProperty("endTime", endTime);
+
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
+    }
+
     @Override
     public String getAllTeamTextReports(String username, String deviceId) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getAllTeamTextReports");
@@ -100,6 +119,24 @@ public class SoapRequestService implements RequestService {
         return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
     }
 
+
+    @Override
+    public String getPeriodSelfTextReports(String username, String deviceId, String startTime, String endTime) {
+        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getPeriodSelfTextReports");
+        // arg0: username
+        soapObject.addProperty("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: sendingTime
+        soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+        // arg3: startTime
+        soapObject.addProperty("startTime", startTime);
+        // arg4: endTime
+        soapObject.addProperty("endTime", endTime);
+
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
+
+    }
     @Override
     public String getAllTeamPhotoReports(String username, String deviceId) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getAllTeamPhotoReports");
@@ -145,7 +182,26 @@ public class SoapRequestService implements RequestService {
 
 
     @Override
-    public String getPhoto(String username, String deviceId, String picId) {
+    public String getPeriodSelfPhotoReports(String username, String deviceId, String startTime, String endTime) {
+        SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getPeriodSelfPhotoReports");
+        // arg0: username
+        soapObject.addProperty("username", Coder.encryptMD5(username));
+        // arg1: uuid
+        soapObject.addProperty("uuid", Coder.encryptMD5(username + deviceId));
+        // arg2: sendingTime
+        soapObject.addProperty("sendingTime", Calendar.getInstance(Constant.TIME_ZONE).getTimeInMillis());
+        // arg3: startTime
+        soapObject.addProperty("startTime", startTime);
+        // arg4: endTime
+        soapObject.addProperty("endTime", endTime);
+
+        return Sender.sendSOAPRequest(soapObject, "RequestService?wsdl");
+    }
+
+
+
+    @Override
+    public String getPhoto(String username, String deviceId, long picId) {
         SoapObject soapObject = new SoapObject("http://service.sair.ntnu.edu/", "getPhoto");
         // arg0: username
         soapObject.addProperty("username", Coder.encryptMD5(username));

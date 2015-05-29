@@ -63,4 +63,14 @@ public interface MemberDao {
      * @return the target member list to be returned
      */
     List<Member> getByTeamId(String teamId);
+
+    /**
+     * Fetch the members by team and username from the database
+     *
+     * @param teamId   the id of the member
+     * @param username the username of the member
+     * @return the target member list to be returned
+     */
+    List<Member> getTeamByTeamIdAndUsername(String teamId, String username);
+
 }

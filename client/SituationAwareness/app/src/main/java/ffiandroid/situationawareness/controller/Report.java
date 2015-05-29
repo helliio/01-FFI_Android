@@ -27,13 +27,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ffiandroid.situationawareness.R;
+import ffiandroid.situationawareness.model.PhotoReport;
 import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.StatusListener;
 
+import ffiandroid.situationawareness.model.localdb.DAOphoto;
 import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.util.AsyncDrawable;
 import ffiandroid.situationawareness.model.util.BitmapWorkerTask;
+import ffiandroid.situationawareness.model.util.Coder;
 
 /**
  * This Report Class is part of project: Situation Awareness
@@ -43,7 +46,8 @@ import ffiandroid.situationawareness.model.util.BitmapWorkerTask;
  * responsible for this file: GuoJunjun
  */
 public class Report extends ActionBarActivity implements StatusListener{
-    private EditText textReport;
+    private EditText reportDescription;
+    private EditText reportTitle;
     private TextView textLocation;
     private Location location;
     private String menuStatus;
@@ -58,11 +62,28 @@ public class Report extends ActionBarActivity implements StatusListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
-        textReport = (EditText) findViewById(R.id.report_edit_text_report);
-
-        location = MapActivity.newReportLocation;
+        reportTitle = (EditText) findViewById(R.id.report_title);
+        reportDescription = (EditText) findViewById(R.id.report_edit_text_report);
         textLocation = (TextView) findViewById(R.id.coordinates);
-        textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
+
+        if(MapActivity.newReportLocation == null && savedInstanceState != null)
+        {
+            System.out.println("Saved instance latitude" + savedInstanceState.getString("latitude"));
+            System.out.println("Saved instance longitude" + savedInstanceState.getString("longitude"));
+            textLocation.setText("Lat: " + savedInstanceState.getString("latitude") + "Long:" + savedInstanceState.getString("longitude"));
+        }
+        else if(MapActivity.newReportLocation != null)
+        {
+            location = MapActivity.newReportLocation;
+            System.out.println("Location from mapActivity: ");
+            System.out.println("Latitude: " + location.getLatitude());
+            System.out.println("Longitude: " + location.getLongitude());
+            textLocation.setText("Lat: " + location.getLatitude() + "Long:" + location.getLongitude());
+        }
+        else
+        {
+            textLocation.setText("Lat: No Location Available Long: No location Available");
+        }
         formatMenuStatus();
     }
     @Override
@@ -149,6 +170,7 @@ public class Report extends ActionBarActivity implements StatusListener{
             values.put(MediaStore.Images.Media.TITLE, fileName);
             mCapturedImageURI = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
+            takePictureIntent.putExtra("location", location);
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
@@ -175,7 +197,7 @@ public class Report extends ActionBarActivity implements StatusListener{
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     photoPath = cursor.getString(columnIndex);
                     cursor.close();
-                    checkImageAddress(photoPath);
+                    checkImageAddressAndLoadBitmap(photoPath);
                 }
             case REQUEST_IMAGE_CAPTURE:
                 if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -184,17 +206,18 @@ public class Report extends ActionBarActivity implements StatusListener{
                     int column_index_data = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     cursor.moveToFirst();
                     photoPath = cursor.getString(column_index_data);
-                    checkImageAddress(photoPath);
+                    checkImageAddressAndLoadBitmap(photoPath);
                 }
         }
     }
 
 
 
-    private void checkImageAddress(String photoPath)
+    private void checkImageAddressAndLoadBitmap(String photoPath)
     {
         if(photoPath != null)
         {
+            // TODO(Torgrim): Check that the image file actually exists
             ((TextView)findViewById(R.id.attached_image_path)).setText("Photo Path: " + photoPath);
             ImageView view = (ImageView)(findViewById(R.id.attached_image));
             Bitmap pl = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
@@ -218,13 +241,20 @@ public class Report extends ActionBarActivity implements StatusListener{
      * @param view
      */
     public void sendReportOnClicked(View view) {
-        String report = textReport.getText().toString();
-        if (validTextInput(report)) {
-            Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
-            sendTextReportToDB(report);
-            startActivity(new Intent(this, ReportView.class));
-        } else {
-            Toast.makeText(this, "input text not valid !", Toast.LENGTH_SHORT).show();
+        String report = reportDescription.getText().toString();
+        if(photoPath == null)
+        {
+            if (validTextInput(report)) {
+                Toast.makeText(this, "connecting database ...", Toast.LENGTH_SHORT).show();
+                sendTextReportToDB(report);
+            } else {
+                Toast.makeText(this, "input text not valid !", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            sendPhotoReportToDB();
+
         }
     }
 
@@ -238,8 +268,14 @@ public class Report extends ActionBarActivity implements StatusListener{
         try
         {
             daOtextReport = new DAOtextReport(getApplicationContext());
-            daOtextReport.addReport(new TextReport(report, location.getLatitude(), location.getLongitude()));
+            daOtextReport.addReport(new TextReport(report, System.currentTimeMillis(), location.getLatitude(), location.getLongitude(), true));
             Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
+            ((ImageView)findViewById(R.id.attached_image)).setImageBitmap(null);
+            ((Button)findViewById(R.id.btn_photo)).setText("Attach Photo");
+            ((TextView)findViewById(R.id.attached_image_path)).setText("Photo Path:");
+            photoPath = null;
+            reportTitle.getText().clear();
+            reportDescription.getText().clear();
         }
         catch (SQLiteException e)
         {
@@ -250,7 +286,61 @@ public class Report extends ActionBarActivity implements StatusListener{
                 daOtextReport.close();
             }
         }
-        textReport.getText().clear();
+
+    }
+
+
+    private void sendPhotoReportToDB() {
+        DAOphoto daoPhotoReport = null;
+        try
+        {
+            daoPhotoReport = new DAOphoto(getApplicationContext());
+            PhotoReport photoReport = new PhotoReport();
+            photoReport.setUserid(Coder.encryptMD5(UserInfo.getUserID()));
+
+            if(reportTitle.getText().toString().length() > 0) {
+                photoReport.setTitle(reportTitle.getText().toString());
+            }
+            else
+            {
+                photoReport.setTitle("This is the Title of a photo report");
+            }
+            if(reportDescription.getText().toString().length() > 0) {
+                photoReport.setDescription(reportDescription.getText().toString());
+            }
+            else
+            {
+                photoReport.setDescription("This is the content of the photo report");
+            }
+            photoReport.setDatetime(System.currentTimeMillis());
+            photoReport.setName(UserInfo.getName());
+            photoReport.setLatitude(location.getLatitude());
+            photoReport.setLongitude(location.getLongitude());
+            String extension = photoPath.substring(photoPath.indexOf("."), photoPath.length());
+            photoReport.setExtension(extension);
+            photoReport.setPath(photoPath);
+            photoReport.setIsreported(false);
+            photoReport.setIsLocalMade(true);
+            photoReport.setPicId(System.nanoTime());
+            daoPhotoReport.addPhoto(photoReport);
+            Toast.makeText(this, "Report saved in local database!", Toast.LENGTH_SHORT).show();
+
+            ((ImageView)findViewById(R.id.attached_image)).setImageBitmap(null);
+            ((Button)findViewById(R.id.btn_photo)).setText("Attach Photo");
+            ((TextView)findViewById(R.id.attached_image_path)).setText("Photo Path:");
+            photoPath = null;
+            reportDescription.getText().clear();
+            reportTitle.getText().clear();
+        }
+        catch (SQLiteException e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            if(daoPhotoReport != null){
+                daoPhotoReport.close();
+            }
+        }
     }
 
     /**
@@ -322,27 +412,33 @@ public class Report extends ActionBarActivity implements StatusListener{
 
     @Override protected void onSaveInstanceState(Bundle outState) {
         // Save the user's current game state
-        if (mCapturedImageURI != null) {
-            outState.putString("mCapturedImageURI", mCapturedImageURI.toString());
-        }
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
+        if (mCapturedImageURI != null) {
+            outState.putString("mCapturedImageURI", mCapturedImageURI.toString());
+            if(location != null) {
+                outState.putString("latitude", Double.toString(location.getLatitude()));
+                outState.putString("longitude", Double.toString(location.getLongitude()));
+            }
+        }
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Inside on save instance state ");
     }
 
     @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
-        super.onRestoreInstanceState(savedInstanceState);
 
         // Restore state members from saved instance
+        super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState.containsKey("mCapturedImageURI")) {
             mCapturedImageURI = Uri.parse(savedInstanceState.getString("mCapturedImageURI"));
         }
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Inside Restore Instance State");
     }
 
 
     @Override protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view Destroyed");
     }
 
