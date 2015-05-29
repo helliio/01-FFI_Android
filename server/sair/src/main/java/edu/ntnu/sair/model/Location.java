@@ -3,8 +3,11 @@ package edu.ntnu.sair.model;
 import javax.persistence.*;
 import java.util.Calendar;
 
+
 /**
- * Created by chun on 2/6/15.
+ * Created by Chun on 2/6/15.
+ * <br>
+ * Location: Location model is used to store the detail of the location.
  */
 
 @Entity

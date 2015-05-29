@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Created by chun on 3/10/15.
+ * Created by Chun on 3/10/15.
+ * <br>
+ * GZIPFilter: GZIPFilter model is used to gzip compression stream.
  */
+
 public class GZIPResponseStream extends ServletOutputStream {
     protected ByteArrayOutputStream baos = null;
     protected GZIPOutputStream gzipstream = null;

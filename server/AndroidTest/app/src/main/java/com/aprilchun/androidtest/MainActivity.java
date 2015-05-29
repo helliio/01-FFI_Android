@@ -1,5 +1,12 @@
 package com.aprilchun.androidtest;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -32,11 +39,14 @@ import java.io.File;
 import java.util.Calendar;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements LocationListener {
 
     private UserService userService = new SoapUserService();
     private ReportService reportService = new SoapReportService();
     private RequestService requestService = new SoapRequestService();
+
+    private LocationManager locationManager;
+    private Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +111,8 @@ public class MainActivity extends ActionBarActivity {
                         e.printStackTrace();
                     }
 
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    System.out.println(location);
                     Looper.loop();
                 }
             };
@@ -244,24 +256,24 @@ public class MainActivity extends ActionBarActivity {
 //                    String response = requestService.getLatestTeamLocations("bb", androidId);
 //                    String response = requestService.getPeriodTeamLocations("gg", androidId, startTime, endTime);
 //                        String response = requestService.getAllTeamTextReports("gg", androidId);
-                        String response = requestService.getLatestTeamTextReports("gg", androidId);
+//                        String response = requestService.getLatestTeamTextReports("gg", androidId);
 //                    String response = requestService.getPeriodTeamTextReports("gg", androidId, startTime, endTime);
 //                    String response = requestService.getAllTeamPhotoReports("gg", androidId);
 //                    String response = requestService.getLatestTeamPhotoReports("gg", androidId);
 //                    String response = requestService.getPeriodTeamPhotoReports("gg", androidId, startTime, endTime);
-//                    String response = requestService.getPhoto("gg", androidId, "19");
+                        String response = requestService.getPhoto("gg", androidId, "60");
                         System.out.println(Calendar.getInstance().getTimeInMillis() - c2.getTimeInMillis() + "ms");
-//                        Message msg = handler.obtainMessage();
-//                        JSONObject jsonObject = new JSONObject(response);
-//                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
-//                        handler.sendMessage(msg);
-//                        String obj = (String) jsonObject.get("obj");
-//                        JSONArray array = new JSONArray(obj);
+                        Message msg = handler.obtainMessage();
+                        JSONObject jsonObject = new JSONObject(response);
+                        msg.obj = jsonObject.get("tag") + ":" + jsonObject.get("desc");
+                        handler.sendMessage(msg);
+                        String obj = (String) jsonObject.get("obj");
+                        JSONArray array = new JSONArray(obj);
 //                        for (int i = 0; i < array.length(); i++) {
 //                            System.out.println(array.length());
 //                        }
 
-//                        System.out.println(obj);
+                        System.out.println(obj);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -269,6 +281,8 @@ public class MainActivity extends ActionBarActivity {
                 }
             };
         });
+
+        System.out.println("start");
 
 
     }
@@ -302,4 +316,48 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_SHORT).show();
         }
     };
+
+    @Override
+    protected void onResume() {
+        System.out.println("resume");
+        super.onResume();
+
+        // Acquire a reference to the system Location Manager
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        System.out.println("GPS_PROVIDER: " + locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
+        System.out.println("NETWORK_PROVIDER: " + locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        System.out.println(location);
+
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+
+
+
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+        System.out.println("Location updated: " + location);
+        Toast.makeText(getBaseContext(), "Location changed: " + location.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        System.out.println("Status updated");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        System.out.println(provider +" enabled");
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        System.out.println(provider +" disabled");
+    }
 }

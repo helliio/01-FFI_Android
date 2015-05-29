@@ -3,8 +3,11 @@ package edu.ntnu.sair.model;
 import javax.persistence.*;
 
 /**
- * Created by chun on 2/6/15.
+ * Created by Chun on 2/6/15.
+ * <br>
+ * PhotoReport: PhotoReport model is used to store the detail of the photo report.
  */
+
 
 @Entity
 @Table(name = "photoreport")

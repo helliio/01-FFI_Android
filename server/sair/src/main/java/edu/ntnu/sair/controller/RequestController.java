@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 /**
- * Created by torgrim on 3/5/15.
+ * Created by chun on 3/5/15.
+ * <br>
+ * RequestController: Offer the interfaces for the client to authenticate the user by REST.
  */
 
 @RequestMapping(value = "/request")
@@ -19,6 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class RequestController {
     RequestService requestService;
 
+    /**
+     * Offer the interface for the client to request all location reports from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getAllTeamLocations", method = RequestMethod.POST)
@@ -29,6 +39,14 @@ public class RequestController {
         return this.requestService.getAllTeamLocations(username, uuid, sendingTime);
     }
 
+    /**
+     * Offer the interface for the client to request latest location reports from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getLatestTeamLocations", method = RequestMethod.POST)
@@ -39,6 +57,16 @@ public class RequestController {
         return this.requestService.getLatestTeamLocations(username, uuid, sendingTime);
     }
 
+    /**
+     * Offer the interface for the client to request location reports in a period time from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param startTime   start of the period
+     * @param endTime     end of the period
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getPeriodTeamLocations", method = RequestMethod.POST)
@@ -51,6 +79,16 @@ public class RequestController {
         return this.requestService.getPeriodTeamLocations(username, uuid, sendingTime, startTime, endTime);
     }
 
+    /**
+     * Offer the interface for the client to request all text reports from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param startTime   start of the period
+     * @param endTime     end of the period
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getDistinctPeriodTeamLocations", method = RequestMethod.POST)
@@ -73,6 +111,14 @@ public class RequestController {
         return this.requestService.getAllTeamTextReports(username, uuid, sendingTime);
     }
 
+    /**
+     * Offer the interface for the client to request latest text reports from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getLatestTeamTextReports", method = RequestMethod.POST)
@@ -83,7 +129,16 @@ public class RequestController {
         return this.requestService.getLatestTeamTextReports(username, uuid, sendingTime);
     }
 
-
+    /**
+     * Offer the interface for the client to request text reports in a period time from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param startTime   start of the period
+     * @param endTime     end of the period
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getPeriodTeamTextReports", method = RequestMethod.POST)
@@ -96,6 +151,14 @@ public class RequestController {
         return this.requestService.getPeriodTeamTextReports(username, uuid, sendingTime, startTime, endTime);
     }
 
+    /**
+     * Offer the interface for the client to request all photo reports from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getAllTeamPhotoReports", method = RequestMethod.POST)
@@ -106,7 +169,14 @@ public class RequestController {
         return this.requestService.getAllTeamPhotoReports(username, uuid, sendingTime);
     }
 
-
+    /**
+     * Offer the interface for the client to request latest photo reports from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getLatestTeamPhotoReports", method = RequestMethod.POST)
@@ -117,7 +187,16 @@ public class RequestController {
         return this.requestService.getLatestTeamPhotoReports(username, uuid, sendingTime);
     }
 
-
+    /**
+     * Offer the interface for the client to request photo reports in a period time from the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param startTime   start of the period
+     * @param endTime     end of the period
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getPeriodTeamPhotoReports", method = RequestMethod.POST)

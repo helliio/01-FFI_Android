@@ -42,7 +42,6 @@ public class ReportServiceImpl implements ReportService {
     private TextReportDao textReportDao;
     private PhotoReportDao photoReportDao;
 
-
     @Transactional
     @Override
     public String sendLocationReport(String username, String uuid, String sendingTime, String latitude, String longitude) {

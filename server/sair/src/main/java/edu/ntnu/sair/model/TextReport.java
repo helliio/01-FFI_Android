@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 /**
  * Created by chun on 2/6/15.
+ * <br>
+ * TextReport: TextReport model is used to store the detail of the text report.
  */
 
 @Entity
@@ -12,7 +14,6 @@ public class TextReport {
     private long id;
     private Location location;
     private String content;
-
 
 
     @Id

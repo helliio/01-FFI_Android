@@ -8,8 +8,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 /**
- * Created by chun on 3/10/15.
+ * Created by Chun on 3/10/15.
+ * <br>
+ * GZIPFilter: GZIPFilter model is used to gzip compression wrapper
  */
+
 public class GZIPResponseWrapper extends HttpServletResponseWrapper {
     protected HttpServletResponse origResponse = null;
     protected ServletOutputStream stream = null;

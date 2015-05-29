@@ -5,24 +5,72 @@ import edu.ntnu.sair.model.Member;
 import java.util.List;
 
 /**
- * Created by chun on 2/10/15.
+ * Created by Chun on 2/10/15.
+ * <br>
+ * MemberDao: Offer the functions for accessing the database and handling member.
  */
 
 public interface MemberDao {
-    public void add(Member member);
 
-    public void delete(Member member);
+    /**
+     * Insert the member to the database
+     *
+     * @param member the member model to be handled in the database
+     */
+    void add(Member member);
 
-    public void update(Member member);
+    /**
+     * Delete the member from the database
+     *
+     * @param member the member model to be handled in the database
+     */
+    void delete(Member member);
 
-    public Member getById(long id);
+    /**
+     * Update the member to the database
+     *
+     * @param member the member model to be handled in the database
+     */
+    void update(Member member);
 
-    public List<Member> getAll();
+    /**
+     * Fetch the member by id from the database
+     *
+     * @param id the id of the member
+     * @return the target member to be returned
+     */
+    Member getById(long id);
 
-    public Member getByUsername(String username);
+    /**
+     * Fetch all the members from the database
+     *
+     * @return the target member list to be returned
+     */
+    List<Member> getAll();
 
-    public List<Member> getByTeamId(String teamId);
+    /**
+     * Fetch the member by username from the database
+     *
+     * @param username the username of the member
+     * @return the target member to be returned
+     */
+    Member getByUsername(String username);
 
-    public List<Member> getTeamByTeamIdAndUsername(String teamId, String username);
+    /**
+     * Fetch the members by team from the database
+     *
+     * @param teamId the id of the member
+     * @return the target member list to be returned
+     */
+    List<Member> getByTeamId(String teamId);
+
+    /**
+     * Fetch the members by team and username from the database
+     *
+     * @param teamId   the id of the member
+     * @param username the username of the member
+     * @return the target member list to be returned
+     */
+    List<Member> getTeamByTeamIdAndUsername(String teamId, String username);
 
 }
