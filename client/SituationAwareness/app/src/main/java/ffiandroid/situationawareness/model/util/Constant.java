@@ -9,9 +9,11 @@ public class Constant {
     // Key for encryption
     public static final String AES_KEY = "01FFIAndroid2015";
 
+    // Default server address
+    public static final String DEFAULT_SERVICE_URL = "http://sair.chun.no";
     // URL of the server
     // Public Server
-    public static final String SERVICE_URL = "http://sair.chun.no";
+    public static String SERVICE_URL = "http://sair.chun.no";
 
     // Timezone for time
     public static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Europe/Oslo");
