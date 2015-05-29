@@ -16,14 +16,14 @@ package edu.ntnu.sair.util;
 
 /**
  * A Base64 Encoder/Decoder.
- * <p>
+ * <br>
  * This class is used to encode and decode data in Base64 format as described in
  * RFC 1521.
- * <p>
+ * <br>
  * Home page: <a href="http://www.source-code.biz">www.source-code.biz</a><br>
  * Author: Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland<br>
  * Multi-licensed: EPL/LGPL/AL/BSD.
- * <p>
+ * <br>
  * Version history:<br>
  * 2003-07-22 Christian d'Heureuse (chdh): Module created.<br>
  * 2005-08-11 chdh: Lincense changed from GPL to LGPL.<br>
@@ -40,6 +40,7 @@ public class Base64Coder {
 
     // Mapping table from 6-bit nibbles to Base64 characters.
     private static char[] map1 = new char[64];
+
     static {
         int i = 0;
         for (char c = 'A'; c <= 'Z'; c++)
@@ -54,6 +55,7 @@ public class Base64Coder {
 
     // Mapping table from Base64 characters to 6-bit nibbles.
     private static byte[] map2 = new byte[128];
+
     static {
         for (int i = 0; i < map2.length; i++)
             map2[i] = -1;
@@ -64,18 +66,19 @@ public class Base64Coder {
     /**
      * Encodes a string into Base64 format. No blanks or line breaks are
      * inserted.
-     * 
+     *
      * @param s a String to be encoded.
      * @return A String with the Base64 encoded data.
+     * @throws Exception all exceptions
      */
-    public static String encodeString(String s) throws Exception{
+    public static String encodeString(String s) throws Exception {
         return new String(encode(s.getBytes("UTF-8")));
     }
 
     /**
      * Encodes a byte array into Base64 format. No blanks or line breaks are
      * inserted.
-     * 
+     *
      * @param in an array containing the data bytes to be encoded.
      * @return A character array with the Base64 encoded data.
      */
@@ -86,8 +89,8 @@ public class Base64Coder {
     /**
      * Encodes a byte array into Base64 format. No blanks or line breaks are
      * inserted.
-     * 
-     * @param in an array containing the data bytes to be encoded.
+     *
+     * @param in   an array containing the data bytes to be encoded.
      * @param iLen number of bytes to process in <code>in</code>.
      * @return A character array with the Base64 encoded data.
      */
@@ -117,11 +120,11 @@ public class Base64Coder {
 
     /**
      * Decodes a string from Base64 format.
-     * 
+     *
      * @param s a Base64 String to be decoded.
      * @return A String containing the decoded data.
      * @throws IllegalArgumentException if the input is not valid Base64 encoded
-     *             data.
+     *                                  data.
      */
     public static String decodeString(String s) {
         return new String(decode(s));
@@ -129,11 +132,11 @@ public class Base64Coder {
 
     /**
      * Decodes a byte array from Base64 format.
-     * 
+     *
      * @param s a Base64 String to be decoded.
      * @return An array containing the decoded data bytes.
      * @throws IllegalArgumentException if the input is not valid Base64 encoded
-     *             data.
+     *                                  data.
      */
     public static byte[] decode(String s) {
         return decode(s.toCharArray());
@@ -142,11 +145,11 @@ public class Base64Coder {
     /**
      * Decodes a byte array from Base64 format. No blanks or line breaks are
      * allowed within the Base64 encoded data.
-     * 
+     *
      * @param in a character array containing the Base64 encoded data.
      * @return An array containing the decoded data bytes.
      * @throws IllegalArgumentException if the input is not valid Base64 encoded
-     *             data.
+     *                                  data.
      */
     public static byte[] decode(char[] in) {
         int iLen = in.length;

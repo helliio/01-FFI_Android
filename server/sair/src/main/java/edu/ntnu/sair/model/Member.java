@@ -4,8 +4,11 @@ import javax.persistence.*;
 import java.util.Calendar;
 
 /**
- * Created by chun on 2/6/15.
+ * Created by Chun on 2/6/15.
+ * <br>
+ * Member: Member model is used to store the information of the user.
  */
+
 
 @Entity
 @Table(name = "member")

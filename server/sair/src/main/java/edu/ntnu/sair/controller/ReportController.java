@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 /**
- * Created by torgrim on 3/5/15.
+ * Created by chun on 3/5/15.
+ * <br>
+ * ReportController: Offer the interfaces for the client to report the reports from the server by REST.
  */
 
 @RequestMapping(value = "/report")
@@ -20,6 +22,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ReportController {
     private ReportService reportService;
 
+    /**
+     * Offer the interface for the client to send location report to the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param latitude    latitude of the location
+     * @param longitude   longitude of the location
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/sendLocationReport", method = RequestMethod.POST)
@@ -33,6 +45,15 @@ public class ReportController {
 
     }
 
+    /**
+     * Offer the interface for the client to send location report list to the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param list        list of the location reports
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/sendLocationReportList", method = RequestMethod.POST)
@@ -44,6 +65,17 @@ public class ReportController {
         return this.reportService.sendLocationReportList(username, uuid, sendingTime, list);
     }
 
+    /**
+     * Offer the interface for the client to send text report to the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param latitude    latitude of the location
+     * @param longitude   longitude of the location
+     * @param content     content of the text report
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/sendTextReport", method = RequestMethod.POST)
@@ -57,6 +89,15 @@ public class ReportController {
         return this.reportService.sendTextReport(username, uuid, sendingTime, latitude, longitude, content);
     }
 
+    /**
+     * Offer the interface for the client to send text report list to the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param list        list of the text reports
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/sendTextReportList", method = RequestMethod.POST)
@@ -68,7 +109,21 @@ public class ReportController {
         return this.reportService.sendTextReportList(username, uuid, sendingTime, list);
     }
 
-
+    /**
+     * Offer the interface for the client to send photo report to the server
+     *
+     * @param username    username for the user
+     * @param uuid        unique id for the user together with device id
+     * @param sendingTime timestamp when sent from client
+     * @param latitude    latitude of the location
+     * @param longitude   longitude of the location
+     * @param direction   direction of the user
+     * @param file        photo file
+     * @param extension   extension of the photo file
+     * @param title       title of the report
+     * @param description description of the report
+     * @return result with string type as a json or a xml format
+     */
     // NOTE(Torgrim): added title as a request param here...
     @Scope("prototype")
     @ResponseBody
@@ -95,8 +150,7 @@ public class ReportController {
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/populateReports", method = RequestMethod.GET)
-    public String populateDatabaseWithNewReports()
-    {
+    public String populateDatabaseWithNewReports() {
         DatabasePopulator dbPopulator = new DatabasePopulator();
         dbPopulator.populateLocationReports(reportService);
         dbPopulator.populateTextReports(reportService);
@@ -112,8 +166,7 @@ public class ReportController {
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getAllReports", method = RequestMethod.GET)
-    public String getAllReports()
-    {
+    public String getAllReports() {
         return reportService.getAllReports();
     }
 

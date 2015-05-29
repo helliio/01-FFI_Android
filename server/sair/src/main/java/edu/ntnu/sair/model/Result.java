@@ -3,8 +3,11 @@ package edu.ntnu.sair.model;
 import org.json.JSONObject;
 
 /**
- * Created by chun on 3/5/15.
+ * Created by Chun on 2/6/15.
+ * <br>
+ * Result: Result model is used to store of the return information and format it as JSON or XML.
  */
+
 public class Result {
     private String tag;
     private String description;

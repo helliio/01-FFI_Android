@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 /**
- * Created by torgrim on 3/5/15.
+ * Created by chun on 3/5/15.
+ * <br>
+ * UserController: Offer the interfaces for the client to authenticate the user by REST.
  */
 
 @RequestMapping(value = "/user")
@@ -21,6 +23,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
     private UserService userService;
 
+    /**
+     * Offer the interface for the client to login a  user
+     *
+     * @param username  username for the user
+     * @param password  password for the user
+     * @param uuid      unique id for the user together with the device id
+     * @param loginTime timestamp when the user login
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -32,6 +43,15 @@ public class UserController {
         return this.userService.login(username, uuid, password, loginTime);
     }
 
+    /**
+     * Offer the interface for the client to register a new user
+     *
+     * @param username username for the user
+     * @param password password for the user
+     * @param name     name for the user
+     * @param teamId   teamId for the user
+     * @return result with string type as a json or a xml format
+     */
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -54,8 +74,7 @@ public class UserController {
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/registerAndLoginTestDB", method = RequestMethod.GET)
-    public String populateDatabaseWithUsersAndLogin()
-    {
+    public String populateDatabaseWithUsersAndLogin() {
         DatabasePopulator dbPopulator = new DatabasePopulator();
         dbPopulator.registerAllNewMembers(userService);
         dbPopulator.loginAllNewMembers(userService);
@@ -67,8 +86,7 @@ public class UserController {
     @Scope("prototype")
     @ResponseBody
     @RequestMapping(value = "/getAllMembers", method = RequestMethod.GET)
-    public String getAllMembers()
-    {
+    public String getAllMembers() {
         return userService.getAllMembers();
     }
 

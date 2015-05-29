@@ -5,6 +5,8 @@ import java.util.Calendar;
 
 /**
  * Created by chun on 2/6/15.
+ * <br>
+ * EventLog: Eventlog model is used to store the log of events.
  */
 
 @Entity

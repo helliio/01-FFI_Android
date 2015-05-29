@@ -8,6 +8,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.security.MessageDigest;
 
+/**
+ * Created by Chun on 2/6/15.
+ * <br>
+ * Coder: Encoding and decoding functions.
+ */
+
 public class Coder {
     private final static String extraCode = "&*^%@%$^#&";
     private final static char[] hexDigits = {'0', '1', '2', '3', '4', '5',
@@ -23,6 +29,12 @@ public class Coder {
     }
 
 
+    /**
+     * Encrypt the input using MD5
+     *
+     * @param input input string
+     * @return the encrypted string
+     */
     public static String encryptMD5(String input) {
         try {
             // Construct MessageDigest with MD5 type
@@ -46,6 +58,12 @@ public class Coder {
         }
     }
 
+    /**
+     * Encrypt the input using BASE64
+     *
+     * @param file input file
+     * @return the encrypted string
+     */
     public static String encryptBASE64(File file) {
         try {
             FileInputStream in = new FileInputStream(file);
@@ -59,6 +77,12 @@ public class Coder {
         return null;
     }
 
+    /**
+     * Decrypt the input using BASE64
+     *
+     * @param file  input file
+     * @param input input string
+     */
     public static void decryptBASE64(File file, String input) {
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -70,6 +94,12 @@ public class Coder {
         }
     }
 
+    /**
+     * Encrypt the input using AES128
+     *
+     * @param input input string
+     * @return the encrypted byte array
+     */
     protected static byte[] encryptAES128(String input) {
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(
@@ -84,6 +114,12 @@ public class Coder {
         return null;
     }
 
+    /**
+     * Decrypt the input using AES128
+     *
+     * @param input input byte array
+     * @return the decrypted string
+     */
     protected static String decryptAES128(byte[] input) {
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(
@@ -98,6 +134,12 @@ public class Coder {
         return null;
     }
 
+    /**
+     * Encrypt the input using BASE64
+     *
+     * @param input input byte array
+     * @return the encrypted string
+     */
     protected static String encryptBASE64(byte[] input) {
         try {
             return String.valueOf(Base64Coder.encode(input));
@@ -107,6 +149,12 @@ public class Coder {
         return null;
     }
 
+    /**
+     * Encrypt the input using BASE64
+     *
+     * @param input input string
+     * @return the decrypted byte array
+     */
     protected static byte[] decryptBASE64(String input) {
         try {
             return Base64Coder.decode(input);

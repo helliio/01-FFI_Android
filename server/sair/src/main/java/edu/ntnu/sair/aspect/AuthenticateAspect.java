@@ -8,15 +8,28 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Created by Chun on 2/16/15.
+ * <br>
+ * AuthenticateAspect: Authenticate the users.
+ */
 @Aspect
 @Service("authenticateAspect")
 public class AuthenticateAspect {
     private UserService userService;
 
+    /**
+     * Set the pointcut.
+     */
     @Pointcut("execution(* edu.ntnu.sair.service.ReportService.*(..)) && args(..)")
     private void aspectjMethod() {
     }
 
+    /**
+     * Execute before the point cut
+     *
+     * @param jp the pointcut
+     */
     @Before(value = "aspectjMethod()")
     public void before(JoinPoint jp) {
         System.out.println("Authenticate Aspect before execution is running");
