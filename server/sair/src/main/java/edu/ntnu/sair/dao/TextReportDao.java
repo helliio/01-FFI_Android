@@ -92,11 +92,12 @@ public interface TextReportDao {
      * Fetch the text reports by team in a period of time from the database
      *
      * @param teamId    the owner's teamid of the text report
+     * @param username  username of the member
      * @param startTime start of the period
      * @param endTime   end of the period
      * @return the target text list report to be returned
      */
-    List<TextReport> getByTeamPeriod(String teamId, long startTime, long endTime);
+    List<TextReport> getByTeamPeriod(String teamId, String username, long startTime, long endTime);
 
     /**
      * Fetch the text reports by member in a period of time from the database
