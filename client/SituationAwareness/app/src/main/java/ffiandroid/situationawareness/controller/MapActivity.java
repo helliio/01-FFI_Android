@@ -87,7 +87,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
 
     // NOTE(Torgrim): Added for testing purpose
-    // TODO(Torgrim): Clean up unnecessary member variables, methods and imports
     private ArrayList<Marker> coworkersLocationMarkers = new ArrayList();
     private ArrayList<LocationReport> coworkersLocationReportsPresent = new ArrayList<>();
     private ArrayList<String> coworkersLocationReportsIDPresent = new ArrayList<>();
@@ -142,6 +141,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     private Marker bottomRightMiddleMarker;
     private Marker bottomRightMarker;
 
+
+    /**
+     * Sets up the cluster marker for the different positions.
+     * There are a total of 16 cluster markers to initiate
+     * for the simple cluster marker algorithm.
+     *
+     */
     private void setUpClusterMarkers() {
 
         topLeftMarker = new Marker(mMapView);
@@ -229,6 +235,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     }
 
+    /**
+     * Used to create and refresh the cluster icon
+     * so that the correct text is written, meaning the number of
+     * reports contained within this cluster marker's area
+     *
+     * @param text The number of markers contained within this cluster
+     * @return BitampDrawable used as icon for cluster marker object.
+     */
     private BitmapDrawable refreshClusterIconCanvas(String text) {
         Drawable clusterIconD = getResources().getDrawable(R.drawable.marker_cluster);
         Bitmap clusterIcon = ((BitmapDrawable) clusterIconD).getBitmap();
@@ -251,7 +265,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         return bd;
     }
 
-
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_view);
@@ -341,7 +360,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapController.setZoom(32);
     }
 
-
+    /**
+     * Updates the users location based on the best provider,
+     * and also updates the map according to the content of the local database
+     */
     private void updateLocation() {
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
@@ -407,36 +429,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     }
 
+
     /**
-     * get coworkers location and add the to map view
+     * Called when the refresh icon is clicked and
+     * tries to update the location and map with {@link #updateLocation()}
      *
-     * @return
+     * @param view
      */
-    private ArrayList<OverlayItem> getCoworkersLocation() {
-        new Thread(queryThread).start();
-        return null;
-    }
-
-    /**
-     * use thread to run the server request
-     */
-    private Runnable queryThread = new Runnable() {
-        @Override public void run() {
-            Looper.prepare();
-            //            JSONArray jsonArray =
-            //                    new RequestService().getLocationsByTeam(UserInfo.getUSERNAME(),
-            // UserInfo.getMYANDROIDID());
-            //            System.out.println(jsonArray);
-            //            if (jsonArray != null) {
-            //                addAllMarkers(jsonArray);
-            //
-            //            }
-
-            Looper.loop();
-        }
-    };
-
-
     public void refreshOnCLicked(View view) {
         updateLocation();
         System.out.println("Refreshed");
@@ -444,8 +443,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
         //TODO Add timer to not flood app if pressed many times in a row
     }
-
-    // NOTE(Torgrim): Helper method to help with timeing of events..
 
 
     public static void getTimeSinceLastLocationDownload()
@@ -502,13 +499,27 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
 
-
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_map_view, menu);
         return true;
     }
 
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_app_settings:
@@ -545,7 +556,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     @Override public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.contextmenu_item_report_observation:
                 startActivity(new Intent(this, Report.class));
@@ -571,6 +581,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         });
     }
 
+    /**
+     * Called when the users location is updated or changed
+     * and tries to update map accordingly
+     *
+     * @param location
+     */
     @Override public void onLocationChanged(Location location) {
         UserInfo.setCurrentLatitude(location.getLatitude());
         UserInfo.setCurrentLongitude(location.getLongitude());
@@ -588,18 +604,23 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         timeOfLastNewPositionAdded = System.currentTimeMillis();
 
         System.out.println("Time since last my position was added to the local database... " + timeSinceLastPositionWasAdded + " ms");
-        DAOlocation daOlocation = new DAOlocation(getApplicationContext());
+        DAOlocation daOlocation = null;
         try {
+            daOlocation = new DAOlocation(getApplicationContext());
             daOlocation.addLocation(new LocationReport(true));
         } catch (SQLiteException e) {
             e.printStackTrace();
         } finally {
-            daOlocation.close();
+            if(daOlocation != null) {
+                daOlocation.close();
+            }
         }
     }
 
     /**
      * update coworkers position marker
+     * <p>
+     * Adds new coworker markers if there are any new ones needed
      */
     public void updateCoworkersPositionMarker() {
         new Thread(getCoWorkerMarkerThread).start();
@@ -718,9 +739,13 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         }
     };
 
-    // NOTE(Torgrim): Function to update photo reports on map,
-    // Called for every zoom and drag event on the map
-    // TODO(Torgrim): Check and clean up this method
+
+    /**
+     * Tries to add {@link PhotoReport} markers if
+     * there are any new ones need. Called when the
+     * user interacts with the map
+     *
+     */
     public void updatePhotoMarkers() {
 
         List<PhotoReport> photoReports = new OSMmap().getAllPhotoReports(getApplicationContext());
@@ -785,9 +810,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     }
 
-    // NOTE(Torgrim): Added by Torgrim for testing purposes
-    // to calculate the marker view status, meaning that
-    // we're trying to calculate whether to cluster or single markers
+    /**
+     * Checks to see of the there is need to cluster markers together
+     * if there are more than a 1000 markers within screen view then the
+     * {@link #calculateCluster()} method will be called. Is called for every
+     * user interaction with the map
+     *
+     * @return
+     */
     private boolean calculateMarkers() {
 
         double startTime = System.currentTimeMillis();
@@ -865,6 +895,14 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         }
     }
 
+    /**
+     * A very simple but static algorithm to calculate where
+     * the cluster markers will be drawn and with what status.
+     * <p>
+     * If further development is done on this application or it is put to use,
+     * it is recommended to improve this
+     *
+     */
     private void calculateCluster() {
         final float DIVIDER = 1000000.000000f;
         float latitudeSouth = (float) mMapView.getBoundingBox().getLatSouthE6() / DIVIDER;
@@ -905,22 +943,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         int bottomLeftMiddleCount = 0;
         int bottomRightMiddleCount = 0;
         int bottomRightCount = 0;
-
-
-        System.out.println("---------Latitude South-----------------        " + latitudeSouth);
-        System.out.println("---------Latitude North-----------------        " + latitudeNorth);
-        System.out.println("---------Longitude West-----------------        " + longitudeWest);
-        System.out.println("---------Longitude East-----------------        " + longitudeEast);
-        System.out.println("---------Latitude Span-----------------         " + latitudeSpan);
-        System.out.println("---------Longitude Span-----------------        " + longitudeSpan);
-        System.out.println("---------Latitude Half Span-----------------    " + latitudeSpanQuarter);
-        System.out.println("---------Longitude Half Span-----------------   " + longitudeSpanQuarter);
-        System.out.println("---------Latitude First Middle-----------------       " + latitudeFirstMiddle);
-        System.out.println("---------Latitude Second Middle-----------------      " + latitudeSecondMiddle);
-        System.out.println("---------Latitude Third Middle-----------------      " + latitudeThirdMiddle);
-        System.out.println("---------Longitude First Middle-----------------      " + longitudeFirstMiddle);
-        System.out.println("---------Longitude Second Middle-----------------      " + longitudeSecondMiddle);
-        System.out.println("---------Longitude Third Middle-----------------      " + longitudeThirdMiddle);
 
 
         for (Marker marker : allCoworkersMarkers) {
@@ -1135,7 +1157,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     }
 
-
+    /**
+     * Caching of tiles to be used in offline mode
+     */
     private void cacheTiles() {
 
 
@@ -1147,9 +1171,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     /**
-     * my position marker
+     * Updates the current user's location marker to reflect a change in position
      *
-     * @param location
+     * @param location the new location
      */
     private void updateMyPositionMarker(Location location) {
         mMapView.getOverlays().remove(startMarker);
@@ -1162,7 +1186,8 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
 
         startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-            @Override public boolean onMarkerClick(Marker marker, MapView mapView) {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
                 System.out.println(">>>>>>>I guess you just touched yourself!!>>>>>>>>>>>>");
                 return true;
             }
@@ -1190,24 +1215,25 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         return true;
     }
 
+    /**
+     * Used to handle long press event on the map.
+     *
+     * @param location
+     * @return boolean
+     */
 
     @Override
-    /*
-    If user presses long on the map it opens a menu where
-    it can go to submit an observation about the particular point
-    on the map through the report page
-    // TODO(Torgrim): Fix so that the latitude and longitude always have E6
-     */ public boolean longPressHelper(GeoPoint p) {
+     public boolean longPressHelper(GeoPoint location) {
 
         registerForContextMenu(mMapView);
         newReportLocation = new Location("");
         newReportLocation.setTime(System.currentTimeMillis());
-        newReportLocation.setLatitude((p.getLatitudeE6() / 1000000.000000f));
-        newReportLocation.setLongitude((p.getLongitudeE6() / 1000000.000000f));
+        newReportLocation.setLatitude((location.getLatitudeE6() / 1000000.000000f));
+        newReportLocation.setLongitude((location.getLongitudeE6() / 1000000.000000f));
         openContextMenu(mMapView);
 
 
-        Toast.makeText(this, "Long press on (" + (p.getLatitudeE6() / 1000000.000000f) + "," + (p.getLongitudeE6() / 1000000.000000f) + ")", Toast.LENGTH_SHORT)
+        Toast.makeText(this, "Long press on (" + (location.getLatitudeE6() / 1000000.000000f) + "," + (location.getLongitudeE6() / 1000000.000000f) + ")", Toast.LENGTH_SHORT)
         .show();
         return false;
     }
@@ -1223,11 +1249,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     /**
-     * delete remembered information from a user
+     * Delete the saved preference used to automatically login
+     * These field are username, password, ip address and user's full name
      */
     private void rememberMeDelete() {
         getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
-                .putString(Login.PREF_PASSWORD, null).commit();
+                .putString(Login.PREF_PASSWORD, null).putString(Login.PREF_NAME, null).putString(Login.PREF_SERVERIP, null).commit();
     }
 
     /**
@@ -1270,13 +1297,22 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
 
 
-
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Map Activity Destroyed");
     }
 
+    /**
+     * Is called automatically
+     * by the android system for more info see the android developer manual
+     * or the API
+     */
     @Override public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
         menuItem.setTitle(String.valueOf(menuStatus));
@@ -1284,20 +1320,15 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     /**
-     * get value form UserInfo and assign it to menu status
+     * Get value from UserInfo and assign it to menu status
      */
     private void formatMenuStatus() {
-        //        int count = UserInfo.getTotalUnReportedItemsCount();
-        //        if (count == 0) {
-        //            menuStatus = "NO un-reported items !";
-        //        } else {
-        //            menuStatus = count + " items not reported! send now?";
-        //        }
-        // new methods as customer wishes: detailed count by category
         menuStatus = UserInfo.getReportDetails();
     }
 
-
+    /**
+     * Called automatically when the menu status changed to update this view's menu status
+     */
     @Override public void menuStatusChanged() {
         formatMenuStatus();
     }

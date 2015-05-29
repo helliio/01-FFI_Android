@@ -48,6 +48,12 @@ public class Login extends ActionBarActivity {
     protected static final String PREF_NAME = "name";
     protected static final String PREF_SERVERIP = "serverIP";
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
@@ -80,6 +86,11 @@ public class Login extends ActionBarActivity {
         });
     }
 
+    /**
+     * Is called when the checkbox related to ip address preference is clicked
+     *
+     * @param view
+     */
     public void onIPCheckClicked(View view)
     {
         CheckBox ipCheckBox = ((CheckBox) findViewById(R.id.server_ip_checkbox));
@@ -96,7 +107,9 @@ public class Login extends ActionBarActivity {
     }
 
     /**
-     * navigate to Map view if login is clicked and user name and password is valid
+     * Called when login button is clicked, and checks that
+     * the input is valid (Except ip address) and tries to
+     * login via {@link #login()}
      *
      * @param view
      */
@@ -114,7 +127,8 @@ public class Login extends ActionBarActivity {
     }
 
     /**
-     * go to register screen
+     * Called when register button is clicked and
+     * navigates to the register screen
      *
      * @param view
      */
@@ -123,12 +137,18 @@ public class Login extends ActionBarActivity {
     }
 
     /**
-     * Go to MapView window
+     * Starts a new activity {@link MapActivity} and navigates to this view.
      */
     private void toMapWindow() {
         startActivity(new Intent(this, MapActivity.class));
     }
 
+
+    /**
+     * Starts a login thread that tries to connect to the server
+     * and verify this user. If this is successful the user is
+     * navigated to the MapView
+     */
     private void login() {
         new Thread(loginThread).start();
     }
@@ -175,10 +195,13 @@ public class Login extends ActionBarActivity {
     };
 
     /**
-     * remember user and user pass
+     * Saves the username, user password, username and ip setting
+     * to use later when trying to automatically login
      *
-     * @param userName
-     * @param userPass
+     * @param userName user's username
+     * @param userPass user's password
+     * @param name full name of the user
+     * @param serverIP the server ip address this user is trying to connect to
      */
     private void rememberMe(String userName, String userPass, String name, String serverIP) {
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putString(PREF_USERNAME, userName)
@@ -186,7 +209,9 @@ public class Login extends ActionBarActivity {
     }
 
     /**
-     * auto login from remember me
+     * checks to see if the user can automatically login.
+     * If this is true, that the user is automatically taken
+     * to the MapView instead of the login screen
      */
     private void autoLogin() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -203,6 +228,8 @@ public class Login extends ActionBarActivity {
 
 
     /**
+     * Checks to see if the user has a network connection
+     *
      * @return true is there is a network connection
      */
     public boolean isOnline() {
@@ -211,12 +238,28 @@ public class Login extends ActionBarActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -232,21 +275,19 @@ public class Login extends ActionBarActivity {
     }
 
     /**
-     * receive broadcast for logout
+     * Receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
-            //            if (!getIntent().getExtras().getBoolean("LOGIN_ON")) {
-            //                Intent i = new Intent(getBaseContext(), Login.class);
-            //                i.putExtra("LOGIN_ON", true);
-            //                startActivity(i);
-            //            }
-            //            startActivity(new Intent(getBaseContext(), Login.class));
-
             finish();
         }
     };
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();

@@ -27,6 +27,13 @@ public class Status extends ActionBarActivity implements StatusListener {
             currentLocationLongitude;
     private String menuStatus;
 
+
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
@@ -93,11 +100,12 @@ public class Status extends ActionBarActivity implements StatusListener {
     }
 
     /**
-     * delete remembered information from a user
+     * Delete the saved preference used to automatically login
+     * These field are username, password, ip address and user's full name
      */
     private void rememberMeDelete() {
         getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
-                .putString(Login.PREF_PASSWORD, null).commit();
+                .putString(Login.PREF_PASSWORD, null).putString(Login.PREF_NAME, null).putString(Login.PREF_SERVERIP,null).commit();
     }
 
     /**

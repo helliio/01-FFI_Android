@@ -32,7 +32,11 @@ import ffiandroid.situationawareness.model.localdb.DAOtextReport;
 import ffiandroid.situationawareness.model.util.AdapterContentHolder;
 
 /**
- * Created by Torgrim on 13/05/2015.
+ * @author      Torgrim Bøe Skårsmoen
+ * @version     1.0
+ * @since       2015-05-2015
+ *
+ * The main activity for view all of the report currently in the local database
  */
 public class AllReportsView extends ActionBarActivity implements StatusListener
 {
@@ -48,7 +52,12 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
 
 
 
-
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // LocationReport View OnCreate
@@ -69,7 +78,11 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
         checkFilterCheckboxesAndPopulateListView();
         formatMenuStatus();
     }
-
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onResume() {
         super.onResume();
         checkFilterCheckboxesAndPopulateListView();
@@ -85,11 +98,10 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
 
 
 
-    // LocationReport View Methods
     /**
-     * get all data entries from database as a string list
-     *
-     * @return String [] list
+     * Refreshes the location report list and
+     * text report list used to create the content
+     * for this view
      */
     public void refreshLocationAndTextReportList() {
         try {
@@ -122,9 +134,14 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
     }
 
     /**
-     * Toast the clicked item
+     * Is called when one of the items in the list view
+     * is clicked. If this is a {@link LocationReport} or
+     * {@link TextReport} just the location or the location
+     * and the content of the report is shown. If the clicked
+     * item is a {@link PhotoReport} the user is taken to a separate
+     * image view
      *
-     * @param listView
+     * @param listView The list view that holds the item that the has been clicked
      */
     private void addItemClickListener(final ListView listView) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -153,14 +170,27 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
 
 
 
-
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_item_all_reports, menu);
         return true;
     }
-
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -188,25 +218,26 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
     }
 
     /**
-     * delete remembered information from a user
+     * Delete the saved preference used to automatically login
+     * These field are username, password, ip address and user's full name
      */
     private void rememberMeDelete() {
         getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
-                .putString(Login.PREF_PASSWORD, null).commit();
+                .putString(Login.PREF_PASSWORD, null).putString(Login.PREF_NAME, null).putString(Login.PREF_SERVERIP,null).commit();
     }
 
-
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
 
-
-
-    // PhotoReport View Methods
-
     /**
-     * refresh image list
+     * Is called to refresh the {@link PhotoReport} in this view
      */
     private void refreshImageList() {
         DAOphoto daOphoto = null;
@@ -231,12 +262,20 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
 
     }
 
-    // NOTE(Torgrim): Added for testing of filtering
+    /**
+     * Is called when one of the checkboxes used for filtering is clicked.
+     * The only thing this method does is call {@link #checkFilterCheckboxesAndPopulateListView()}.
+     * @param view
+     */
     public void onCheckboxClicked(View view) {
         checkFilterCheckboxesAndPopulateListView();
     }
 
-
+    /**
+     * Is used to determine the current state of all the checkboxes in this view
+     * and filters the list view accordingly
+     *
+     */
     private void checkFilterCheckboxesAndPopulateListView()
     {
         CheckBox location_report = (CheckBox)findViewById(R.id.location_report_filter);
@@ -284,25 +323,24 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
     }
 
     /**
-     * receive broadcast for logout
+     * Receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };
 
     /**
-     * get value form UserInfo and assign it to menu status
+     * Get value from UserInfo and assign it to menu status
      */
     private void formatMenuStatus() {
         menuStatus = UserInfo.getReportDetails();
     }
 
     /**
-     * menu status changed
+     * Called automatically when the menu status changed to update this view's menu status
      */
     @Override public void menuStatusChanged() {
         formatMenuStatus();
@@ -330,7 +368,7 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
     }
 
     /**
-     * last time report succeed or not
+     * last time report succeed or failed
      */
     @Override public void lastReportStatusChanged() {
 
@@ -340,7 +378,11 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
 
 
 
-
+    /**
+     * This method is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * or API
+     */
     @Override protected void onSaveInstanceState(Bundle outState) {
         // Save the user's current game state
         super.onSaveInstanceState(outState);
@@ -349,7 +391,11 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
         }
         // Always call the superclass so it can save the view hierarchy state
     }
-
+    /**
+     * This method is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual or
+     * API
+     */
     @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);

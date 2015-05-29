@@ -8,6 +8,13 @@ import java.security.MessageDigest;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ *
+ * Created by Chun
+ *
+ * Used encrypt and decrypt messages and username
+ */
+
 public class Coder {
     private final static String extraCode = "&*^%@%$^#&";
     private final static char[] hexDigits = {'0', '1', '2', '3', '4', '5',

@@ -13,6 +13,10 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by Torgrim on 08/05/2015.
+ *
+ * Used together with {@link AsyncDrawable} to
+ * generate a bitmap of the ui thread
+ *
  */
 public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap>
 {

@@ -10,6 +10,8 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by Torgrim on 13/05/2015.
+ *
+ * Is used to generate bitmaps of the ui thread
  */
 public class AsyncDrawable extends BitmapDrawable
 {

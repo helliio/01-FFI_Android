@@ -18,9 +18,9 @@ public class DatabasePopulator {
     ReportService reportService;
 
     // NOTE(Torgrim): linux path
-    //private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
+    private static final String PHOTO_PATH = "/home/tbstbs/Documents/BachelorNTNU/testPhotos/";
     // Windows path
-    private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos/";
+    //private static final String PHOTO_PATH = "p:/ProjectFFI/testPhotos/";
 
     private static final String TIME_IN_MILLI = Long.toString(new Date().getTime());
 
@@ -128,8 +128,8 @@ public class DatabasePopulator {
                                                             "This is the title for tbs's picture", "This is a test from tbs, sending photo");
 
         result += ">>>>>    " + reportService.sendPhotoReport(Coder.encryptMD5("tbstbs"), "9", TIME_IN_MILLI, "63.383070", "10.226228", "0",
-                Coder.encryptBASE64(new File(PHOTO_PATH + "test9.png")), "jpg",
-                "This is the title for tbs's picture", "This is a test from tbs, sending a PNG photo");
+                Coder.encryptBASE64(new File(PHOTO_PATH + "test9.jpg")), "jpg",
+                "This is the title for tbs's picture", "This is a test from tbs, sending a JPG photo");
 
         System.out.println("=================== Result of populating the photo reports =================\n");
         System.out.println(result);

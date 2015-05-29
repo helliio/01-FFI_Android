@@ -88,7 +88,7 @@ public class DAOphoto {
 
 
     /**
-     * set new un-reported photo value to UserInfo when it changed
+     * set new unreported photo value to UserInfo when it changed
      */
     private void statusChanged() {
         UserInfo.setUnReportedPhotos(getMyNOTReportedItemCount(UserInfo.getUserID()));
@@ -218,8 +218,12 @@ public class DAOphoto {
     }
 
     /**
-     * @param myUserID
-     * @return latest downloaded photo report item time as long; return 0 if there is none;
+     * Gets the timestamp of the latest photo
+     * report in the local database that does
+     * not belong to the current user
+     *
+     * @param myUserID current user's username
+     * @return latest downloaded photo report from current user's teammates item time as long; return 0 if there is none;
      */
     public long getTeammatesLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
@@ -240,6 +244,9 @@ public class DAOphoto {
 
 
     /**
+     * Gets the timestamp of the latest photo report
+     * in the local database that belongs to the current user
+     *
      * @param myUserID
      * @return latest downloaded photo report item time as long; return 0 if there is none;
      */
