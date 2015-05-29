@@ -36,6 +36,13 @@ public class Register extends ActionBarActivity {
     protected static String server_ip = Constant.DEFAULT_SERVICE_URL;
 
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +51,15 @@ public class Register extends ActionBarActivity {
         ((TextView)findViewById(R.id.register_default_server_ip_text)).setText("Default IP:" + Constant.DEFAULT_SERVICE_URL);
     }
 
+    /**
+     * Is called when the user clicks the ip checkbox in this view
+     * and sets the ip fields there after.
+     * <p>
+     * If the checkbox is checked then the ip edit text field is disabled
+     * and the content cleared, else it is enabled
+     *
+     * @param view
+     */
     public void onIPCheckClicked(View view)
     {
         CheckBox ipCheckBox = ((CheckBox) findViewById(R.id.register_default_server_ip_checkbox));
@@ -61,7 +77,12 @@ public class Register extends ActionBarActivity {
 
 
     /**
-     * handle user register
+     * Called when the regiser button is clicked
+     * <p>
+     * Starts the register thread that checks if all
+     * input is valid and tries to connect to the server
+     * with the given ip address.
+     *
      *
      * @param view
      */
@@ -73,6 +94,8 @@ public class Register extends ActionBarActivity {
     }
 
     /**
+     * Checks to see if the password fields match
+     *
      * @return true if input value is valid false otherwise
      */
     private boolean validateInput() {
@@ -143,6 +166,14 @@ public class Register extends ActionBarActivity {
         startActivity(new Intent(this, Login.class));
     }
 
+
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -150,6 +181,14 @@ public class Register extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -176,6 +215,11 @@ public class Register extends ActionBarActivity {
         }
     };
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();

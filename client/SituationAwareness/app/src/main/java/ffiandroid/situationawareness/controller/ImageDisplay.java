@@ -30,6 +30,13 @@ public class ImageDisplay extends Activity {
     private TextView description;
     private String jstring;
 
+
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system for more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
@@ -51,6 +58,13 @@ public class ImageDisplay extends Activity {
         imageView.setImageBitmap(ImageResizer.decodeSampledBitmapFromFile(photoReport.getPath(), width, height));
     }
 
+    /**
+     * internal method used to get the {@link PhotoReport}
+     * related to this photo
+     *
+     * @param jsonS
+     * @return
+     */
     private PhotoReport getPhotoReport(String jsonS) {
         try {
             JSONObject job = new JSONObject(jsonS);
@@ -63,17 +77,21 @@ public class ImageDisplay extends Activity {
     }
 
     /**
-     * go back to main activity
+     * Go back to the last view
      *
      * @param v
      */
     public void btnBackOnClick(View v) {
-        //startActivity(new Intent(this, AllReportsView.class));
         finish();
     }
 
     /**
-     * delete the current item;
+     * Delete the current report.
+     * <p>
+     * NOTE:
+     * This has not been implemented yet,
+     * So for now this only shows a text to the user
+     * saying it has not been implemented yet
      *
      * @param v
      */
@@ -82,6 +100,11 @@ public class ImageDisplay extends Activity {
         finish();
     }
 
+    /**
+     * This method is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * or API
+     */
     @Override protected void onSaveInstanceState(Bundle outState) {
         // Save the user's current game state
         if (jstring != null) {
@@ -91,6 +114,11 @@ public class ImageDisplay extends Activity {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * This method is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * or API
+     */
     @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
@@ -101,12 +129,28 @@ public class ImageDisplay extends Activity {
         }
     }
 
+
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_image_display, menu);
         return true;
     }
 
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -122,7 +166,7 @@ public class ImageDisplay extends Activity {
     }
 
     /**
-     * receive broadcast for logout
+     * Receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
@@ -131,6 +175,11 @@ public class ImageDisplay extends Activity {
         }
     };
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();

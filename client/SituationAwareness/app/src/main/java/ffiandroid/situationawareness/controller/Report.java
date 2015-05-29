@@ -57,6 +57,13 @@ public class Report extends ActionBarActivity implements StatusListener{
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private String photoPath;
 
+
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
@@ -118,7 +125,13 @@ public class Report extends ActionBarActivity implements StatusListener{
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Report view started");
     }
     /**
-     * user click add photo button
+     * Called if the user clicks the attach photo button
+     * <p>
+     * Opens a dialog view where the user can select
+     * between taken a photo with the camera or
+     * select a image from the photo gallery
+     *
+     * @param view
      */
     public void addPhotoButtonOnClicked(View view){
         if(photoPath == null) {
@@ -160,7 +173,7 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
     /**
-     * take a photo
+     * Start the camera application
      */
     private void activeTakePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -176,14 +189,23 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
     /**
-     * to gallery
+     * Send user to gallery application
      */
     private void activeGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, RESULT_LOAD_IMAGE);
     }
 
-
+    /**
+     * Called automatically when after the user has either
+     * taken a photo or selected on from the gallery.
+     *
+     * Then based on the request code, what to do with the image is decided
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -212,7 +234,13 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
 
-
+    /**
+     * Internal method get a bitmap to use as a thumbnail
+     * by using {@link AsyncDrawable} and {@link BitmapWorkerTask}
+     *
+     *
+     * @param photoPath
+     */
     private void checkImageAddressAndLoadBitmap(String photoPath)
     {
         if(photoPath != null)
@@ -236,7 +264,12 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
 
-    /* user click send report button
+    /** Called when the report observation button is clicked
+     * <p>
+     * Checks if the input fields are valid then trying to
+     * connect to the server. Here there is also done a check
+     * to see if the report to be sent is a {@link PhotoReport}
+     * or a {@link TextReport}.
      *
      * @param view
      */
@@ -259,9 +292,9 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
     /**
-     * send text report to database
+     * Save the {@link TextReport} to the local database
      *
-     * @param report
+     * @param report the content of the report
      */
     private void sendTextReportToDB(String report) {
         DAOtextReport daOtextReport = null;
@@ -289,7 +322,10 @@ public class Report extends ActionBarActivity implements StatusListener{
 
     }
 
-
+    /**
+     * Internal method to save the {@link PhotoReport}
+     * to the local database
+     */
     private void sendPhotoReportToDB() {
         DAOphoto daoPhotoReport = null;
         try
@@ -356,6 +392,13 @@ public class Report extends ActionBarActivity implements StatusListener{
         return false;
     }
 
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -363,6 +406,14 @@ public class Report extends ActionBarActivity implements StatusListener{
         return true;
     }
 
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -391,11 +442,12 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
     /**
-     * delete remembered information from a user
+     * Delete the saved preference used to automatically login
+     * These field are username, password, ip address and user's full name
      */
     private void rememberMeDelete() {
         getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
-                .putString(Login.PREF_PASSWORD, null).commit();
+                .putString(Login.PREF_PASSWORD, null).putString(Login.PREF_NAME, null).putString(Login.PREF_SERVERIP,null).commit();
     }
 
     /**
@@ -409,7 +461,11 @@ public class Report extends ActionBarActivity implements StatusListener{
         }
     };
 
-
+    /**
+     * This method is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * or API
+     */
     @Override protected void onSaveInstanceState(Bundle outState) {
         // Save the user's current game state
         // Always call the superclass so it can save the view hierarchy state
@@ -424,6 +480,11 @@ public class Report extends ActionBarActivity implements StatusListener{
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Inside on save instance state ");
     }
 
+    /**
+     * This method is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * or API
+     */
     @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
 
@@ -432,10 +493,14 @@ public class Report extends ActionBarActivity implements StatusListener{
         if (savedInstanceState.containsKey("mCapturedImageURI")) {
             mCapturedImageURI = Uri.parse(savedInstanceState.getString("mCapturedImageURI"));
         }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Inside Restore Instance State");
     }
 
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
@@ -449,14 +514,14 @@ public class Report extends ActionBarActivity implements StatusListener{
     }
 
     /**
-     * get value form UserInfo and assign it to menu status
+     * Get value from UserInfo and assign it to menu status
      */
     private void formatMenuStatus() {
         menuStatus = UserInfo.getReportDetails();
     }
 
     /**
-     * menu status changed
+     * Called automatically when the menu status changed to update this view's menu status
      */
     @Override public void menuStatusChanged() {
         formatMenuStatus();

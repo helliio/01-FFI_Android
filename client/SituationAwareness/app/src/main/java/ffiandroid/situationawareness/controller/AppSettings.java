@@ -37,6 +37,13 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
     private EditText serverIPAddress;
     private String menuStatus;
 
+
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     * @param  savedInstanceState
+     */
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_settings);
@@ -53,7 +60,12 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
         formatMenuStatus();
     }
 
-
+    /**
+     * Is called if the checkbox for default ip setting is
+     * clicked. Sets the current ip and ip edit text field accordingly
+     *
+     * @param view the view that was clicked and contains the checkbox
+     */
     public void onIPSettingsCheckBoxClicked(View view)
     {
         CheckBox setting_checkBox = ((CheckBox) findViewById(R.id.setting_ip_check_box));
@@ -70,12 +82,25 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
         }
     }
 
+    /**
+     * Is used to display the current settings concerning
+     * auto sync time, location update time and location update distance
+     * parameters to the user.
+     */
     private void initParameterSettings() {
         autoSyncTime.setText((ParameterSetting.getAutoSyncTime() / 60000) + "");
         locationUpdateTime.setText((ParameterSetting.getLocationUpdateTime() / 1000) + "");
         locationUpdateDistance.setText((ParameterSetting.getLocationUpdateDistance()) + "");
     }
 
+    /**
+     * Is called when the save settings button is clicked
+     *
+     * Checks that all input is valid although the ip address does not have to be valid
+     * and saves these settings
+     *
+     * @param v the view that was clicked
+     */
     public void parameterSettingClicked(View v) {
         int synctime, locauptime, locaupdis;
         try {
@@ -114,13 +139,26 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
         }
     }
 
-
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param menu
+     */
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_app_settings, menu);
         return true;
     }
-
+    /**
+     * Is called automatically by android.
+     * For more info see the android developer guide or
+     * API specification
+     *
+     * @param item the menu item selected
+     * @return boolean
+     */
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_report:
@@ -144,28 +182,38 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
     }
 
     /**
-     * delete remembered information from a user
+     * Delete the saved preference used to automatically login
+     * These field are username, password, ip address and user's full name
      */
     private void rememberMeDelete() {
         getSharedPreferences(Login.PREFS_NAME, MODE_PRIVATE).edit().putString(Login.PREF_USERNAME, null)
-                .putString(Login.PREF_PASSWORD, null).commit();
+                .putString(Login.PREF_PASSWORD, null).putString(Login.PREF_NAME, null).putString(Login.PREF_SERVERIP,null).commit();
     }
 
     /**
-     * receive broadcast for logout
+     * Receive broadcast for logout
      */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
-            //            startActivity(new Intent(getBaseContext(), Login.class));
             finish();
         }
     };
 
+    /**
+     * Is part of android apps life cycle and is called automatically
+     * by the android system. For more info see the android developer manual
+     * on activity life cycle
+     */
     @Override protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
 
+    /**
+     * Is called automatically
+     * by the android system for more info see the android developer manual
+     * or the API
+     */
     @Override public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.menu_item_status_and_send_button);
         menuItem.setTitle(String.valueOf(menuStatus));
@@ -173,14 +221,14 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
     }
 
     /**
-     * get value form UserInfo and assign it to menu status
+     * Get value from UserInfo and assign it to menu status
      */
     private void formatMenuStatus() {
         menuStatus = UserInfo.getReportDetails();
     }
 
     /**
-     * menu status changed
+     * Called automatically when the menu status changed to update this view's menu status
      */
     @Override public void menuStatusChanged() {
         formatMenuStatus();

@@ -171,7 +171,14 @@ public class DAOtextReport {
         return count;
     }
 
-    // NOTE(Torgrim): Added to make sure only not already downloaded text reports are downloaded
+    /**
+     * Gets the timestamp of the latest photo
+     * report in the local database that does
+     * not belong to the current user
+     *
+     * @param username current user's username
+     * @return latest downloaded photo report from current user's teammates item time as long; return 0 if there is none;
+     */
     public long getTeammatesLastDownloadedTextReportTime(String username) {
         long lastTime;
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,
@@ -187,7 +194,13 @@ public class DAOtextReport {
         return lastTime;
     }
 
-
+    /**
+     * Gets the timestamp of the latest text report
+     * in the local database that belongs to the current user
+     *
+     * @param username
+     * @return latest downloaded photo report item time as long; return 0 if there is none;
+     */
     public long getMyLastDownloadedTextReportTime(String username) {
         long lastTime;
         Cursor cursor = database.query(DBtables.TextReportTB.TABLE_NAME, DBtables.TextReportTB.ALL_COLUMNS,

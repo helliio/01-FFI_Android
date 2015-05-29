@@ -66,7 +66,12 @@ public class DAOlocation {
         return result;
     }
 
-
+    /**
+     * update the location fields of a {@link LocationReport}
+     *
+     * @param locationReport the location report to be updated
+     * @return
+     */
     public long updateLocation(LocationReport locationReport)
     {
         ContentValues cv = new ContentValues();
@@ -90,7 +95,7 @@ public class DAOlocation {
 
 
     /**
-     * set new un-reported location number value to UserInfo when it changed
+     * set new unreported location number value to UserInfo when it changed
      */
     private void statusChanged() {
         UserInfo.setUnReportedLocations(getMyNOTReportedItemCount(UserInfo.getUserID()));

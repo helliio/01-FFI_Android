@@ -16,15 +16,13 @@ import ffiandroid.situationawareness.model.localdb.DAOtextReport;
  * Created by GuoJunjun <junjunguo.com> on 3/8/2015.
  * <p/>
  * Responsible for this file: GuoJunjun
+ *
+ * Used to get information in the local database
+ * to use in the map view
  */
 public class OSMmap {
 
 
-
-    /*
-    // Created by Torgrim for testing purpose
-    // return all coworkers location reports in the server database.
-     */
 
     public ArrayList<LocationReport> getAllCoworkersLocationReports(Context context)
     {
