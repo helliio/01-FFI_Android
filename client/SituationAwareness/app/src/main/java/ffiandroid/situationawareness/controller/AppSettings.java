@@ -132,9 +132,6 @@ public class AppSettings extends ActionBarActivity implements StatusListener {
             case R.id.menu_item_map_view:
                 startActivity(new Intent(this, MapActivity.class));
                 return true;
-            case R.id.menu_item_report_view:
-                startActivity(new Intent(this, ReportView.class));
-                return true;
             case R.id.menu_item_logout:
                 rememberMeDelete();
                 Intent broadcastIntent = new Intent();

@@ -70,25 +70,6 @@ public class OSMmap {
     }
 
 
-    public List<PhotoReport> getAllCoworkersPhotoReports(Context context)
-    {
-        DAOphoto daoPhoto = null;
-        List<PhotoReport> photoReports = null;
-        try
-        {
-            daoPhoto = new DAOphoto(context);
-            photoReports = daoPhoto.getCoWorkerPhotos(UserInfo.getUserID());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally {
-            daoPhoto.close();
-        }
-        return photoReports;
-    }
-
     public List<PhotoReport> getAllPhotoReports(Context context)
     {
         DAOphoto daoPhoto = null;
@@ -103,7 +84,9 @@ public class OSMmap {
             e.printStackTrace();
         }
         finally {
-            daoPhoto.close();
+            if(daoPhoto != null) {
+                daoPhoto.close();
+            }
         }
         return photoReports;
     }

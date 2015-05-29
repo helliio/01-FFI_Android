@@ -109,10 +109,11 @@ public class PhotoReportDaoImpl implements PhotoReportDao {
     }
 
     @Override
-    public List<PhotoReport> getByTeamPeriod(String teamId, long startTime, long endTime) {
+    public List<PhotoReport> getByTeamPeriod(String teamId, String username, long startTime, long endTime) {
         this.session = this.sessionFactory.getCurrentSession();
         Query q = this.session.createQuery("from PhotoReport o" +
                 " where o.location.member.teamId = '" + teamId + "'" +
+                " and o.location.member.username != '" + username + "'" +
                 " and o.location.clientTimestamp > :startTime and o.location.clientTimestamp < :endTime" +
                 " order by o.location.clientTimestamp desc, o.location.member.id asc");
         Calendar calendar1 = Calendar.getInstance();

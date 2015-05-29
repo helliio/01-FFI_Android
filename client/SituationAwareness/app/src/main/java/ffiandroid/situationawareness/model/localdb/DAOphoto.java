@@ -4,13 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ffiandroid.situationawareness.model.PhotoReport;
-import ffiandroid.situationawareness.model.TextReport;
 import ffiandroid.situationawareness.model.UserInfo;
 import ffiandroid.situationawareness.model.util.Coder;
 
@@ -76,10 +74,7 @@ public class DAOphoto {
     public long updateIsReported(PhotoReport photoReport) {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.PhotoTB.COLUMN_ISREPORTED, true);
-        /*
-        String where = DBtables.PhotoTB.COLUMN_USER_ID + "=?" + " AND " +
-                DBtables.PhotoTB.COLUMN_DATETIME + "=?";
-                */
+
         String where = DBtables.PhotoTB.COLUMN_USER_ID + "=?" + " AND " +
                 DBtables.PhotoTB.COLUMN_DATETIME + "=?";
         long result = database.update(DBtables.PhotoTB.TABLE_NAME, cv, where,
@@ -91,32 +86,6 @@ public class DAOphoto {
         return result;
     }
 
-    public long getHighestPicID()
-    {
-        String sql = "SELECT MAX(" + DBtables.PhotoTB.COLUMN_PIC_ID + ") FROM " + DBtables.PhotoTB.TABLE_NAME;
-        Cursor cursor = database.rawQuery(sql, null);
-
-        boolean cur = cursor.moveToFirst();
-        Long picId = cursor.getLong(cursor.getColumnIndex("MAX(picId)"));
-        cursor.close();
-        return picId;
-    }
-
-    public List<Long> getAllPicIds()
-    {
-        ArrayList<Long> picIds = new ArrayList<>();
-        String sql = "SELECT picId FROM " + DBtables.PhotoTB.TABLE_NAME;
-        Cursor cursor = database.rawQuery(sql, null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast())
-        {
-            picIds.add(cursor.getLong(cursor.getColumnIndex("picId")));
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        return picIds;
-    }
 
     /**
      * set new un-reported photo value to UserInfo when it changed
@@ -255,9 +224,8 @@ public class DAOphoto {
     public long getTeammatesLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.PhotoTB.COLUMN_USER_ID +
-                " != ?",
-                new String[]{"0", Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " != ?",
+                new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
@@ -278,9 +246,8 @@ public class DAOphoto {
     public long getMyLastDownloadedPhotoReportTime(String myUserID) {
         long lastTime;
         Cursor cursor = database.query(DBtables.PhotoTB.TABLE_NAME, DBtables.PhotoTB.ALL_COLUMNS,
-                DBtables.PhotoTB.COLUMN_ISREPORTED + " = ? AND " + DBtables.PhotoTB.COLUMN_USER_ID +
-                        " = ?",
-                new String[]{"0", Coder.encryptMD5(myUserID)}, null, null,
+                DBtables.PhotoTB.COLUMN_USER_ID + " = ?",
+                new String[]{Coder.encryptMD5(myUserID)}, null, null,
                 DBtables.PhotoTB.COLUMN_DATETIME + " DESC");
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {

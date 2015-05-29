@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -257,25 +258,24 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("ACTION_LOGOUT"));
         activeOpenStreetMap();
         checkGpsAvailability();
-        System.out.println("Size of mmapView overlay array on created: " + mMapView.getOverlays().size());
         locationManager.requestLocationUpdates(bestProvider, ParameterSetting.getLocationUpdateTime(),
                 ParameterSetting.getLocationUpdateDistance(), this);
         UserInfo.addListener(this);
         formatMenuStatus();
 
 
-        GeoPoint myLoc = new GeoPoint(myCurrentLocation);
-        mMapController.setCenter(myLoc);
         StartSync.getInstance(getApplicationContext()).start();
 
         // NOTE(Torgrim): Added for tesing, might need to change this.
         mMapView.setMapListener(new MapListener() {
-            @Override public boolean onScroll(ScrollEvent scrollEvent) {
+            @Override
+            public boolean onScroll(ScrollEvent scrollEvent) {
                 calculateMarkers();
                 return true;
             }
 
-            @Override public boolean onZoom(ZoomEvent zoomEvent) {
+            @Override
+            public boolean onZoom(ZoomEvent zoomEvent) {
                 calculateMarkers();
                 return true;
             }
@@ -287,6 +287,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         //Used for creating menu from long click event
         mapEventsOverlay = new MapEventsOverlay(this, this);
         mMapView.getOverlays().add(0, mapEventsOverlay);
+        mMapView.setActivated(true);
+        if(mMapView.isActivated())
+        {
+            mMapView.getController().setCenter(startMarker.getPosition());
+        }
+
 
     }
 
@@ -329,12 +335,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         mMapView.setUseDataConnection(true);
 
         mMapController = (MapController) mMapView.getController();
-        mMapController.setZoom(32);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         updatePhotoMarkers();
         updateLocation();
-        mMapController.setCenter(new GeoPoint(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
-
+        mMapController.setZoom(32);
     }
 
 
@@ -759,7 +763,6 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
                         }
                     });
 
-                    // TODO(Torgrim): Fix that only one photo from the current user shows up???
                     String info = "User: " + report.getName() + "\n";
                     info += "Latitude: " + report.getLatitude() + "\n";
                     info += "Longitude:" + report.getLongitude() + "\n";
@@ -851,14 +854,12 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     }
 
     private void setAllMarkersToEnabled() {
-        // TODO(Torgrim): Remember to change the list so that all markers are taken into account
         for (Marker marker : coworkersLocationMarkers) {
             marker.setEnabled(true);
         }
     }
 
     private void setAllMarkersToDisabled() {
-        // TODO(Torgrim): Remember to change the list so that all markers are taken into account
         for (Marker marker : coworkersLocationMarkers) {
             marker.setEnabled(false);
         }
@@ -1262,8 +1263,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view Stopped");
     }
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> MapActivity view started");
     }

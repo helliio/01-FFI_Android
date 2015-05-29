@@ -223,7 +223,9 @@ public class AllReportsView extends ActionBarActivity implements StatusListener
             e.printStackTrace();
         }
         finally {
-            daOphoto.close();
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
         }
 
 

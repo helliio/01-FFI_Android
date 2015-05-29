@@ -52,7 +52,7 @@ public class Status extends ActionBarActivity implements StatusListener {
      */
     private void setStatusValues() {
         userId.setText(UserInfo.getUserID());
-        lastSync.setText((UserInfo.isLastSyncSucceed() ? "SUCCEED" : "NOT SUCCEED"));
+        lastSync.setText((UserInfo.isLastSyncSucceed() ? "SUCCEED" : "Failed"));
         unReportedText.setText(String.valueOf(UserInfo.getUnReportedText()));
         unReportedPhotos.setText(String.valueOf(UserInfo.getUnReportedPhotos()));
         unReportedLocations.setText(String.valueOf(UserInfo.getUnReportedLocations()));

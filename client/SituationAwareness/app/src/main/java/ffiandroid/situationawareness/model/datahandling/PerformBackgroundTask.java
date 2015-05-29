@@ -78,10 +78,15 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         finally {
-            // TODO Write these properly
-            if(daOlocation != null) daOlocation.close();
-            if(daOphoto != null)daOphoto.close();
-            if(daOtextReport != null) daOtextReport.close();
+            if(daOlocation != null) {
+                daOlocation.close();
+            }
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
+            if(daOtextReport != null) {
+                daOtextReport.close();
+            }
         }
     }
 
@@ -110,8 +115,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
         finally {
-            // TODO make these properly
-            if(daOphoto != null)daOphoto.close();
+            if(daOphoto != null) {
+                daOphoto.close();
+            }
         }
     }
 
@@ -157,8 +163,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
             }
             finally {
-                // TODO make these properly
-                if(daOphoto != null)daOphoto.close();
+                if(daOphoto != null) {
+                    daOphoto.close();
+                }
             }
             return null;
         }
@@ -180,7 +187,9 @@ public class PerformBackgroundTask extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
             }
             finally {
-                if(daOphoto != null)daOphoto.close();
+                if(daOphoto != null) {
+                    daOphoto.close();
+                }
             }
         }
     }

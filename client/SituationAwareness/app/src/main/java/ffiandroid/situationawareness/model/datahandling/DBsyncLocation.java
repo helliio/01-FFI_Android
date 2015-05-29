@@ -104,8 +104,10 @@ public class DBsyncLocation extends DBsync {
                 e.printStackTrace();
             }
             finally {
-                // TODO make these properly
-                if(daOlocation != null)daOlocation.close();
+                if(daOlocation != null)
+                {
+                    daOlocation.close();
+                }
             }
         }
     }
@@ -166,8 +168,9 @@ public class DBsyncLocation extends DBsync {
                 e.printStackTrace();
             }
             finally {
-                // TODO make these properly
-                if(daOlocation != null)daOlocation.close();
+                if(daOlocation != null) {
+                    daOlocation.close();
+                }
             }
         }
     };
@@ -207,11 +210,7 @@ public class DBsyncLocation extends DBsync {
                     }
                 }
             }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-            catch (SQLiteException e)
+            catch (Exception e)
             {
                 e.printStackTrace();
             }

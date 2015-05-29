@@ -314,14 +314,10 @@ public class Report extends ActionBarActivity implements StatusListener{
             }
             photoReport.setDatetime(System.currentTimeMillis());
             photoReport.setName(UserInfo.getName());
-            System.out.println("Highest picture id current in the locale database: " + daoPhotoReport.getHighestPicID());
-            System.out.print(daoPhotoReport.getAllPicIds().toString());
             photoReport.setLatitude(location.getLatitude());
             photoReport.setLongitude(location.getLongitude());
             String extension = photoPath.substring(photoPath.indexOf("."), photoPath.length());
             photoReport.setExtension(extension);
-            // TODO(Torgrim): Check that the extension is correct
-            System.out.println("New photo report extension::::: " + extension);
             photoReport.setPath(photoPath);
             photoReport.setIsreported(false);
             photoReport.setIsLocalMade(true);
@@ -345,9 +341,6 @@ public class Report extends ActionBarActivity implements StatusListener{
                 daoPhotoReport.close();
             }
         }
-
-
-        System.out.println("ID1 ====================== Time the report was saved to the local Database: " + System.currentTimeMillis());
     }
 
     /**

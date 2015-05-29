@@ -42,10 +42,6 @@ public class DAOlocation {
      * @param locationReport
      * @return the row ID of the newly inserted row, or -1 if an error occurred
      */
-    //TODO(Torgrim): Fix that your own location is always in the database
-    // Maybe only necessary to keep unsent ones..
-    // TODO(Torgrim): Also decide if to separate your own reports from others
-    // and show your own reports in the reports view
     public long addLocation(LocationReport locationReport)  {
         ContentValues cv = new ContentValues();
         cv.put(DBtables.LocationTB.COLUMN_USER_ID, locationReport.getUserid());

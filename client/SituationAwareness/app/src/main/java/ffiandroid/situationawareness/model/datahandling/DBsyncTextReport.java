@@ -35,15 +35,16 @@ public class DBsyncTextReport extends DBsync {
      * upload report from local to server
      */
     @Override public void upload() {
-        new Thread(uplocadThread).start();
+        new Thread(uploadThread).start();
     }
 
-    Runnable uplocadThread = new Runnable() {
+    Runnable uploadThread = new Runnable() {
         @Override
         public void run() {
-            DAOtextReport daOreport = new DAOtextReport(context);
+            DAOtextReport daOreport = null;
             Looper.prepare();
             try {
+                daOreport = new DAOtextReport(context);
                 reports = daOreport.getMyUnsentReports(UserInfo.getUserID());
                 String message = reportService
                         .sendTextReportList(UserInfo.getUserID(), UserInfo.getMyAndroidID(), System.currentTimeMillis(),
@@ -58,7 +59,9 @@ public class DBsyncTextReport extends DBsync {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                daOreport.close();
+                if(daOreport != null) {
+                    daOreport.close();
+                }
             }
             Looper.loop();
         }
@@ -162,15 +165,20 @@ public class DBsyncTextReport extends DBsync {
             try {
                 daOtextReport = new DAOtextReport(context);
                 String message = requestService.getPeriodTeamTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
-                        String.valueOf(daOtextReport.getLastDownloadedTextReportTime()),
+                        String.valueOf(daOtextReport.getTeammatesLastDownloadedTextReportTime(UserInfo.getUserID())),
                         String.valueOf(System.currentTimeMillis()));
                 JSONArray jArray = stringToJsonArray(message);
                 saveTextReportToLocalDB(jArray);
 
+                message = requestService.getPeriodSelfTextReports(UserInfo.getUserID(), UserInfo.getMyAndroidID(),
+                        String.valueOf(daOtextReport.getMyLastDownloadedTextReportTime(UserInfo.getUserID())),
+                        String.valueOf(System.currentTimeMillis()));
+                jArray = stringToJsonArray(message);
+                saveTextReportToLocalDB(jArray);
 
                 MapActivity.getTimeSinceLastTextDownload();
             } catch (Exception e) {
-                System.out.println("This is message from download >>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +e.getMessage());
+                e.printStackTrace();
             }
             finally
             {
@@ -189,8 +197,9 @@ public class DBsyncTextReport extends DBsync {
      */
     private void saveTextReportToLocalDB(JSONArray jsonArray) {
         if (jsonArray != null) {
-            DAOtextReport daOtextReport = new DAOtextReport(context);
+            DAOtextReport daOtextReport = null;
             try {
+                daOtextReport = new DAOtextReport(context);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject job = jsonArray.getJSONObject(i);
                     TextReport textReport = new TextReport();
@@ -207,8 +216,11 @@ public class DBsyncTextReport extends DBsync {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-            } finally {
-                daOtextReport.close();
+            } finally
+            {
+                if(daOtextReport != null) {
+                    daOtextReport.close();
+                }
             }
         }
     }

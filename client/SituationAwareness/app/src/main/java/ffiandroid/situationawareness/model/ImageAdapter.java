@@ -63,7 +63,6 @@ public class ImageAdapter extends ArrayAdapter<AdapterContentHolder> {
             viewHolder.description.setText(photoReport.toString());
 
 
-            // TODO(Torgrim): Work on improving the efficiency when creating a bitmap
             if (photoReport.getPath() != null) {
                 Bitmap pl = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_launcher);
                 Bitmap placeHolderBitmap = Bitmap.createScaledBitmap(pl, 256, 256, true);

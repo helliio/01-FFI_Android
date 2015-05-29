@@ -16,6 +16,8 @@ public interface RequestService {
 
     public String getPeriodTeamTextReports(String username, String deviceId, String startTime, String endTime);
 
+    public String getPeriodSelfTextReports(String username, String deviceId, String startTime, String endTime);
+
     public String getAllTeamPhotoReports(String username, String deviceId);
 
     public String getLatestTeamPhotoReports(String username, String deviceId);
