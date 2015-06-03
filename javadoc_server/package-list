@@ -1,0 +1,9 @@
+edu.ntnu.sair.aspect
+edu.ntnu.sair.controller
+edu.ntnu.sair.dao
+edu.ntnu.sair.dao.impl
+edu.ntnu.sair.filter
+edu.ntnu.sair.model
+edu.ntnu.sair.service
+edu.ntnu.sair.service.impl
+edu.ntnu.sair.util

@@ -1,0 +1,8 @@
+ffiandroid.situationawareness
+ffiandroid.situationawareness.controller
+ffiandroid.situationawareness.model
+ffiandroid.situationawareness.model.datahandling
+ffiandroid.situationawareness.model.localdb
+ffiandroid.situationawareness.model.service
+ffiandroid.situationawareness.model.service.impl
+ffiandroid.situationawareness.model.util
